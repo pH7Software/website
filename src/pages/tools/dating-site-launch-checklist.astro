@@ -1,0 +1,222 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { launchChecklist, milestones, productTypes } from "../../lib/launch-checklist";
+---
+
+<BaseLayout title="Dating site launch checklist" description="A practical, printable checklist for validating, building and launching a dating app, matchmaking service or social community." path="/tools/dating-site-launch-checklist/">
+  <header class="checklist-header shell print-hidden">
+    <div>
+      <p class="eyebrow">Free browser tool</p>
+      <h1>Dating product launch checklist</h1>
+    </div>
+    <p>Choose the product and next milestone. Check progress in this browser, then print or save a clean copy. Nothing is submitted.</p>
+  </header>
+
+  <div class="checklist-app" data-checklist-app>
+    <aside class="checklist-controls print-hidden" aria-labelledby="checklist-controls-title">
+      <div class="controls-inner">
+        <div class="panel-heading">
+          <span>01</span>
+          <div><h2 id="checklist-controls-title">Choose the work</h2><p>Your progress stays in this browser.</p></div>
+        </div>
+        <label>Type of product
+          <select data-product-type>
+            {productTypes.map((item) => <option value={item.value}>{item.label}</option>)}
+          </select>
+        </label>
+        <label>Next milestone
+          <select data-milestone>
+            {milestones.map((item) => <option value={item.value}>{item.label}</option>)}
+          </select>
+        </label>
+        <div class="progress-card">
+          <strong data-progress-text>0 of 0 complete</strong>
+          <div class="progress-track" aria-hidden="true"><span data-progress-bar></span></div>
+          <small>Progress is stored locally on this device.</small>
+        </div>
+        <div class="control-actions">
+          <button class="button button-dark button-small" type="button" data-print>Print checklist</button>
+          <button class="text-button" type="button" data-clear>Clear saved progress</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="checklist-results" aria-labelledby="checklist-results-title">
+      <div class="results-heading">
+        <span>02</span>
+        <div>
+          <h2 id="checklist-results-title">Your focused checklist</h2>
+          <p data-selection-summary>Niche dating app · Validate the idea</p>
+        </div>
+        <p class="print-meta">Generated at ph7builder.com</p>
+      </div>
+      <div class="checklist-items" data-checklist-items></div>
+      <noscript><p class="notice">JavaScript is required to filter and save this checklist.</p></noscript>
+    </main>
+  </div>
+
+  <section class="section-tight narrow-shell print-hidden">
+    <p class="eyebrow">How to use it</p>
+    <h2>A checked box is a prompt for evidence, not proof by itself.</h2>
+    <p class="lede">Link each completed item to the decision, test result, provider setting or operating document that proves it. Reopen the checklist when the launch market, business model or member risk changes.</p>
+  </section>
+</BaseLayout>
+
+<script define:vars={{ launchChecklist, productTypes, milestones }}>
+  const storageKey = "ph7builder-launch-checklist-v1";
+  const app = document.querySelector("[data-checklist-app]");
+  const productSelect = app?.querySelector("[data-product-type]");
+  const milestoneSelect = app?.querySelector("[data-milestone]");
+  const itemsRoot = app?.querySelector("[data-checklist-items]");
+  const summary = app?.querySelector("[data-selection-summary]");
+  const progressText = app?.querySelector("[data-progress-text]");
+  const progressBar = app?.querySelector("[data-progress-bar]");
+
+  const emptyState = { product: "niche-dating", milestone: "validate", completed: [] };
+  const readState = () => {
+    try {
+      const value = JSON.parse(localStorage.getItem(storageKey) || "null");
+      if (!value || !Array.isArray(value.completed)) return { ...emptyState };
+      return {
+        product: productTypes.some((item) => item.value === value.product) ? value.product : emptyState.product,
+        milestone: milestones.some((item) => item.value === value.milestone) ? value.milestone : emptyState.milestone,
+        completed: value.completed.filter((id) => launchChecklist.some((item) => item.id === id)),
+      };
+    } catch {
+      return { ...emptyState };
+    }
+  };
+  let state = readState();
+
+  const saveState = () => localStorage.setItem(storageKey, JSON.stringify(state));
+  const visibleItems = () => launchChecklist.filter((item) => item.products.includes(state.product) && item.milestones.includes(state.milestone));
+  const selectedLabel = (options, value) => options.find((item) => item.value === value)?.label ?? value;
+
+  const updateProgress = (items) => {
+    const completed = items.filter((item) => state.completed.includes(item.id)).length;
+    const percentage = items.length === 0 ? 0 : Math.round((completed / items.length) * 100);
+    if (progressText) progressText.textContent = `${completed} of ${items.length} complete`;
+    if (progressBar) progressBar.style.width = `${percentage}%`;
+  };
+
+  const render = () => {
+    const items = visibleItems();
+    const phases = new Map();
+    items.forEach((item) => {
+      if (!phases.has(item.phase)) phases.set(item.phase, []);
+      phases.get(item.phase).push(item);
+    });
+    if (summary) summary.textContent = `${selectedLabel(productTypes, state.product)} · ${selectedLabel(milestones, state.milestone)} · ${items.length} items`;
+    if (!itemsRoot) return;
+    itemsRoot.replaceChildren();
+    phases.forEach((phaseItems, phase) => {
+      const group = document.createElement("section");
+      group.className = "checklist-group";
+      const heading = document.createElement("h3");
+      heading.textContent = phase;
+      group.append(heading);
+      phaseItems.forEach((item) => {
+        const label = document.createElement("label");
+        label.className = "checklist-item";
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.checked = state.completed.includes(item.id);
+        input.addEventListener("change", () => {
+          state.completed = input.checked
+            ? [...new Set([...state.completed, item.id])]
+            : state.completed.filter((id) => id !== item.id);
+          saveState();
+          label.classList.toggle("completed", input.checked);
+          updateProgress(items);
+        });
+        const marker = document.createElement("span");
+        marker.className = "check-marker";
+        marker.setAttribute("aria-hidden", "true");
+        const copy = document.createElement("span");
+        copy.className = "check-copy";
+        const phaseLabel = document.createElement("b");
+        phaseLabel.textContent = phase;
+        const title = document.createElement("strong");
+        title.textContent = item.title;
+        const detail = document.createElement("small");
+        detail.textContent = item.detail;
+        copy.append(phaseLabel, title, detail);
+        label.append(input, marker, copy);
+        label.classList.toggle("completed", input.checked);
+        group.append(label);
+      });
+      itemsRoot.append(group);
+    });
+    updateProgress(items);
+  };
+
+  if (productSelect) {
+    productSelect.value = state.product;
+    productSelect.addEventListener("change", () => { state.product = productSelect.value; saveState(); render(); });
+  }
+  if (milestoneSelect) {
+    milestoneSelect.value = state.milestone;
+    milestoneSelect.addEventListener("change", () => { state.milestone = milestoneSelect.value; saveState(); render(); });
+  }
+  app?.querySelector("[data-print]")?.addEventListener("click", () => window.print());
+  app?.querySelector("[data-clear]")?.addEventListener("click", () => {
+    state = { ...emptyState };
+    localStorage.removeItem(storageKey);
+    if (productSelect) productSelect.value = state.product;
+    if (milestoneSelect) milestoneSelect.value = state.milestone;
+    render();
+  });
+  render();
+</script>
+
+<style is:global>
+  .checklist-header { display: grid; grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.55fr); align-items: end; gap: 3rem; padding-block: clamp(4rem, 8vw, 7rem); }
+  .checklist-header h1 { max-width: 12ch; margin-bottom: 0; }
+  .checklist-header > p { margin-bottom: 0; color: var(--ink-soft); font-size: 1.1rem; }
+  .checklist-app { display: grid; grid-template-columns: minmax(22rem, 0.65fr) minmax(0, 1.35fr); border-block: 2px solid var(--ink); background: var(--paper-strong); }
+  .checklist-controls { position: relative; border-right: 2px solid var(--ink); background: var(--yellow); }
+  .controls-inner { position: sticky; top: 4.75rem; max-width: 36rem; padding: clamp(1.5rem, 4vw, 3rem); margin-left: auto; }
+  .panel-heading, .results-heading { display: grid; grid-template-columns: 3.5rem 1fr; align-items: start; gap: 1rem; padding-bottom: 2rem; border-bottom: 2px solid var(--ink); }
+  .panel-heading > span, .results-heading > span { display: grid; width: 3.5rem; height: 3.5rem; place-items: center; border: 2px solid var(--ink); border-radius: 0.4rem; background: var(--lime); font-family: var(--mono); font-weight: 800; }
+  .panel-heading h2, .results-heading h2 { margin: 0; font-family: var(--sans); font-size: clamp(1.6rem, 3vw, 2.4rem); letter-spacing: -0.03em; }
+  .panel-heading p, .results-heading p { margin: 0.25rem 0 0; color: var(--ink-soft); }
+  .checklist-controls label { display: grid; gap: 0.45rem; margin-top: 2rem; font-weight: 800; }
+  .checklist-controls select { width: 100%; padding: 0.95rem; border: 2px solid var(--ink); border-radius: 0.4rem; background: var(--paper-strong); font-weight: 700; }
+  .progress-card { padding: 1.15rem; margin-top: 2rem; border: 1px solid var(--ink); background: rgba(255,255,255,.35); }
+  .progress-card strong, .progress-card small { display: block; }
+  .progress-card small { margin-top: 0.65rem; color: #555129; }
+  .progress-track { height: 0.65rem; margin-top: 0.75rem; border: 1px solid var(--ink); background: var(--paper-strong); }
+  .progress-track span { display: block; width: 0; height: 100%; background: var(--blue); transition: width 180ms ease; }
+  .control-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem; margin-top: 1.5rem; }
+  .text-button { padding: 0; border: 0; border-bottom: 1px solid currentColor; background: transparent; font-size: 0.85rem; font-weight: 800; }
+  .checklist-results { min-width: 0; padding: clamp(1.5rem, 4vw, 3rem); }
+  .results-heading { position: relative; grid-template-columns: 3.5rem 1fr auto; }
+  .print-meta { display: none; }
+  .checklist-group h3 { padding: 1rem 0; margin: 0; border-bottom: 1px solid var(--line); color: var(--coral); font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .checklist-item { position: relative; display: grid; grid-template-columns: 2.7rem 1fr; gap: 1rem; padding: 1.5rem 0.4rem; border-bottom: 1px solid var(--line); cursor: pointer; }
+  .checklist-item > input { position: absolute; opacity: 0; }
+  .check-marker { display: grid; width: 2.2rem; height: 2.2rem; place-items: center; border: 2px solid #777; border-radius: 0.3rem; background: white; }
+  .checklist-item input:checked + .check-marker { border-color: var(--ink); background: var(--lime); }
+  .checklist-item input:checked + .check-marker::after { content: "✓"; font-size: 1.4rem; font-weight: 900; }
+  .checklist-item input:focus-visible + .check-marker { outline: 3px solid var(--blue); outline-offset: 3px; }
+  .check-copy { display: grid; }
+  .check-copy b { color: var(--coral); font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.05em; text-transform: uppercase; }
+  .check-copy strong { font-size: 1.08rem; }
+  .check-copy small { margin-top: 0.35rem; color: var(--ink-soft); }
+  .checklist-item.completed .check-copy strong { color: #6a6d78; text-decoration: line-through; }
+  @media (max-width: 900px) { .checklist-header, .checklist-app { grid-template-columns: 1fr; } .checklist-controls { border-right: 0; border-bottom: 2px solid var(--ink); } .controls-inner { position: static; max-width: none; margin: 0; } }
+  @media (max-width: 560px) { .results-heading { grid-template-columns: 3.5rem 1fr; } }
+  @media print {
+    .checklist-app { display: block; border: 0; }
+    .checklist-results { padding: 0; }
+    .results-heading { grid-template-columns: auto 1fr auto; padding-bottom: 1rem; }
+    .results-heading > span { width: 2rem; height: 2rem; }
+    .results-heading h2 { font-size: 1.5rem; }
+    .print-meta { display: block; color: #555; font-size: .75rem; }
+    .checklist-group { break-inside: avoid; }
+    .checklist-item { grid-template-columns: 1.8rem 1fr; padding: .6rem 0; break-inside: avoid; }
+    .check-marker { width: 1.4rem; height: 1.4rem; }
+    .check-copy strong { font-size: .9rem; }
+    .check-copy small { font-size: .72rem; }
+  }
+</style>
