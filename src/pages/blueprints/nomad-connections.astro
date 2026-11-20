@@ -1,0 +1,90 @@
+---
+import ArrowIcon from "../../components/ArrowIcon.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Nomad Connections blueprint" description="A worked pH7Builder product blueprint for a dating business serving travellers and people living abroad." path="/blueprints/nomad-connections/">
+  <header class="page-hero shell">
+    <p class="eyebrow">Flagship blueprint · Worked example</p>
+    <h1>Nomad Connections</h1>
+    <p class="lede">A dating product for people who feel at home in more than one place. This example shows how a customer idea becomes a portable specification before an agent changes the code.</p>
+    <a class="button" href="/build/?example=nomad">Use this as a starting point<ArrowIcon /></a>
+  </header>
+
+  <section class="blueprint-intro">
+    <div class="shell blueprint-intro-grid">
+      <div><span>THE IDEA</span><blockquote>“I want to create a dating app for people who enjoy travelling and living abroad.”</blockquote></div>
+      <dl>
+        <div><dt>Audience</dt><dd>Adult travellers and expats</dd></div>
+        <div><dt>Core promise</dt><dd>Meet compatible people across current and future locations</dd></div>
+        <div><dt>Foundation</dt><dd>pH7Builder {"19.4.0"}</dd></div>
+        <div><dt>Status</dt><dd>Concept blueprint, not a deployed application</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="section shell">
+    <div class="section-heading">
+      <div><p class="eyebrow">Product decisions</p><h2>Make the differentiator explicit.</h2></div>
+      <p>These are proposed product requirements. An implementation agent must map each one to the real pH7Builder codebase rather than assume the exact field or module already exists.</p>
+    </div>
+    <div class="decision-grid">
+      <article><span>01</span><h3>Destination-aware discovery</h3><p>Members can indicate where they live now and where they expect to be, then discover people with compatible timing and interests.</p></article>
+      <article><span>02</span><h3>Location privacy</h3><p>Exact location remains private by default. Members control whether travel plans are hidden, approximate or visible to matched people.</p></article>
+      <article><span>03</span><h3>Lifestyle compatibility</h3><p>Languages, travel pace, work pattern and shared interests matter alongside existing profile and matching preferences.</p></article>
+      <article><span>04</span><h3>Trust before growth</h3><p>Reporting, blocking, moderation and clear community rules are launch requirements, not work deferred until after acquisition.</p></article>
+    </div>
+  </section>
+
+  <section class="section surface">
+    <div class="narrow-shell">
+      <p class="eyebrow">Portable specification excerpt</p>
+      <pre class="yaml"><code>product:
+  name: "Nomad Connections"
+  purpose: "Dating for travellers and expats"
+  audience: "Adults aged 18 and over"
+
+foundation:
+  package: "ph7software/ph7builder"
+  version: "19.4.0"
+
+experience:
+  discovery:
+    - "current city"
+    - "preferred destinations"
+    - "languages"
+    - "shared travel interests"
+
+privacy:
+  exact_location_sharing: false
+  travel_dates_visibility: "private by default"
+
+requirements:
+  - "Members can discover compatible travellers."
+  - "Members control their location visibility."
+  - "Members can report and block another account."</code></pre>
+      <div class="notice"><p><strong>Important:</strong> this schema records product intent. It does not claim that every key maps directly to a current pH7Builder configuration setting.</p></div>
+    </div>
+  </section>
+
+  <CtaBand eyebrow="Make it yours" title="Change the audience, promise and rules. Keep the portable structure." primaryLabel="Create your own blueprint" primaryHref="/build/" secondaryLabel="Read the AI builder workflow" secondaryHref="/ai-builders/" />
+</BaseLayout>
+
+<style>
+  .blueprint-intro { padding-block: clamp(3rem, 7vw, 7rem); background: var(--ink); color: white; }
+  .blueprint-intro-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.65fr); gap: clamp(3rem, 8vw, 8rem); }
+  .blueprint-intro span, .blueprint-intro dt { font-family: var(--mono); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+  blockquote { margin: 2rem 0 0; font-family: var(--serif); font-size: clamp(2rem, 5vw, 4rem); line-height: 1.07; }
+  .blueprint-intro dl { margin: 0; }
+  .blueprint-intro dl div { padding: 1rem 0; border-bottom: 1px solid #42495e; }
+  .blueprint-intro dd { margin: 0.3rem 0 0; color: #dce0eb; }
+  .decision-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 2px solid var(--ink); }
+  .decision-grid article { min-height: 17rem; padding: 1.5rem; border: 1px solid var(--ink); background: var(--paper-strong); }
+  .decision-grid span { font-family: var(--mono); font-size: 0.7rem; font-weight: 800; }
+  .decision-grid h3 { margin-top: 3.5rem; }
+  .decision-grid p { color: var(--ink-soft); }
+  .yaml { overflow-x: auto; padding: clamp(1rem, 4vw, 2.5rem); border: 2px solid var(--ink); border-radius: 0.7rem; background: var(--ink); color: #f8f9fc; font-family: var(--mono); line-height: 1.65; box-shadow: 8px 8px 0 var(--lime); }
+  .notice { margin-top: 2rem; }
+  @media (max-width: 700px) { .blueprint-intro-grid, .decision-grid { grid-template-columns: 1fr; } }
+</style>

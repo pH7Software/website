@@ -1,0 +1,50 @@
+---
+import ArrowIcon from "../components/ArrowIcon.astro";
+import CtaBand from "../components/CtaBand.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../data/site";
+---
+
+<BaseLayout title="About pH7Builder" description="Why pH7Builder is becoming an open-source, AI-ready foundation for independently owned dating, matchmaking and community products." path="/about/">
+  <header class="page-hero shell">
+    <p class="eyebrow">About pH7Builder</p>
+    <h1>Use AI to extend the years of work, not erase them.</h1>
+    <p class="lede">pH7Builder began as open-source dating and social software. Its next purpose is to make that established foundation understandable and useful to a new generation of builders working with coding agents.</p>
+  </header>
+
+  <section class="section surface">
+    <div class="shell about-grid">
+      <div><p class="eyebrow">The mission</p><h2>Independent products deserve a serious starting point.</h2></div>
+      <div class="about-copy">
+        <p>Generating a convincing interface is getting easier. Building the account rules, member journeys, moderation controls and operating discipline behind a real community remains harder.</p>
+        <p>pH7Builder provides a specialised open-source base. Builders can use their preferred agent, choose their infrastructure and keep control of the application they create.</p>
+        <p>The website’s blueprint tool is intentionally portable. It records the product idea separately from its implementation, so another developer or agent can understand what the application is meant to do.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section shell">
+    <div class="creator-card">
+      <div class="creator-monogram" aria-hidden="true">PHS</div>
+      <div>
+        <p class="eyebrow">Created and maintained by</p>
+        <h2>{site.author.name}</h2>
+        <p class="lede">Pierre-Henry created pH7Builder and continues to shape its product direction, architecture and public releases.</p>
+        <a class="text-link" href={site.author.url} target="_blank" rel="author noopener noreferrer">View the GitHub profile<ArrowIcon /><span class="sr-only"> (opens in a new tab)</span></a>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand eyebrow="Open source, built to continue" title="Take the foundation. Make the product yours." />
+</BaseLayout>
+
+<style>
+  .about-grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(20rem, 0.65fr); gap: clamp(3rem, 8vw, 8rem); }
+  .about-grid h2 { max-width: 12ch; }
+  .about-copy { align-self: end; font-size: 1.1rem; }
+  .about-copy p:last-child { margin-bottom: 0; }
+  .creator-card { display: grid; grid-template-columns: 14rem 1fr; align-items: center; gap: clamp(2rem, 7vw, 6rem); padding: clamp(1.5rem, 5vw, 4rem); border: 2px solid var(--ink); border-radius: var(--radius); background: var(--paper-strong); box-shadow: var(--shadow); }
+  .creator-monogram { display: grid; aspect-ratio: 1; place-items: center; border: 2px solid var(--ink); border-radius: 50%; background: var(--blue); color: white; font-family: var(--serif); font-size: 3rem; }
+  .creator-card h2 { font-size: clamp(2.4rem, 5vw, 4.5rem); }
+  @media (max-width: 700px) { .about-grid, .creator-card { grid-template-columns: 1fr; } .creator-monogram { width: 8rem; } }
+</style>

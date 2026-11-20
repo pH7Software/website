@@ -1,0 +1,46 @@
+---
+import ArrowIcon from "../components/ArrowIcon.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../data/site";
+---
+
+<BaseLayout title="Get pH7Builder" description="Install the latest published pH7Builder release through Composer or download the source from GitHub." path="/get-started/">
+  <header class="page-hero shell">
+    <p class="eyebrow">Get pH7Builder</p>
+    <h1>Start from the published open-source foundation.</h1>
+    <p class="lede">pH7Builder {site.latestRelease} is the latest published release. Use Composer for a repeatable source installation or inspect the repository before deciding how your product should extend it.</p>
+  </header>
+  <section class="section surface">
+    <div class="shell get-grid">
+      <article>
+        <span class="status-pill">Recommended</span>
+        <h2>Install through Composer</h2>
+        <pre><code>composer create-project ph7software/ph7builder my-dating-app</code></pre>
+        <p>This creates an independent application copy with locked production dependencies. Future application upgrades are explicit rather than automatic Composer library updates.</p>
+        <a class="button" href="/ai-builders/">Follow the AI builder path<ArrowIcon /></a>
+      </article>
+      <article>
+        <span class="status-pill">Source</span>
+        <h2>Review it on GitHub</h2>
+        <p>Read the production quick start, project conventions, current release notes and open-source licence before deployment.</p>
+        <a class="button button-secondary" href={site.githubUrl} target="_blank" rel="noopener noreferrer">Open the repository<ArrowIcon /><span class="sr-only"> (opens in a new tab)</span></a>
+      </article>
+    </div>
+  </section>
+  <section class="section narrow-shell prose">
+    <h2>Production requirements</h2>
+    <p>The published 19.4.0 release and the upcoming 20.0.0 line have different compatibility notes. Always use the release-specific documentation and lock file rather than assuming the development branch describes a published package.</p>
+    <h2>Before real members arrive</h2>
+    <p>Configure HTTPS, email delivery, backups, scheduled work and web-server rules for production. Review privacy and moderation decisions for the launch market. Then run the critical member journeys in the deployed environment.</p>
+    <p><a href="/tools/dating-site-launch-checklist/">Use the dating product launch checklist</a> to keep those product and operational decisions together.</p>
+  </section>
+</BaseLayout>
+
+<style>
+  .get-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+  .get-grid article { display: flex; min-height: 28rem; flex-direction: column; padding: clamp(1.5rem, 4vw, 3rem); border: 2px solid var(--ink); border-radius: var(--radius); background: var(--paper-strong); }
+  .get-grid h2 { margin: auto 0 1rem; font-size: clamp(2.2rem, 4vw, 3.5rem); }
+  .get-grid pre { overflow-x: auto; padding: 1rem; background: var(--ink); color: white; font-family: var(--mono); font-size: .8rem; }
+  .get-grid .button { width: fit-content; margin-top: 1.25rem; }
+  @media (max-width: 760px) { .get-grid { grid-template-columns: 1fr; } }
+</style>

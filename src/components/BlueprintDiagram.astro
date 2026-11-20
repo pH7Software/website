@@ -1,0 +1,155 @@
+<div class="blueprint-diagram" aria-label="Example portable pH7Builder product blueprint">
+  <div class="blueprint-header">
+    <span class="blueprint-dot"></span>
+    <span>nomad-connections.blueprint.yaml</span>
+    <span class="blueprint-version">v1</span>
+  </div>
+  <div class="blueprint-body">
+    <div class="blueprint-line"><span>product</span><strong>Nomad Connections</strong></div>
+    <div class="blueprint-line"><span>audience</span><strong>Travellers & expats</strong></div>
+    <div class="blueprint-rule"></div>
+    <p class="blueprint-label">FOUNDATION</p>
+    <div class="blueprint-features">
+      <span>Profiles</span><span>Discovery</span><span>Messaging</span><span>Moderation</span>
+    </div>
+    <p class="blueprint-label">CUSTOM EXPERIENCE</p>
+    <div class="blueprint-flow">
+      <span>Current city</span><b>→</b><span>Travel plans</span><b>→</b><span>Compatible people</span>
+    </div>
+    <div class="blueprint-footer">
+      <span>Portable specification</span>
+      <span>Customer-owned</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .blueprint-diagram {
+    overflow: hidden;
+    border: 2px solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--ink);
+    color: white;
+    box-shadow: 10px 10px 0 var(--lime);
+    transform: rotate(1.5deg);
+  }
+
+  .blueprint-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid #3d4358;
+    color: #dce0eb;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+  }
+
+  .blueprint-dot {
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    background: var(--coral);
+  }
+
+  .blueprint-version {
+    color: var(--lime);
+  }
+
+  .blueprint-body {
+    padding: clamp(1.25rem, 4vw, 2.5rem);
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    background-size: 2rem 2rem;
+  }
+
+  .blueprint-line {
+    display: grid;
+    grid-template-columns: 7rem 1fr;
+    gap: 1rem;
+    padding-block: 0.7rem;
+    border-bottom: 1px dashed #52596f;
+  }
+
+  .blueprint-line span,
+  .blueprint-label {
+    color: #8f98b1;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .blueprint-line strong {
+    font-size: 0.95rem;
+  }
+
+  .blueprint-rule {
+    height: 2.5rem;
+  }
+
+  .blueprint-label {
+    margin: 0 0 0.75rem;
+  }
+
+  .blueprint-features {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7rem;
+    margin-bottom: 2rem;
+  }
+
+  .blueprint-features span,
+  .blueprint-flow span {
+    padding: 0.6rem 0.7rem;
+    border: 1px solid #596078;
+    border-radius: 0.3rem;
+    background: rgba(255, 255, 255, 0.04);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+  }
+
+  .blueprint-flow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+
+  .blueprint-flow span {
+    flex: 0 0 auto;
+  }
+
+  .blueprint-flow b {
+    color: var(--lime);
+  }
+
+  .blueprint-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 2rem;
+    color: var(--lime);
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 560px) {
+    .blueprint-diagram {
+      transform: none;
+    }
+
+    .blueprint-line {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
+
+    .blueprint-footer {
+      flex-direction: column;
+    }
+  }
+</style>

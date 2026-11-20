@@ -1,0 +1,85 @@
+---
+import ArrowIcon from "../components/ArrowIcon.astro";
+import CtaBand from "../components/CtaBand.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="pH7Builder for vibe coders" description="Turn a dating or matchmaking idea into a portable product blueprint, then build it with your preferred AI coding agent on pH7Builder." path="/vibe-coders/">
+  <header class="page-hero shell">
+    <p class="eyebrow">pH7Builder for vibe coders</p>
+    <h1>Describe the business. Keep the result.</h1>
+    <p class="lede">You do not need to begin by choosing a framework. Begin with the people you want to help, the connections they are trying to make and the rules that should protect them.</p>
+    <div class="hero-actions">
+      <a class="button" href="/build/">Turn your idea into a blueprint<ArrowIcon /></a>
+      <a class="text-link" href="/tools/dating-site-launch-checklist/">Use the launch checklist<ArrowIcon /></a>
+    </div>
+  </header>
+
+  <section class="idea-section">
+    <div class="shell idea-grid">
+      <div class="idea-quote">
+        <p class="eyebrow">Your idea</p>
+        <blockquote>“I want to create a dating app for people who enjoy travelling and living abroad.”</blockquote>
+      </div>
+      <div class="idea-result">
+        <p class="eyebrow">A useful starting result</p>
+        <h2>Nomad Connections</h2>
+        <p>A product specification for travellers and expats, with destination-aware discovery, language preferences and privacy-conscious travel plans.</p>
+        <a class="text-link" href="/blueprints/nomad-connections/">Open the example blueprint<ArrowIcon /></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section surface">
+    <div class="shell">
+      <div class="section-heading">
+        <div><p class="eyebrow">From sentence to product</p><h2>A guided path without a proprietary builder.</h2></div>
+        <p>The browser tool prepares a specification and prompt. It does not call a model, deploy an application or lock the idea into a service.</p>
+      </div>
+      <ol class="journey">
+        {[
+          ["01", "Describe", "Name the audience, problem, business model and safety requirements in plain language."],
+          ["02", "Generate", "Receive portable YAML plus a starter prompt that explains how an agent should use pH7Builder."],
+          ["03", "Build", "Take the files to Codex, Claude Code or another capable coding agent and work in your own repository."],
+          ["04", "Own", "Keep the source, choose the hosting and continue with another developer or agent later."],
+        ].map(([number, title, copy]) => <li><span>{number}</span><h3>{title}</h3><p>{copy}</p></li>)}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section shell">
+    <div class="section-heading">
+      <div><p class="eyebrow">A product, not only a website</p><h2>Think beyond the first generated screen.</h2></div>
+      <p>A dating business succeeds or fails through trust, supply, member activation and operational discipline. The blueprint makes those questions visible before they become expensive code.</p>
+    </div>
+    <div class="card-grid">
+      <article class="plain-card"><h3>Member promise</h3><p>Who should meet whom, and what would make the connection meaningfully better than a generic network?</p></article>
+      <article class="plain-card"><h3>Marketplace start</h3><p>Which first city, interest or community can reach enough density to avoid launching an empty product?</p></article>
+      <article class="plain-card"><h3>Trust rules</h3><p>What should stay private, what requires moderation, and how can members report or block another account?</p></article>
+      <article class="plain-card"><h3>Revenue model</h3><p>Which part is valuable enough to pay for, and what does each member cost to acquire and support?</p></article>
+      <article class="plain-card"><h3>Operational reality</h3><p>Who handles abuse reports, member questions, content review, email delivery and third-party accounts?</p></article>
+      <article class="plain-card"><h3>Long-term change</h3><p>How will the next agent understand which behaviour is upstream and which decisions belong to your product?</p></article>
+    </div>
+  </section>
+
+  <CtaBand eyebrow="No lock-in to an AI platform" title="Use the agent you prefer. Keep the blueprint for the next one." description="The first version is intentionally simple: the tool runs locally in your browser and gives you files you can save, review and version." />
+</BaseLayout>
+
+<style>
+  .idea-section { padding-block: clamp(3rem, 7vw, 7rem); background: var(--blue); color: white; }
+  .idea-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 1px solid #94a6ff; }
+  .idea-grid > div { min-height: 26rem; padding: clamp(1.5rem, 5vw, 4rem); }
+  .idea-grid > div + div { border-left: 1px solid #94a6ff; }
+  .idea-quote { display: flex; flex-direction: column; justify-content: space-between; }
+  blockquote { margin: 0; font-family: var(--serif); font-size: clamp(2rem, 5vw, 4.4rem); line-height: 1.05; letter-spacing: -0.04em; }
+  .idea-result { background: var(--lime); color: var(--ink); }
+  .idea-result h2 { margin-top: 4rem; }
+  .journey { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 0; margin: 0; border: 2px solid var(--ink); list-style: none; }
+  .journey li { min-height: 21rem; padding: 1.5rem; background: var(--paper-strong); }
+  .journey li + li { border-left: 1px solid var(--ink); }
+  .journey span { font-family: var(--mono); font-size: 0.75rem; font-weight: 800; }
+  .journey h3 { margin-top: 5rem; }
+  .journey p { color: var(--ink-soft); }
+  @media (max-width: 840px) { .journey { grid-template-columns: repeat(2, 1fr); } .journey li { border: 1px solid var(--ink); } }
+  @media (max-width: 660px) { .idea-grid, .journey { grid-template-columns: 1fr; } .idea-grid > div + div { border-top: 1px solid #94a6ff; border-left: 0; } }
+</style>
