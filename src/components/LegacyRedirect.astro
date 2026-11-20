@@ -1,0 +1,37 @@
+---
+import Brand from "./Brand.astro";
+import { site } from "../data/site";
+
+type Props = {
+  destination: string;
+};
+
+const { destination } = Astro.props;
+const target = new URL(destination, site.origin).toString();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, follow" />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <link rel="canonical" href={target} />
+    <title>Moved | pH7Builder</title>
+  </head>
+  <body>
+    <main>
+      <Brand />
+      <h1>This page has moved.</h1>
+      <p><a href={destination}>Continue to the current pH7Builder page</a>.</p>
+    </main>
+  </body>
+</html>
+
+<style>
+  body { margin: 0; background: #f4f2e9; color: #111628; font-family: ui-sans-serif, system-ui, sans-serif; }
+  main { width: min(calc(100% - 2rem), 42rem); margin: 12vh auto; padding: 2rem; border: 2px solid #111628; border-radius: 1rem; background: #fffdf7; box-shadow: 7px 7px 0 #c8ef5a; }
+  h1 { margin: 3rem 0 1rem; font-family: Georgia, serif; font-size: clamp(2.5rem, 7vw, 4.5rem); line-height: 1; }
+  a { color: inherit; font-weight: 800; text-decoration-color: #ff6047; text-underline-offset: .2em; }
+</style>

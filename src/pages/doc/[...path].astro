@@ -1,0 +1,25 @@
+---
+import LegacyRedirect from "../../components/LegacyRedirect.astro";
+import { site } from "../../data/site";
+
+type Props = { destination: string };
+
+export function getStaticPaths() {
+  const docsRoot = `${site.githubUrl}/tree/18.x/docs`;
+  const file = (name: string) => `${site.githubUrl}/blob/18.x/docs/${name}`;
+  return [
+    { params: { path: undefined }, props: { destination: docsRoot } },
+    { params: { path: "en/hosting" }, props: { destination: file("QUICK_START.md") } },
+    { params: { path: "en/install" }, props: { destination: file("QUICK_START.md") } },
+    { params: { path: "en/upgrade" }, props: { destination: file("UPGRADING.md") } },
+    { params: { path: "en/google-maps-not-loaded" }, props: { destination: docsRoot } },
+    { params: { path: "en/how-to-set-the-development-mode" }, props: { destination: docsRoot } },
+    { params: { path: "en/how-to-go-to-admin-panel" }, props: { destination: docsRoot } },
+    { params: { path: "en/rename-the-admin-folder" }, props: { destination: docsRoot } },
+  ];
+}
+
+const { destination } = Astro.props;
+---
+
+<LegacyRedirect destination={destination} />
