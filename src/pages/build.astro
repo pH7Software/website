@@ -1,0 +1,238 @@
+---
+import ArrowIcon from "../components/ArrowIcon.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { availableFeatures, defaultBlueprintInput } from "../lib/blueprint";
+---
+
+<BaseLayout title="Build your dating app blueprint" description="Describe your dating, matchmaking or community product and receive a portable pH7Builder blueprint plus a starter prompt. Everything runs in your browser." path="/build/">
+  <header class="build-header shell">
+    <div>
+      <p class="eyebrow">pH7Builder Blueprint</p>
+      <h1>What dating product would you love to create?</h1>
+    </div>
+    <p>Describe the business in plain language. The tool creates a portable specification and starter prompt. It does not deploy an app or call an AI API. It does not submit your idea.</p>
+  </header>
+
+  <main class="builder-shell shell" data-blueprint-builder>
+    <section class="builder-form-panel" aria-labelledby="blueprint-input-title">
+      <div class="panel-heading">
+        <span class="step-box">01</span>
+        <div><h2 id="blueprint-input-title">Describe the product</h2><p>Your entries stay in this browser page.</p></div>
+      </div>
+      <form id="blueprint-form">
+        <label>Product name<input name="productName" type="text" maxlength="100" value={defaultBlueprintInput.productName} autocomplete="off" /></label>
+        <label>Your idea<textarea name="idea" rows="4" maxlength="600">{defaultBlueprintInput.idea}</textarea></label>
+        <div class="form-pair">
+          <label>Who is it for?<input name="audience" type="text" maxlength="180" value={defaultBlueprintInput.audience} /></label>
+          <label>Where will it start?<input name="launchMarket" type="text" maxlength="180" value={defaultBlueprintInput.launchMarket} /></label>
+        </div>
+        <label>Business model
+          <select name="businessModel">
+            <option>Freemium membership</option>
+            <option>Paid membership</option>
+            <option>Private matchmaking service</option>
+            <option>Free community</option>
+            <option>To be decided</option>
+          </select>
+        </label>
+        <label>What makes it different?<textarea name="differentiation" rows="3" maxlength="500">{defaultBlueprintInput.differentiation}</textarea></label>
+        <fieldset>
+          <legend>Foundation areas to evaluate</legend>
+          <div class="feature-options">
+            {availableFeatures.map((feature) => (
+              <label><input type="checkbox" name="features" value={feature} checked={defaultBlueprintInput.features.includes(feature)} /><span>{feature}</span></label>
+            ))}
+          </div>
+        </fieldset>
+        <label>Safety requirement<textarea name="safetyRequirement" rows="2" maxlength="400">{defaultBlueprintInput.safetyRequirement}</textarea></label>
+        <label>Privacy requirement<textarea name="privacyRequirement" rows="2" maxlength="400">{defaultBlueprintInput.privacyRequirement}</textarea></label>
+        <label>One outcome that must work<textarea name="mustHave" rows="3" maxlength="500">{defaultBlueprintInput.mustHave}</textarea></label>
+        <button class="button button-dark" type="button" data-load-example>Load the Nomad Connections example<ArrowIcon /></button>
+      </form>
+    </section>
+
+    <section class="builder-output-panel" aria-labelledby="blueprint-output-title">
+      <div class="panel-heading">
+        <span class="step-box">02</span>
+        <div><h2 id="blueprint-output-title">Take the result</h2><p>Review it before giving it to an agent.</p></div>
+      </div>
+      <div class="output-tabs" role="tablist" aria-label="Generated files">
+        <button id="yaml-tab" type="button" role="tab" aria-selected="true" aria-controls="yaml-panel">Blueprint YAML</button>
+        <button id="prompt-tab" type="button" role="tab" aria-selected="false" aria-controls="prompt-panel" tabindex="-1">Starter prompt</button>
+      </div>
+      <div id="yaml-panel" role="tabpanel" aria-labelledby="yaml-tab"><pre><code data-yaml-output></code></pre></div>
+      <div id="prompt-panel" role="tabpanel" aria-labelledby="prompt-tab" hidden><pre><code data-prompt-output></code></pre></div>
+      <p class="output-status" aria-live="polite"></p>
+      <div class="tool-actions">
+        <button class="button button-small" type="button" data-copy-output>Copy current file</button>
+        <button class="button button-secondary button-small" type="button" data-download-blueprint>Download blueprint</button>
+        <button class="button button-secondary button-small" type="button" data-download-prompt>Download prompt</button>
+      </div>
+      <div class="output-note">
+        <strong>What happens next?</strong>
+        <p>Save both files with the product repository. Give them to your coding agent together with the pH7Builder source, then ask for an implementation map before code.</p>
+      </div>
+    </section>
+  </main>
+
+  <section class="section-tight narrow-shell build-explanation">
+    <p class="eyebrow">Portable by design</p>
+    <h2>The blueprint describes intent. It does not hide implementation decisions.</h2>
+    <p>The YAML records the audience, product promise, selected foundation areas, privacy choices and acceptance requirements. The agent still has to inspect pH7Builder and decide how each requirement should be implemented.</p>
+    <p>This separation matters. You can change agents, bring in a developer or upgrade the upstream foundation without losing the reason the product exists.</p>
+  </section>
+</BaseLayout>
+
+<script>
+  import {
+    generateBlueprintYaml,
+    generateStarterPrompt,
+    nomadBlueprintInput,
+    slugifyProductName,
+    type BlueprintFeature,
+    type BlueprintInput,
+  } from "../lib/blueprint";
+
+  const root = document.querySelector<HTMLElement>("[data-blueprint-builder]");
+  const form = document.querySelector<HTMLFormElement>("#blueprint-form");
+  const yamlOutput = document.querySelector<HTMLElement>("[data-yaml-output]");
+  const promptOutput = document.querySelector<HTMLElement>("[data-prompt-output]");
+  const status = root?.querySelector<HTMLElement>(".output-status");
+  const tabs = Array.from(root?.querySelectorAll<HTMLButtonElement>("[role='tab']") ?? []);
+
+  const setField = (name: string, value: string) => {
+    const field = form?.elements.namedItem(name);
+    if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement) field.value = value;
+  };
+
+  const readForm = (): BlueprintInput => {
+    const data = new FormData(form ?? undefined);
+    return {
+      productName: String(data.get("productName") ?? ""),
+      idea: String(data.get("idea") ?? ""),
+      audience: String(data.get("audience") ?? ""),
+      launchMarket: String(data.get("launchMarket") ?? ""),
+      businessModel: String(data.get("businessModel") ?? ""),
+      differentiation: String(data.get("differentiation") ?? ""),
+      safetyRequirement: String(data.get("safetyRequirement") ?? ""),
+      privacyRequirement: String(data.get("privacyRequirement") ?? ""),
+      mustHave: String(data.get("mustHave") ?? ""),
+      features: data.getAll("features").map(String) as BlueprintFeature[],
+    };
+  };
+
+  const updateOutputs = () => {
+    const input = readForm();
+    if (yamlOutput) yamlOutput.textContent = generateBlueprintYaml(input);
+    if (promptOutput) promptOutput.textContent = generateStarterPrompt(input);
+  };
+
+  const selectTab = (selected: HTMLButtonElement) => {
+    tabs.forEach((tab) => {
+      const active = tab === selected;
+      tab.setAttribute("aria-selected", String(active));
+      tab.tabIndex = active ? 0 : -1;
+      const panel = document.getElementById(tab.getAttribute("aria-controls") ?? "");
+      if (panel) panel.hidden = !active;
+    });
+  };
+
+  tabs.forEach((tab, index) => {
+    tab.addEventListener("click", () => selectTab(tab));
+    tab.addEventListener("keydown", (event) => {
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      event.preventDefault();
+      const direction = event.key === "ArrowRight" ? 1 : -1;
+      const next = tabs[(index + direction + tabs.length) % tabs.length];
+      selectTab(next);
+      next.focus();
+    });
+  });
+
+  form?.addEventListener("input", updateOutputs);
+  root?.querySelector<HTMLButtonElement>("[data-load-example]")?.addEventListener("click", () => {
+    for (const [name, value] of Object.entries(nomadBlueprintInput)) {
+      if (name === "features") continue;
+      setField(name, String(value));
+    }
+    form?.querySelectorAll<HTMLInputElement>("input[name='features']").forEach((checkbox) => {
+      checkbox.checked = nomadBlueprintInput.features.includes(checkbox.value as BlueprintFeature);
+    });
+    updateOutputs();
+    if (status) status.textContent = "Nomad Connections example loaded.";
+  });
+
+  const download = (content: string, filename: string, type: string) => {
+    const url = URL.createObjectURL(new Blob([content], { type }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  root?.querySelector<HTMLButtonElement>("[data-copy-output]")?.addEventListener("click", async () => {
+    const currentPanel = root.querySelector<HTMLElement>("[role='tabpanel']:not([hidden]) code");
+    try {
+      await navigator.clipboard.writeText(currentPanel?.textContent ?? "");
+      if (status) status.textContent = "Current file copied.";
+    } catch {
+      if (status) status.textContent = "Copy was unavailable. Select the text above to copy it manually.";
+    }
+  });
+
+  root?.querySelector<HTMLButtonElement>("[data-download-blueprint]")?.addEventListener("click", () => {
+    const input = readForm();
+    download(generateBlueprintYaml(input), `${slugifyProductName(input.productName)}.blueprint.yaml`, "text/yaml;charset=utf-8");
+    if (status) status.textContent = "Blueprint downloaded.";
+  });
+  root?.querySelector<HTMLButtonElement>("[data-download-prompt]")?.addEventListener("click", () => {
+    const input = readForm();
+    download(generateStarterPrompt(input), `${slugifyProductName(input.productName)}.prompt.md`, "text/markdown;charset=utf-8");
+    if (status) status.textContent = "Starter prompt downloaded.";
+  });
+
+  updateOutputs();
+  if (new URLSearchParams(window.location.search).get("example") === "nomad") {
+    root?.querySelector<HTMLButtonElement>("[data-load-example]")?.click();
+  }
+</script>
+
+<style>
+  .build-header { display: grid; grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.55fr); align-items: end; gap: 3rem; padding-block: clamp(4rem, 8vw, 7rem); }
+  .build-header h1 { max-width: 12ch; margin-bottom: 0; }
+  .build-header > p { margin-bottom: 0; color: var(--ink-soft); font-size: 1.1rem; }
+  .builder-shell { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); border: 2px solid var(--ink); background: var(--paper-strong); box-shadow: var(--shadow); }
+  .builder-form-panel, .builder-output-panel { min-width: 0; padding: clamp(1.25rem, 4vw, 2.5rem); }
+  .builder-form-panel { border-right: 2px solid var(--ink); background: var(--yellow); }
+  .builder-output-panel { background: var(--paper-strong); }
+  .panel-heading { display: grid; grid-template-columns: 3.5rem 1fr; gap: 1rem; align-items: start; padding-bottom: 2rem; border-bottom: 2px solid var(--ink); }
+  .panel-heading h2 { margin: 0; font-family: var(--sans); font-size: clamp(1.5rem, 3vw, 2.2rem); letter-spacing: -0.035em; }
+  .panel-heading p { margin: 0.25rem 0 0; color: var(--ink-soft); }
+  .step-box { display: grid; width: 3.5rem; height: 3.5rem; place-items: center; border: 2px solid var(--ink); border-radius: 0.4rem; background: var(--lime); font-family: var(--mono); font-weight: 800; }
+  form { padding-top: 1.75rem; }
+  form > label, fieldset { display: grid; gap: 0.45rem; margin: 0 0 1.4rem; font-weight: 800; }
+  input[type="text"], textarea, select { width: 100%; padding: 0.85rem 0.9rem; border: 2px solid var(--ink); border-radius: 0.35rem; background: var(--paper-strong); font-weight: 500; resize: vertical; }
+  .form-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  .form-pair label { display: grid; align-content: start; gap: 0.45rem; font-weight: 800; }
+  fieldset { padding: 0; border: 0; }
+  legend { margin-bottom: 0.65rem; }
+  .feature-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; }
+  .feature-options label { position: relative; }
+  .feature-options input { position: absolute; opacity: 0; }
+  .feature-options span { display: block; padding: 0.7rem; border: 2px solid var(--ink); border-radius: 0.35rem; background: var(--paper-strong); font-size: 0.88rem; text-align: center; }
+  .feature-options input:checked + span { background: var(--lime); box-shadow: inset 0 0 0 2px var(--paper-strong); }
+  .feature-options input:focus-visible + span { outline: 3px solid var(--blue); outline-offset: 2px; }
+  .output-tabs { display: flex; gap: 0.25rem; padding-top: 1.75rem; border-bottom: 1px solid var(--line); }
+  .output-tabs button { padding: 0.65rem 0.85rem; border: 0; border-bottom: 3px solid transparent; background: transparent; font-weight: 800; }
+  .output-tabs button[aria-selected="true"] { border-bottom-color: var(--coral); }
+  [role="tabpanel"] pre { min-height: 36rem; max-height: 56rem; overflow: auto; padding: 1.25rem; margin: 1rem 0; border-radius: 0.5rem; background: var(--ink); color: #f3f5fb; white-space: pre-wrap; overflow-wrap: anywhere; }
+  [role="tabpanel"] code { font-family: var(--mono); font-size: 0.78rem; line-height: 1.65; }
+  .output-status { min-height: 1.5rem; margin: 0 0 0.5rem; color: var(--ink-soft); font-size: 0.85rem; }
+  .output-note { padding: 1.2rem; margin-top: 2rem; border: 1px solid var(--ink); border-left: 0.45rem solid var(--blue); background: var(--blue-soft); }
+  .output-note p { margin: 0.3rem 0 0; }
+  .build-explanation h2 { max-width: 14ch; }
+  .build-explanation p:not(.eyebrow) { color: var(--ink-soft); font-size: 1.1rem; }
+  @media (max-width: 900px) { .build-header, .builder-shell { grid-template-columns: 1fr; } .builder-form-panel { border-right: 0; border-bottom: 2px solid var(--ink); } }
+  @media (max-width: 560px) { .form-pair, .feature-options { grid-template-columns: 1fr; } .builder-form-panel, .builder-output-panel { padding: 1rem; } }
+</style>
