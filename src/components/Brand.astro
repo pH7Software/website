@@ -1,0 +1,12 @@
+---
+type Props = {
+  inverted?: boolean;
+};
+
+const { inverted = false } = Astro.props;
+---
+
+<span class:list={["brand", { inverted }]}>
+  <span class="brand-mark" aria-hidden="true">pH7</span>
+  <span class="brand-name">Builder</span>
+</span>

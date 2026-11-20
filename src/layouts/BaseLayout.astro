@@ -1,0 +1,175 @@
+---
+import "../styles/global.css";
+import Brand from "../components/Brand.astro";
+import { footerNavigation, primaryNavigation, site } from "../data/site";
+
+type Props = {
+  title: string;
+  description?: string;
+  path?: string;
+  image?: string;
+  type?: "website" | "article";
+  robots?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  schema?: Record<string, unknown> | Record<string, unknown>[];
+};
+
+const {
+  title,
+  description = site.description,
+  path = Astro.url.pathname,
+  image = "/social-card.svg",
+  type = "website",
+  robots = "index, follow, max-image-preview:large",
+  publishedTime,
+  modifiedTime,
+  schema,
+} = Astro.props;
+const pageTitle = title === site.name ? title : `${title} | ${site.name}`;
+const canonical = new URL(path, Astro.site ?? site.origin).toString();
+const socialImage = new URL(image, Astro.site ?? site.origin).toString();
+const currentPath = Astro.url.pathname.replace(/\/+$/, "") || "/";
+const isCurrentPath = (href: string) => {
+  const linkPath = href.replace(/\/+$/, "") || "/";
+  return linkPath === "/"
+    ? currentPath === "/"
+    : currentPath === linkPath || currentPath.startsWith(`${linkPath}/`);
+};
+const baseSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": `${site.origin}/#creator`,
+      name: site.author.name,
+      url: site.author.url,
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "@id": `${site.origin}/#software`,
+      name: site.name,
+      description: site.description,
+      codeRepository: site.githubUrl,
+      programmingLanguage: "PHP",
+      license: "https://www.gnu.org/licenses/agpl-3.0.html",
+      author: { "@id": `${site.origin}/#creator` },
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${site.origin}/#website`,
+      name: site.name,
+      url: `${site.origin}/`,
+      publisher: { "@id": `${site.origin}/#creator` },
+      inLanguage: "en",
+    },
+  ],
+};
+const schemas = schema
+  ? [baseSchema, ...(Array.isArray(schema) ? schema : [schema])]
+  : [baseSchema];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="robots" content={robots} />
+    <meta name="theme-color" content="#f4f2e9" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:image:alt" content={`${site.name} — open-source dating software foundation`} />
+    {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title="pH7Builder articles" href="/rss.xml" />
+    {schemas.map((item) => <script type="application/ld+json" set:html={JSON.stringify(item)} />)}
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <header class="site-header">
+      <div class="shell nav-shell">
+        <a class="brand-link" href="/" aria-label="pH7Builder home"><Brand /></a>
+        <nav id="primary-navigation" class="primary-navigation" aria-label="Primary navigation">
+          {primaryNavigation.map((item) => (
+            <a href={item.href} aria-current={isCurrentPath(item.href) ? "page" : undefined}>{item.label}</a>
+          ))}
+        </nav>
+        <a class="header-github" href={site.githubUrl} target="_blank" rel="noopener noreferrer">GitHub<span class="sr-only"> (opens in a new tab)</span></a>
+        <button class="menu-button" type="button" aria-controls="primary-navigation" aria-expanded="false">
+          <span class="sr-only">Open navigation</span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+    </header>
+    <main id="main-content"><slot /></main>
+    <footer class="site-footer">
+      <div class="shell">
+        <div class="footer-lead">
+          <a class="brand-link" href="/" aria-label="pH7Builder home"><Brand inverted /></a>
+          <p>Build with an established open-source foundation. Keep your code, hosting choices and member relationships.</p>
+        </div>
+        <div class="footer-grid">
+          {footerNavigation.map((group) => (
+            <div>
+              <h2>{group.title}</h2>
+              <ul>
+                {group.links.map((link) => (
+                  <li>
+                    <a href={link.href} target={"external" in link && link.external ? "_blank" : undefined} rel={"external" in link && link.external ? "noopener noreferrer" : undefined}>
+                      {link.label}{"external" in link && link.external && <span class="sr-only"> (opens in a new tab)</span>}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <div class="footer-bottom">
+          <p>© {new Date().getFullYear()} pH7Builder. Open-source software under the AGPL-3.0 licence.</p>
+          <p>Created by <a href={site.author.url} target="_blank" rel="author noopener noreferrer">{site.author.name}</a>.</p>
+        </div>
+      </div>
+    </footer>
+    <script>
+      const menuButton = document.querySelector<HTMLButtonElement>(".menu-button");
+      const navigation = document.querySelector<HTMLElement>(".primary-navigation");
+      const label = menuButton?.querySelector<HTMLElement>(".sr-only");
+      const closeNavigation = () => {
+        document.body.classList.remove("navigation-open");
+        menuButton?.setAttribute("aria-expanded", "false");
+        if (label) label.textContent = "Open navigation";
+      };
+
+      menuButton?.addEventListener("click", () => {
+        const isOpen = document.body.classList.toggle("navigation-open");
+        menuButton.setAttribute("aria-expanded", String(isOpen));
+        if (label) label.textContent = isOpen ? "Close navigation" : "Open navigation";
+      });
+      navigation?.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeNavigation));
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && document.body.classList.contains("navigation-open")) {
+          closeNavigation();
+          menuButton?.focus();
+        }
+      });
+      window.matchMedia("(min-width: 861px)").addEventListener("change", (event) => {
+        if (event.matches) closeNavigation();
+      });
+    </script>
+  </body>
+</html>

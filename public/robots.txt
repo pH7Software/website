@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ph7builder.com/sitemap.xml
