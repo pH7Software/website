@@ -1,0 +1,77 @@
+---
+import type { CollectionEntry } from "astro:content";
+import ArrowIcon from "../components/ArrowIcon.astro";
+import CtaBand from "../components/CtaBand.astro";
+import BaseLayout from "./BaseLayout.astro";
+import { site } from "../data/site";
+
+type Props = {
+  article: CollectionEntry<"articles">;
+};
+
+const { article } = Astro.props;
+const { data } = article;
+const dateFormatter = new Intl.DateTimeFormat("en", { day: "numeric", month: "long", year: "numeric" });
+const publishedIso = data.publishedAt.toISOString();
+const modifiedIso = data.updatedAt?.toISOString() ?? publishedIso;
+const category = data.categories[0] ?? (data.sourceType === "release" ? "Release notes" : "pH7Builder");
+const articleSchema = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: data.title,
+  description: data.description,
+  datePublished: publishedIso,
+  dateModified: modifiedIso,
+  mainEntityOfPage: `${site.origin}/${data.slug}/`,
+  author: { "@id": `${site.origin}/#creator` },
+  publisher: { "@id": `${site.origin}/#creator` },
+};
+---
+
+<BaseLayout title={data.title} description={data.description} path={`/${data.slug}/`} type="article" publishedTime={publishedIso} modifiedTime={modifiedIso} schema={articleSchema}>
+  <article>
+    <header class="article-header shell">
+      <div class="article-kicker"><span>{category}</span><span>{data.releaseStatus === "unreleased" ? "Unreleased" : dateFormatter.format(data.publishedAt)}</span></div>
+      <h1>{data.title}</h1>
+      <p class="lede">{data.description}</p>
+      <p class="article-byline">By <a href={site.author.url} rel="author" target="_blank">{site.author.name}<span class="sr-only"> (opens in a new tab)</span></a></p>
+    </header>
+    {data.historical && (
+      <aside class="archive-notice narrow-shell" aria-label="Historical archive notice">
+        <span>Archive</span>
+        <div>
+          <strong>This article is preserved from the former pH7Builder website.</strong>
+          <p>It may describe an older release, service or requirement. Use the <a href="/changelog/">current changelog</a> and <a href={site.docsUrl}>official documentation</a> for present-day decisions.</p>
+        </div>
+      </aside>
+    )}
+    <div class="article-content prose"><slot /></div>
+    <footer class="article-footer narrow-shell">
+      <div>
+        <p class="eyebrow">Written by</p>
+        <h2>{site.author.name}</h2>
+        <p>Creator of pH7Builder and its open-source dating, matchmaking and community foundation.</p>
+      </div>
+      <a class="text-link" href={site.author.url} target="_blank" rel="author noopener noreferrer">GitHub profile<ArrowIcon /><span class="sr-only"> (opens in a new tab)</span></a>
+    </footer>
+  </article>
+  <CtaBand eyebrow="Start with the foundation" title="Turn your dating product idea into a portable blueprint." description="Describe the audience, experience and operating rules. Keep the specification, use your preferred agent and build on pH7Builder." />
+</BaseLayout>
+
+<style>
+  .article-header { padding-block: clamp(5rem, 10vw, 9rem) clamp(3rem, 6vw, 5rem); }
+  .article-kicker { display: flex; gap: 1rem; margin-bottom: 2rem; font-family: var(--mono); font-size: .72rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+  .article-kicker span:first-child { color: var(--coral); }
+  .article-header h1 { max-width: 13ch; margin-bottom: 1.5rem; font-size: clamp(3rem, 7vw, 6.4rem); }
+  .article-byline { margin: 1.5rem 0 0; font-size: .9rem; }
+  .archive-notice { display: grid; grid-template-columns: auto 1fr; gap: 1.25rem; padding: 1.25rem; margin-bottom: 3rem; border: 1px solid var(--ink); border-left: .5rem solid var(--yellow); background: #fff8d9; }
+  .archive-notice > span { height: fit-content; padding: .2rem .45rem; background: var(--ink); color: white; font-family: var(--mono); font-size: .65rem; font-weight: 800; text-transform: uppercase; }
+  .archive-notice p { margin: .25rem 0 0; color: var(--ink-soft); }
+  .article-content { padding-bottom: clamp(4rem, 9vw, 8rem); }
+  .article-content :global(.wp-caption-text) { color: var(--ink-soft); font-size: .85rem; }
+  .article-content :global(.legacy-media-note) { padding: .75rem 1rem; border-left: .3rem solid var(--line); color: var(--ink-soft); font-size: .85rem; }
+  .article-footer { display: flex; align-items: end; justify-content: space-between; gap: 2rem; padding-block: 2.5rem; border-block: 2px solid var(--ink); }
+  .article-footer h2 { margin-bottom: .5rem; font-family: var(--sans); font-size: 1.5rem; letter-spacing: -.03em; }
+  .article-footer p:not(.eyebrow) { max-width: 35rem; margin-bottom: 0; color: var(--ink-soft); }
+  @media (max-width: 600px) { .archive-notice { grid-template-columns: 1fr; } .article-footer { align-items: start; flex-direction: column; } }
+</style>

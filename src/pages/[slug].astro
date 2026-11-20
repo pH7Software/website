@@ -1,0 +1,28 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import LegacyRedirect from "../components/LegacyRedirect.astro";
+import ArticleLayout from "../layouts/ArticleLayout.astro";
+import { legacyRedirects } from "../data/redirects";
+
+type Props = {
+  article?: CollectionEntry<"articles">;
+  destination?: string;
+};
+
+export async function getStaticPaths() {
+  const articles = await getCollection("articles", ({ data }) => !data.draft && !(data.slug in legacyRedirects));
+  const articlePaths = articles.map((article) => {
+    let routeSlug = article.data.slug;
+    try { routeSlug = decodeURIComponent(routeSlug); } catch { /* Preserve a malformed legacy slug verbatim. */ }
+    return { params: { slug: routeSlug }, props: { article } };
+  });
+  const redirectPaths = Object.entries(legacyRedirects).map(([slug, destination]) => ({ params: { slug }, props: { destination } }));
+  return [...articlePaths, ...redirectPaths];
+}
+
+const { article, destination } = Astro.props;
+const rendered = article ? await render(article) : undefined;
+const Content = rendered?.Content;
+---
+
+{destination ? <LegacyRedirect destination={destination} /> : article && Content ? <ArticleLayout article={article}><Content /></ArticleLayout> : null}
