@@ -1,0 +1,110 @@
+---
+import { getCollection } from "astro:content";
+import ArrowIcon from "../../components/ArrowIcon.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { site } from "../../data/site";
+
+const entries = await getCollection("articles", ({ data }) => !data.draft);
+const releases = entries
+  .filter((entry) => entry.data.sourceType === "release")
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+const upcoming = releases.find((entry) => entry.data.releaseStatus === "unreleased");
+const published = releases.filter((entry) => entry.data.releaseStatus === "published");
+const historical = entries
+  .filter((entry) => entry.data.sourceType === "post" && entry.data.categories.includes("Release archive"))
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+const dateFormatter = new Intl.DateTimeFormat("en", { day: "numeric", month: "short", year: "numeric" });
+---
+
+<BaseLayout title="Changelog" description="Published pH7Builder release notes, the upcoming 20.0.0 plan and the preserved historical release archive." path="/changelog/">
+  <header class="page-hero shell changelog-hero">
+    <div>
+      <p class="eyebrow">pH7Builder changelog</p>
+      <h1>Every published step. No mystery version numbers.</h1>
+      <p class="lede">Current release notes come from the application repository. Older announcements remain available as a clearly marked historical archive.</p>
+    </div>
+    <aside class="current-release">
+      <span class="status-pill">Latest published</span>
+      <strong>{site.latestRelease}</strong>
+      <p>Released 10 November 2026</p>
+      <a class="button button-small" href="/release-notes-19-4-0/">Read the release notes<ArrowIcon /></a>
+    </aside>
+  </header>
+
+  {upcoming && <section class="upcoming-release">
+    <div class="shell upcoming-grid">
+      <div><p class="eyebrow">Upcoming · not yet published</p><h2>pH7Builder {site.upcomingRelease}</h2></div>
+      <div>
+        <p>{upcoming.data.description}</p>
+        <p>No tag or release package is available yet. The published 19.4.0 release remains the current download.</p>
+        <a class="text-link" href={`/${upcoming.data.slug}/`}>Read the draft notes<ArrowIcon /></a>
+      </div>
+    </div>
+  </section>}
+
+  <section class="section shell">
+    <div class="section-heading">
+      <div><p class="eyebrow">Verified release notes</p><h2>18.6.0 to {site.latestRelease}</h2></div>
+      <p>Each entry keeps compatibility, upgrade and verification details close to the code that shipped.</p>
+    </div>
+    <div class="release-timeline">
+      {published.map((release, index) => (
+        <article>
+          <div class="release-marker"><span>{String(published.length - index).padStart(2, "0")}</span></div>
+          <div class="release-date">{dateFormatter.format(release.data.publishedAt)}</div>
+          <div>
+            <h3><a href={`/${release.data.slug}/`}>{release.data.title.replace(" — Release Notes", "")}</a></h3>
+            <p>{release.data.description}</p>
+          </div>
+          <a class="release-arrow" href={`/${release.data.slug}/`} aria-label={`Read ${release.data.title}`}><ArrowIcon /></a>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section surface">
+    <div class="shell">
+      <div class="section-heading">
+        <div><p class="eyebrow">Historical archive</p><h2>{historical.length} earlier release announcements.</h2></div>
+        <p>The wording is preserved for project history. These posts are not current installation or upgrade guidance.</p>
+      </div>
+      <div class="historical-releases">
+        {historical.map((release) => (
+          <article>
+            <time datetime={release.data.publishedAt.toISOString()}>{dateFormatter.format(release.data.publishedAt)}</time>
+            <h3><a href={`/${release.data.slug}/`}>{release.data.title}</a></h3>
+            <a href={`/${release.data.slug}/`} aria-label={`Open ${release.data.title}`}><ArrowIcon /></a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .changelog-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(18rem, .4fr); align-items: end; gap: clamp(3rem, 8vw, 8rem); }
+  .current-release { padding: 1.5rem; border: 2px solid var(--ink); border-radius: var(--radius); background: var(--lime); box-shadow: var(--shadow); }
+  .current-release strong { display: block; margin: 2.5rem 0 .25rem; font-family: var(--serif); font-size: 4rem; line-height: 1; }
+  .current-release p { color: #485225; }
+  .upcoming-release { padding-block: clamp(3rem, 7vw, 6rem); background: var(--blue); color: white; }
+  .upcoming-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(20rem, .65fr); gap: clamp(3rem, 8vw, 8rem); }
+  .upcoming-grid h2 { margin-bottom: 0; }
+  .upcoming-grid > div:last-child { color: #e0e5ff; }
+  .upcoming-grid .text-link { color: white; text-decoration-color: var(--lime); }
+  .release-timeline { border-top: 2px solid var(--ink); }
+  .release-timeline article { display: grid; grid-template-columns: 3.5rem 9rem 1fr auto; align-items: center; gap: 1.5rem; padding: 1.5rem 0; border-bottom: 1px solid var(--line); }
+  .release-marker { display: grid; width: 2.8rem; height: 2.8rem; place-items: center; border: 2px solid var(--ink); border-radius: 50%; background: var(--paper-strong); font-family: var(--mono); font-size: .7rem; font-weight: 800; }
+  .release-date { color: var(--ink-soft); font-family: var(--mono); font-size: .72rem; }
+  .release-timeline h3, .release-timeline p { margin: 0; }
+  .release-timeline h3 a { text-decoration: none; }
+  .release-timeline p { margin-top: .25rem; color: var(--ink-soft); font-size: .9rem; }
+  .release-arrow { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border: 1px solid var(--ink); border-radius: 50%; }
+  .historical-releases { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 1px solid var(--ink); }
+  .historical-releases article { display: grid; grid-template-columns: 7rem 1fr auto; align-items: center; gap: 1rem; padding: 1rem; border: 1px solid var(--ink); background: var(--paper-strong); }
+  .historical-releases time { color: var(--ink-soft); font-family: var(--mono); font-size: .67rem; }
+  .historical-releases h3 { margin: 0; font-size: .95rem; }
+  .historical-releases h3 a { text-decoration: none; }
+  .historical-releases svg { width: 1rem; }
+  @media (max-width: 760px) { .changelog-hero, .upcoming-grid { grid-template-columns: 1fr; } .release-timeline article { grid-template-columns: 3rem 1fr auto; } .release-date { grid-column: 2; grid-row: 2; } .release-timeline article > div:nth-child(3) { grid-column: 2; } .historical-releases { grid-template-columns: 1fr; } }
+  @media (max-width: 500px) { .historical-releases article { grid-template-columns: 1fr auto; } .historical-releases time { grid-column: 1 / -1; } }
+</style>
