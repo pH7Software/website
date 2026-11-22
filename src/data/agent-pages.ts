@@ -16,6 +16,8 @@ export const agentPages: AgentPage[] = [
     description: "The open-source, AI-ready foundation for independently owned dating apps, matchmaking services and online communities.",
     body: `pH7Builder is a self-hosted PHP application. It gives builders an established starting point for profiles, discovery, matchmaking, messaging, memberships, moderation and administration.
 
+The website includes clearly labelled interactive concepts for social dating, a focused social network and private matchmaking. They show how the same foundation can support different member experiences without pretending that a generated preview is a finished application.
+
 ## Current release
 
 - Latest published release: **${site.latestRelease}**

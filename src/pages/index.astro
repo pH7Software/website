@@ -3,6 +3,7 @@ import ArrowIcon from "../components/ArrowIcon.astro";
 import BlueprintDiagram from "../components/BlueprintDiagram.astro";
 import CtaBand from "../components/CtaBand.astro";
 import PathCard from "../components/PathCard.astro";
+import ProductPreview from "../components/ProductPreview.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { site } from "../data/site";
 ---
@@ -32,6 +33,8 @@ import { site } from "../data/site";
     </div>
   </section>
 
+  <ProductPreview />
+
   <section class="section surface">
     <div class="shell">
       <div class="section-heading">
@@ -57,38 +60,6 @@ import { site } from "../data/site";
             ["06", "Admin operations"],
           ].map(([number, label]) => <span><b>{number}</b>{label}</span>)}
         </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="shell">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">What could you build?</p>
-          <h2>One foundation. Different businesses.</h2>
-        </div>
-        <p>The useful question is not how many features fit on a page. It is whether the foundation can support the experience your members need.</p>
-      </div>
-      <div class="outcome-grid">
-        <article class="outcome-card outcome-card-coral">
-          <span>01 / NICHE DATING</span>
-          <h3>People living between cities</h3>
-          <p>Connect travellers and expats through destinations, languages, lifestyle and privacy-conscious travel plans.</p>
-          <a class="text-link" href="/blueprints/nomad-connections/">Explore Nomad Connections<ArrowIcon /></a>
-        </article>
-        <article class="outcome-card outcome-card-blue">
-          <span>02 / MATCHMAKING</span>
-          <h3>A private introduction service</h3>
-          <p>Use application-based membership, controlled profile visibility, curated introductions and paid consultations.</p>
-          <a class="text-link" href="/build/">Create this blueprint<ArrowIcon /></a>
-        </article>
-        <article class="outcome-card outcome-card-yellow">
-          <span>03 / COMMUNITY</span>
-          <h3>Connection beyond dating</h3>
-          <p>Adapt the social foundation for friendship, activity partners or a focused community with its own participation rules.</p>
-          <a class="text-link" href="/vibe-coders/">See the guided path<ArrowIcon /></a>
-        </article>
       </div>
     </div>
   </section>
@@ -246,45 +217,6 @@ import { site } from "../data/site";
     font-size: 0.68rem;
   }
 
-  .outcome-grid {
-    display: grid;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    gap: 1.25rem;
-  }
-
-  .outcome-card {
-    display: flex;
-    min-height: 27rem;
-    flex-direction: column;
-    padding: 1.75rem;
-    border: 2px solid var(--ink);
-    border-radius: 0.8rem;
-  }
-
-  .outcome-card:nth-child(1) { grid-column: span 5; }
-  .outcome-card:nth-child(2) { grid-column: span 4; }
-  .outcome-card:nth-child(3) { grid-column: span 3; }
-
-  .outcome-card-coral { background: #ffdcd5; }
-  .outcome-card-blue { background: var(--blue-soft); }
-  .outcome-card-yellow { background: var(--yellow); }
-
-  .outcome-card > span {
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    font-weight: 800;
-  }
-
-  .outcome-card h3 {
-    margin: auto 0 1rem;
-    font-family: var(--serif);
-    font-size: clamp(2rem, 4vw, 3.1rem);
-  }
-
-  .outcome-card .text-link {
-    margin-top: 1rem;
-  }
-
   .principle-section {
     background: var(--blue);
     color: white;
@@ -324,10 +256,6 @@ import { site } from "../data/site";
       writing-mode: initial;
     }
 
-    .outcome-card:nth-child(n) {
-      grid-column: span 12;
-      min-height: 21rem;
-    }
   }
 
   @media (max-width: 680px) {
