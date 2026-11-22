@@ -5,6 +5,10 @@ export const site = {
     "The open-source, AI-ready foundation for independently owned dating apps, matchmaking services and online communities.",
   githubUrl: "https://github.com/pH7Software/pH7-Social-Dating-CMS",
   docsUrl: "https://github.com/pH7Software/pH7-Social-Dating-CMS/tree/18.x/docs",
+  licence: {
+    name: "MIT",
+    url: "https://github.com/pH7Software/pH7-Social-Dating-CMS/blob/18.x/LICENSE.md",
+  },
   author: {
     name: "Pierre-Henry Soria",
     url: "https://github.com/pH-7",
@@ -17,7 +21,7 @@ export const site = {
 export const primaryNavigation = [
   { label: "Build", href: "/build/" },
   { label: "AI builders", href: "/ai-builders/" },
-  { label: "Services", href: "/services/" },
+  { label: "Get started", href: "/get-started/" },
   { label: "Articles", href: "/articles/" },
   { label: "Changelog", href: "/changelog/" },
 ] as const;
@@ -44,7 +48,7 @@ export const footerNavigation = [
   {
     title: "pH7Builder",
     links: [
-      { label: "Custom development", href: "/services/custom-development/" },
+      { label: "Get pH7Builder", href: "/get-started/" },
       { label: "About", href: "/about/" },
       { label: "GitHub", href: site.githubUrl, external: true },
       { label: "Privacy", href: "/privacy/" },
