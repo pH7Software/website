@@ -27,8 +27,8 @@ import { site } from "../data/site";
         <div class="terminal-bar"><span></span><span></span><span></span><b>terminal</b></div>
         <pre><code><span>$</span> composer create-project \
   ph7software/ph7builder:{site.latestRelease} \
-  my-dating-app</code></pre>
-        <button class="copy-command button button-small" type="button" data-copy={`composer create-project ph7software/ph7builder:${site.latestRelease} my-dating-app`}>Copy command</button>
+  my-dating-app --no-dev --prefer-dist</code></pre>
+        <button class="copy-command button button-small" type="button" data-copy={`composer create-project ph7software/ph7builder:${site.latestRelease} my-dating-app --no-dev --prefer-dist`}>Copy command</button>
         <p class="copy-status" aria-live="polite"></p>
       </div>
     </div>
