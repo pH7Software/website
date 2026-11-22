@@ -25,8 +25,9 @@ Canonical identity: pH7Builder is a self-hosted PHP application created by Pierr
 - [Practical dating startup plan](${site.origin}/dating-startup-by-step/)
 - [Dating product launch checklist](${site.origin}/tools/dating-site-launch-checklist/)
 
-## Work with the creator
-- [Custom development](${site.origin}/services/custom-development/)
+## Use pH7Builder
+- [Install the published release](${site.origin}/get-started/)
+- [Official release documentation](${site.docsUrl})
 - [About pH7Builder](${site.origin}/about/)
 
 ## Optional
