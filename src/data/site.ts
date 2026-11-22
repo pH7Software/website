@@ -12,7 +12,9 @@ export const site = {
   author: {
     name: "Pierre-Henry Soria",
     url: "https://github.com/pH-7",
+    linkedinUrl: "https://www.linkedin.com/in/ph7enry/",
   },
+  sponsorUrl: "https://github.com/sponsors/pH-7",
   contactEmail: "hello@ph7builder.com",
   latestRelease: "19.4.0",
   upcomingRelease: "20.0.0",

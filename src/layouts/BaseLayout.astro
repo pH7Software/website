@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import Brand from "../components/Brand.astro";
+import FounderCard from "../components/FounderCard.astro";
 import { footerNavigation, primaryNavigation, site } from "../data/site";
 
 type Props = {
@@ -141,7 +142,7 @@ const schemas = schema
         </div>
         <div class="footer-bottom">
           <p>© {new Date().getFullYear()} pH7Builder. Open-source software under the <a href={site.licence.url} target="_blank" rel="license noopener noreferrer">{site.licence.name} licence</a>.</p>
-          <p>Created by <a href={site.author.url} target="_blank" rel="author noopener noreferrer">{site.author.name}</a>.</p>
+          <FounderCard />
         </div>
       </div>
     </footer>
