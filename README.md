@@ -60,6 +60,12 @@ The production site is deployed to GitHub Pages from `main`. Pull requests run
 the same build without publishing. The complete WordPress export is a local
 migration input and is intentionally ignored.
 
+## Product and migration notes
+
+- [Product and website strategy](docs/PRODUCT_AND_WEBSITE_STRATEGY.md)
+- [Legacy URL migration](docs/LEGACY_URL_MIGRATION.md)
+- [Build journey acceptance record](docs/BUILD_ACCEPTANCE.md)
+
 ## About Me
 
 I'm [Pierre-Henry Soria](https://github.com/pH-7), the founder and software

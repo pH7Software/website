@@ -1,0 +1,65 @@
+---
+import ArrowIcon from "../../components/ArrowIcon.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { site } from "../../data/site";
+---
+
+<BaseLayout
+  title="Dating platform migration and modernisation"
+  description="Assess and plan a dating-platform migration without risking member data, privacy obligations or the business behaviour users already depend on."
+  path="/services/migration/"
+>
+  <header class="page-hero shell">
+    <p class="eyebrow">Migration and modernisation</p>
+    <h1>Move the product without losing the reasons it works.</h1>
+    <p class="lede">A dating-platform migration touches member identity, private conversations, media, payments, moderation history and years of custom behaviour. Start with an evidence-led plan.</p>
+    <a class="button" href={`mailto:${site.contactEmail}?subject=Dating%20platform%20migration`}>Discuss a migration<ArrowIcon /></a>
+  </header>
+
+  <section class="section surface">
+    <div class="shell migration-grid">
+      <div>
+        <p class="eyebrow">Migration preflight</p>
+        <h2>Know what must survive before moving anything.</h2>
+      </div>
+      <div class="migration-list">
+        <article><span>01</span><h3>Inventory</h3><p>Versions, database schema, themes, modules, integrations, scheduled work and undocumented customisations.</p></article>
+        <article><span>02</span><h3>Data contract</h3><p>Member identities, profile visibility, messages, media, billing records, consent and retention obligations.</p></article>
+        <article><span>03</span><h3>Behaviour map</h3><p>The critical journeys and business rules that must remain correct after the move.</p></article>
+        <article><span>04</span><h3>Rehearsal</h3><p>Backups, dry runs, reconciliation, rollback criteria and a cutover plan appropriate to the live product.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section shell boundary-grid">
+    <div>
+      <p class="eyebrow">Honest boundaries</p>
+      <h2>No universal migration button.</h2>
+    </div>
+    <div>
+      <p>The source platform, data quality, custom code and downtime tolerance determine the work. pH7Builder may be the right destination, one reusable part of the destination or not the right fit.</p>
+      <p>The initial outcome is a scoped migration decision with risks, evidence requirements and a testable path. No production data is moved before that path is agreed.</p>
+      <p><strong>Typical commercial path:</strong> migration work is scoped as a Launch or Custom Build engagement after preflight.</p>
+    </div>
+  </section>
+
+  <section class="section-tight narrow-shell brief-card">
+    <p class="eyebrow">Start the assessment</p>
+    <h2>Describe the current platform and the result you need.</h2>
+    <p>Include the software and version, approximate member and data volume, critical integrations, desired timing and what is driving the move. Do not email production exports, credentials or member data.</p>
+    <a class="button button-dark" href={`mailto:${site.contactEmail}?subject=Dating%20platform%20migration`}>Email {site.contactEmail}<ArrowIcon /></a>
+  </section>
+</BaseLayout>
+
+<style>
+  .migration-grid, .boundary-grid { display: grid; grid-template-columns: minmax(0, .75fr) minmax(20rem, 1fr); gap: clamp(3rem, 8vw, 8rem); }
+  .migration-list { border-top: 2px solid var(--ink); }
+  .migration-list article { display: grid; grid-template-columns: 3rem minmax(8rem, .35fr) 1fr; gap: 1.25rem; padding: 1.25rem 0; border-bottom: 1px solid var(--line); }
+  .migration-list span { font-family: var(--mono); font-weight: 800; }
+  .migration-list h3, .migration-list p { margin: 0; }
+  .migration-list p, .boundary-grid > div:last-child { color: var(--ink-soft); }
+  .brief-card { padding-inline: clamp(1.5rem, 5vw, 4rem); border: 2px solid var(--ink); border-radius: var(--radius); background: var(--lime); box-shadow: var(--shadow); }
+  .brief-card h2 { max-width: 14ch; }
+  .brief-card .button { margin-top: 1rem; }
+  @media (max-width: 760px) { .migration-grid, .boundary-grid { grid-template-columns: 1fr; } .migration-list article { grid-template-columns: 2rem 1fr; } .migration-list p { grid-column: 2; } }
+</style>

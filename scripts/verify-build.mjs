@@ -40,7 +40,12 @@ const requiredFiles = [
   "release-notes-19-4-0/index.html",
   "release-notes-20-0-0/index.html",
   "services/index.html",
+  "services/index.md",
+  "services/ai-prototype-to-production/index.html",
+  "services/ai-prototype-to-production/index.md",
   "services/custom-development/index.html",
+  "services/migration/index.html",
+  "services/migration/index.md",
   "social-dating-features/index.html",
   "dating-startup-by-step/index.html",
   "tools/dating-site-launch-checklist/index.html",
@@ -177,7 +182,7 @@ if (await exists(path.join(dist, "robots.txt"))) {
 
 if (await exists(path.join(dist, "sitemap.xml"))) {
   const sitemap = await readFile(path.join(dist, "sitemap.xml"), "utf8");
-  for (const route of ["/", "/build/", "/ai-builders/", "/changelog/", "/social-dating-features/", "/dating-startup-by-step/", "/tools/dating-site-launch-checklist/"]) {
+  for (const route of ["/", "/build/", "/ai-builders/", "/services/", "/services/ai-prototype-to-production/", "/services/migration/", "/changelog/", "/social-dating-features/", "/dating-startup-by-step/", "/tools/dating-site-launch-checklist/"]) {
     if (!sitemap.includes(`<loc>${productionOrigin}${route}</loc>`)) failures.add(`Sitemap is missing: ${route}`);
   }
   const urls = (sitemap.match(/<url>/g) ?? []).length;
@@ -250,13 +255,21 @@ if (await exists(path.join(dist, ".well-known/ard.json"))) {
 
 if (await exists(path.join(dist, "index.html"))) {
   const homepage = await readFile(path.join(dist, "index.html"), "utf8");
-  if (homepage.includes("work with the creator") || homepage.includes("Discuss a custom build")) failures.add("Homepage still advertises bespoke consulting");
+  if (!homepage.includes("Build it yourself") || !homepage.includes("Work with the creator")) failures.add("Homepage does not expose the independent and professional paths");
 }
 
 if (await exists(path.join(dist, "build/index.html"))) {
   const buildPage = await readFile(path.join(dist, "build/index.html"), "utf8");
-  if (!buildPage.includes("does not deploy an app") || !buildPage.includes("does not submit your idea")) failures.add("Blueprint page is missing its local-only scope disclosure");
-  if (!buildPage.includes("data-share-card-canvas") || !buildPage.includes("The card excludes your idea")) failures.add("Blueprint page is missing the privacy-conscious share card");
+  if (!buildPage.includes("No account. No AI API. No idea stored or transmitted.")) failures.add("Build page is missing its local-only privacy disclosure");
+  if (!buildPage.includes("A customised production business takes further engineering")) failures.add("Build page is missing the production-readiness boundary");
+  if (!buildPage.includes("data-share-card-canvas") || !buildPage.includes("Only the public product name and audience above can appear")) failures.add("Build page is missing the privacy-conscious share card");
+}
+
+if (await exists(path.join(dist, "services/index.html"))) {
+  const servicesPage = await readFile(path.join(dist, "services/index.html"), "utf8");
+  for (const price of ["Free", "From $3,000 USD", "From $15,000 USD", "Custom pricing"]) {
+    if (!servicesPage.includes(price)) failures.add(`Services page is missing the proposed price: ${price}`);
+  }
 }
 
 if (failures.size > 0) {

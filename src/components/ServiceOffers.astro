@@ -1,0 +1,120 @@
+---
+import ArrowIcon from "./ArrowIcon.astro";
+import { serviceOffers } from "../data/services";
+
+type Props = {
+  compact?: boolean;
+  headingLevel?: "h2" | "h3";
+};
+
+const { compact = false, headingLevel = "h3" } = Astro.props;
+const Heading = headingLevel;
+---
+
+<div class:list={["service-offers", { "service-offers-compact": compact }]}>
+  {serviceOffers.map((offer) => (
+    <article class:list={["service-offer", { "service-offer-featured": offer.featured }]}>
+      <div>
+        <p class="service-offer-name">{offer.name}</p>
+        <Heading>{offer.price}</Heading>
+        {offer.range && <p class="service-offer-range">{offer.range}</p>}
+        <p class="service-offer-description">{offer.description}</p>
+      </div>
+      {!compact && (
+        <ul>
+          {offer.includes.map((item) => <li>{item}</li>)}
+        </ul>
+      )}
+      <a class:list={["text-link", { button: offer.featured }]} href={offer.href}>{offer.cta}<ArrowIcon /></a>
+    </article>
+  ))}
+</div>
+
+<style>
+  .service-offers {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .service-offer {
+    display: flex;
+    min-height: 32rem;
+    flex-direction: column;
+    padding: clamp(1.4rem, 3vw, 2rem);
+    border: 2px solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--paper-strong);
+  }
+
+  .service-offer-featured {
+    background: var(--blue-soft);
+    box-shadow: var(--shadow);
+  }
+
+  .service-offer-name {
+    margin-bottom: 2.5rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .service-offer h2,
+  .service-offer h3 {
+    margin-bottom: 0.45rem;
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+  }
+
+  .service-offer-range {
+    color: var(--ink-soft);
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  .service-offer-description {
+    color: var(--ink-soft);
+  }
+
+  .service-offer ul {
+    padding-left: 1.2rem;
+    margin: 1.25rem 0 2rem;
+  }
+
+  .service-offer li + li {
+    margin-top: 0.45rem;
+  }
+
+  .service-offer > a {
+    width: fit-content;
+    margin-top: auto;
+  }
+
+  .service-offers-compact {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .service-offers-compact .service-offer {
+    min-height: 24rem;
+  }
+
+  @media (max-width: 980px) {
+    .service-offers-compact {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 680px) {
+    .service-offers,
+    .service-offers-compact {
+      grid-template-columns: 1fr;
+    }
+
+    .service-offer,
+    .service-offers-compact .service-offer {
+      min-height: 0;
+    }
+  }
+</style>

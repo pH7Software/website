@@ -1,0 +1,64 @@
+---
+import ArrowIcon from "../../components/ArrowIcon.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { site } from "../../data/site";
+---
+
+<BaseLayout
+  title="Take an AI-built dating app to production"
+  description="Turn a promising dating-app prototype into maintainable production software through focused architecture, security, data and operational engineering."
+  path="/services/ai-prototype-to-production/"
+>
+  <header class="page-hero shell">
+    <p class="eyebrow">AI prototype to production</p>
+    <h1>Your prototype proved the idea. Now prove the product.</h1>
+    <p class="lede">A polished interface is only one part of a dating business. Real members depend on reliable identity, private data access, messaging, payments, moderation and operations.</p>
+    <a class="button" href={`mailto:${site.contactEmail}?subject=AI%20dating%20prototype%20review`}>Discuss your prototype<ArrowIcon /></a>
+  </header>
+
+  <section class="section surface">
+    <div class="shell assessment-grid">
+      <div>
+        <p class="eyebrow">What gets examined</p>
+        <h2>Follow the risk, not the framework fashion.</h2>
+      </div>
+      <ol>
+        <li><strong>Identity and access</strong><span>Authentication, session handling, permissions and ownership of member records.</span></li>
+        <li><strong>Member data</strong><span>Schema quality, sensitive fields, privacy defaults, deletion and migration risk.</span></li>
+        <li><strong>Connection flows</strong><span>Discovery, matching, messaging, notifications and the behaviour that creates member value.</span></li>
+        <li><strong>Money and moderation</strong><span>Payment state, abuse reporting, blocking, operator workflows and failure handling.</span></li>
+        <li><strong>Production operation</strong><span>Deployment, backups, observability, third-party costs and a maintainable release path.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section shell outcome-grid">
+    <div>
+      <p class="eyebrow">Possible outcomes</p>
+      <h2>Preserve useful work before choosing what changes.</h2>
+    </div>
+    <div>
+      <p>The right answer may be to strengthen the existing stack, replace one unsafe boundary or introduce selected pH7Builder capabilities behind the current frontend. It is not automatically a rewrite.</p>
+      <p>Every external stack has different constraints. No universal one-click migration is promised.</p>
+      <p><strong>Typical commercial path:</strong> a focused assessment followed by a Launch or Custom Build scope. Custom Build starts from $15,000 USD.</p>
+    </div>
+  </section>
+
+  <section class="section-tight narrow-shell brief-card">
+    <p class="eyebrow">Before writing</p>
+    <h2>Bring evidence, not a polished pitch.</h2>
+    <p>Share the current repository or demo, target users, known failures, deployment state, existing data and the outcome you want. Do not send production credentials or real member data.</p>
+    <a class="button button-dark" href={`mailto:${site.contactEmail}?subject=AI%20dating%20prototype%20review`}>Email {site.contactEmail}<ArrowIcon /></a>
+  </section>
+</BaseLayout>
+
+<style>
+  .assessment-grid, .outcome-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(20rem, 1fr); gap: clamp(3rem, 8vw, 8rem); }
+  .assessment-grid ol { padding: 0; margin: 0; list-style: none; border-top: 2px solid var(--ink); }
+  .assessment-grid li { display: grid; gap: .35rem; padding: 1.25rem 0; border-bottom: 1px solid var(--line); }
+  .assessment-grid span, .outcome-grid > div:last-child { color: var(--ink-soft); }
+  .brief-card { padding-inline: clamp(1.5rem, 5vw, 4rem); border: 2px solid var(--ink); border-radius: var(--radius); background: var(--yellow); box-shadow: var(--shadow); }
+  .brief-card h2 { max-width: 14ch; }
+  .brief-card .button { margin-top: 1rem; }
+  @media (max-width: 760px) { .assessment-grid, .outcome-grid { grid-template-columns: 1fr; } }
+</style>

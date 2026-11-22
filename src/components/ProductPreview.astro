@@ -1,0 +1,324 @@
+---
+import ArrowIcon from "./ArrowIcon.astro";
+import { productPreviews } from "../data/product-previews";
+---
+
+<section class="product-preview-section section" aria-labelledby="product-preview-title" data-product-preview>
+  <div class="shell">
+    <div class="preview-heading">
+      <div>
+        <p class="eyebrow">Picture the product</p>
+        <h2 id="product-preview-title">See your idea before you build it.</h2>
+      </div>
+      <div class="preview-heading-copy">
+        <p>pH7Builder is the foundation behind a product with your own audience, identity and rules. Switch between three examples to see how different that product can feel.</p>
+        <p class="concept-note">Interactive concept preview · fictional people and products</p>
+      </div>
+    </div>
+
+    <div class="preview-tabs" role="tablist" aria-label="Choose a product concept">
+      {productPreviews.map((preview, index) => (
+        <button
+          id={`preview-tab-${preview.id}`}
+          type="button"
+          role="tab"
+          aria-selected={index === 0 ? "true" : "false"}
+          aria-controls={`preview-panel-${preview.id}`}
+          tabindex={index === 0 ? 0 : -1}
+        >
+          <span>0{index + 1}</span>{preview.tabLabel}
+        </button>
+      ))}
+    </div>
+
+    {productPreviews.map((preview, index) => (
+      <div
+        id={`preview-panel-${preview.id}`}
+        class={`preview-experience preview-experience-${preview.id}`}
+        role="tabpanel"
+        aria-labelledby={`preview-tab-${preview.id}`}
+        hidden={index !== 0}
+      >
+        <aside class="preview-brief">
+          <div>
+            <span class="preview-step">Your starting brief</span>
+            <blockquote>“{preview.prompt}”</blockquote>
+          </div>
+          <div class="preview-feature-list" aria-label="Capabilities represented in this concept">
+            {preview.features.map((feature) => <span>{feature}</span>)}
+          </div>
+          <a class="text-link" href={preview.href}>{preview.ctaLabel}<ArrowIcon /></a>
+        </aside>
+
+        <div class="concept-browser" aria-hidden="true">
+          <div class="browser-chrome" aria-hidden="true">
+            <span></span><span></span><span></span>
+            <div>your-product.local</div>
+          </div>
+
+          <div class="concept-app">
+            <header class="concept-topbar">
+              <div class="concept-brand"><b>{preview.productMark}</b><strong>{preview.productName}</strong></div>
+              <label class="concept-search">
+                <span class="sr-only">Search this illustrative interface</span>
+                <span aria-hidden="true">⌕</span>
+                <input type="text" placeholder={preview.id === "community" ? "Search the community" : "Search"} disabled />
+              </label>
+              <div class="topbar-actions" aria-hidden="true"><span>♡</span><span>✦</span><i>ME</i></div>
+            </header>
+
+            <div class="concept-body">
+              <nav class="concept-sidebar" aria-label={`${preview.productName} illustrative navigation`}>
+                <div>
+                  <span class="active"><i aria-hidden="true">⌂</i>{preview.id === "community" ? "Home" : preview.id === "matchmaking" ? "Introductions" : "Discover"}</span>
+                  <span><i aria-hidden="true">♢</i>{preview.id === "community" ? "Groups" : preview.id === "matchmaking" ? "My profile" : "Connections"}</span>
+                  <span><i aria-hidden="true">◇</i>{preview.id === "community" ? "Events" : "Messages"}</span>
+                  <span><i aria-hidden="true">◌</i>Preferences</span>
+                </div>
+                <small>Your community.<br />Your rules.</small>
+              </nav>
+
+              {preview.id === "dating" && (
+                <div class="app-main dating-main">
+                  <div class="app-title-row">
+                    <div><span class="app-kicker">DISCOVER</span><h3>People going your way</h3></div>
+                    <span class="concept-button">Lisbon · Next 3 months⌄</span>
+                  </div>
+                  <div class="profile-grid">
+                    <article class="profile-card">
+                      <div class="portrait portrait-lina"><span>LA</span><em>92% match</em></div>
+                      <div><h4>Lina, 31</h4><p>Berlin → Lisbon</p><span class="tag">Slow travel</span><span class="tag">Photography</span></div>
+                    </article>
+                    <article class="profile-card">
+                      <div class="portrait portrait-noor"><span>NK</span><em>88% match</em></div>
+                      <div><h4>Noor, 34</h4><p>London → Lisbon</p><span class="tag">Food</span><span class="tag">Hiking</span></div>
+                    </article>
+                    <article class="profile-card profile-card-wide">
+                      <div class="portrait portrait-mateo"><span>MS</span><em>84% match</em></div>
+                      <div><h4>Mateo, 33</h4><p>Madrid · Open to a new city</p><span class="tag">Design</span><span class="tag">Live music</span></div>
+                    </article>
+                  </div>
+                </div>
+              )}
+
+              {preview.id === "community" && (
+                <div class="app-main community-main">
+                  <div class="app-title-row">
+                    <div><span class="app-kicker">YOUR COMMUNITY</span><h3>Good morning, Maya.</h3></div>
+                    <span class="concept-button">＋ Share something</span>
+                  </div>
+                  <div class="community-grid">
+                    <article class="feed-card">
+                      <div class="member-line"><span class="mini-avatar">JO</span><div><strong>Jonas O.</strong><small>Harbour Makers · 18 min</small></div></div>
+                      <p>We have two places left at Saturday’s sunrise photo walk. Beginners are welcome.</p>
+                      <div class="feed-visual"><span>06:30</span><strong>COASTAL<br />PHOTO WALK</strong><small>Meet at the old ferry steps</small></div>
+                      <div class="feed-meta"><span>♡ 24</span><span>12 comments</span><span>Save</span></div>
+                    </article>
+                    <aside class="group-card">
+                      <span class="app-kicker">HAPPENING NEAR YOU</span>
+                      <h4>Small groups, real plans</h4>
+                      <div><b>TH</b><p><strong>Thursday Table</strong><small>8 members · Dinner</small></p></div>
+                      <div><b>CS</b><p><strong>Creative Sundays</strong><small>43 members · Weekly</small></p></div>
+                      <span class="concept-button">Explore groups</span>
+                    </aside>
+                  </div>
+                </div>
+              )}
+
+              {preview.id === "matchmaking" && (
+                <div class="app-main matchmaking-main">
+                  <div class="matchmaking-heading"><span class="app-kicker">A CONSIDERED INTRODUCTION</span><h3>Meet Elise.</h3><p>One introduction at a time. Review the context before you decide.</p></div>
+                  <article class="introduction-card">
+                    <div class="introduction-portrait"><span>ER</span><small>Profile shared with permission</small></div>
+                    <div class="introduction-copy">
+                      <div><span class="match-score">A thoughtful fit</span><h4>Elise, 36</h4><p>Architect · Wellington</p></div>
+                      <div class="match-reasons">
+                        <strong>Why you may connect</strong>
+                        <p><i>01</i>You both make time for life outside work.</p>
+                        <p><i>02</i>You value curiosity and direct communication.</p>
+                        <p><i>03</i>You are both open to building a life locally.</p>
+                      </div>
+                      <div class="match-actions"><span class="concept-button">Review introduction</span><span class="concept-button">Not this time</span></div>
+                    </div>
+                  </article>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<script>
+  const previewRoot = document.querySelector<HTMLElement>("[data-product-preview]");
+  const previewTabs = Array.from(previewRoot?.querySelectorAll<HTMLButtonElement>("[role='tab']") ?? []);
+
+  const selectPreview = (selectedTab: HTMLButtonElement) => {
+    previewTabs.forEach((tab) => {
+      const isSelected = tab === selectedTab;
+      tab.setAttribute("aria-selected", String(isSelected));
+      tab.tabIndex = isSelected ? 0 : -1;
+      const panel = document.getElementById(tab.getAttribute("aria-controls") ?? "");
+      if (panel) panel.hidden = !isSelected;
+    });
+  };
+
+  previewTabs.forEach((tab, index) => {
+    tab.addEventListener("click", () => selectPreview(tab));
+    tab.addEventListener("keydown", (event) => {
+      let nextIndex: number | undefined;
+      if (event.key === "ArrowRight") nextIndex = (index + 1) % previewTabs.length;
+      if (event.key === "ArrowLeft") nextIndex = (index - 1 + previewTabs.length) % previewTabs.length;
+      if (event.key === "Home") nextIndex = 0;
+      if (event.key === "End") nextIndex = previewTabs.length - 1;
+      if (nextIndex === undefined) return;
+      event.preventDefault();
+      selectPreview(previewTabs[nextIndex]);
+      previewTabs[nextIndex].focus();
+    });
+  });
+</script>
+
+<style>
+  .product-preview-section { overflow: hidden; background: var(--ink); color: white; }
+  .preview-heading { display: grid; grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.58fr); align-items: end; gap: clamp(2rem, 7vw, 7rem); }
+  .preview-heading h2 { max-width: 12ch; margin-bottom: 0; }
+  .preview-heading-copy > p:first-child { color: #c7ccda; font-size: 1.08rem; }
+  .concept-note { margin: 1rem 0 0; color: var(--lime); font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.07em; text-transform: uppercase; }
+  .preview-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.65rem; margin-top: clamp(2.5rem, 6vw, 5rem); }
+  .preview-tabs button { display: flex; align-items: center; gap: 0.8rem; min-height: 4.3rem; padding: 0.8rem 1rem; border: 1px solid #4a5169; border-radius: 0.6rem; background: #20263a; color: white; font-weight: 800; text-align: left; transition: background 160ms ease, color 160ms ease, transform 160ms ease; }
+  .preview-tabs button:hover { transform: translateY(-2px); }
+  .preview-tabs button[aria-selected="true"] { border-color: var(--lime); background: var(--lime); color: var(--ink); }
+  .preview-tabs button span { font-family: var(--mono); font-size: 0.65rem; }
+  .preview-experience { display: grid; grid-template-columns: minmax(15rem, 0.32fr) minmax(0, 1fr); margin-top: 0.65rem; border: 1px solid #4a5169; border-radius: 1rem; background: #20263a; box-shadow: 14px 14px 0 rgba(200, 239, 90, 0.18); overflow: hidden; }
+  .preview-experience[hidden] { display: none; }
+  .preview-brief { display: flex; flex-direction: column; justify-content: space-between; gap: 2rem; padding: clamp(1.5rem, 3vw, 2.25rem); border-right: 1px solid #4a5169; }
+  .preview-step { color: var(--lime); font-family: var(--mono); font-size: 0.68rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+  .preview-brief blockquote { margin: 1.25rem 0 0; font-family: var(--serif); font-size: clamp(1.35rem, 2vw, 2rem); line-height: 1.24; }
+  .preview-feature-list { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .preview-feature-list span { padding: 0.38rem 0.55rem; border: 1px solid #596078; border-radius: 999px; color: #cfd4e2; font-size: 0.7rem; }
+  .preview-brief .text-link { align-self: flex-start; color: white; text-decoration-color: var(--lime); }
+  .concept-browser { min-width: 0; padding: clamp(0.75rem, 2.5vw, 1.5rem); background: #111628; }
+  .browser-chrome { display: grid; grid-template-columns: repeat(3, 0.55rem) 1fr; align-items: center; gap: 0.35rem; min-height: 2.25rem; padding: 0 0.8rem; border-radius: 0.7rem 0.7rem 0 0; background: #d8d9de; }
+  .browser-chrome > span { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: #ff7d6a; }
+  .browser-chrome > span:nth-child(2) { background: #eeba3c; }
+  .browser-chrome > span:nth-child(3) { background: #83b95b; }
+  .browser-chrome div { width: min(70%, 25rem); padding: 0.23rem 0.65rem; margin-inline: auto; border-radius: 999px; background: #f3f3f4; color: #777b85; font-family: var(--mono); font-size: 0.54rem; text-align: center; }
+  .concept-app { min-height: 37rem; background: #fbfaf6; color: #20202a; }
+  .concept-topbar { display: grid; grid-template-columns: 1fr minmax(10rem, 0.8fr) 1fr; align-items: center; min-height: 4.3rem; padding: 0.75rem 1rem; border-bottom: 1px solid #e3e0d8; }
+  .concept-brand { display: flex; align-items: center; gap: 0.5rem; }
+  .concept-brand b { display: grid; width: 2rem; height: 2rem; place-items: center; border-radius: 0.5rem 0.5rem 1rem 0.5rem; background: #e05272; color: white; font-size: 0.6rem; }
+  .concept-brand strong { font-size: 0.88rem; letter-spacing: -0.03em; }
+  .concept-search { position: relative; }
+  .concept-search > span:not(.sr-only) { position: absolute; top: 50%; left: 0.65rem; color: #858795; transform: translateY(-50%); }
+  .concept-search input { width: 100%; padding: 0.48rem 0.75rem 0.48rem 1.75rem; border: 1px solid #dddbe0; border-radius: 999px; background: #f1f0ed; font-size: 0.68rem; }
+  .topbar-actions { display: flex; justify-content: flex-end; align-items: center; gap: 0.65rem; }
+  .topbar-actions span { font-size: 1rem; }
+  .topbar-actions i { display: grid; width: 1.85rem; height: 1.85rem; place-items: center; border-radius: 50%; background: #282c3e; color: white; font-size: 0.5rem; font-style: normal; }
+  .concept-body { display: grid; grid-template-columns: 9.25rem minmax(0, 1fr); min-height: 32.7rem; }
+  .concept-sidebar { display: flex; flex-direction: column; justify-content: space-between; padding: 1.25rem 0.8rem; border-right: 1px solid #e3e0d8; }
+  .concept-sidebar div { display: grid; gap: 0.35rem; }
+  .concept-sidebar span { display: flex; align-items: center; gap: 0.55rem; padding: 0.55rem 0.65rem; border-radius: 0.45rem; color: #6a6b75; font-size: 0.65rem; font-weight: 700; }
+  .concept-sidebar span.active { background: #f5e2e6; color: #9f2d49; }
+  .concept-sidebar i { width: 0.8rem; font-style: normal; text-align: center; }
+  .concept-sidebar small { color: #a09fa6; font-family: var(--mono); font-size: 0.5rem; line-height: 1.5; text-transform: uppercase; }
+  .app-main { min-width: 0; padding: clamp(1rem, 2.5vw, 1.75rem); }
+  .app-title-row { display: flex; justify-content: space-between; align-items: end; gap: 1rem; margin-bottom: 1.25rem; }
+  .app-kicker { color: #a13952; font-family: var(--mono); font-size: 0.52rem; font-weight: 800; letter-spacing: 0.08em; }
+  .app-main h3 { margin: 0.15rem 0 0; font-family: var(--serif); font-size: clamp(1.35rem, 3vw, 2rem); }
+  .concept-button { display: inline-grid; place-items: center; padding: 0.52rem 0.72rem; border: 1px solid #d4d1cb; border-radius: 0.45rem; background: white; color: #5e5f68; font-size: 0.57rem; font-weight: 700; }
+  .profile-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; }
+  .profile-card { overflow: hidden; border: 1px solid #ddd9d1; border-radius: 0.8rem; background: white; }
+  .profile-card-wide { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(8rem, 0.55fr) 1fr; }
+  .profile-card > div:last-child { padding: 0.75rem; }
+  .profile-card h4 { margin: 0; font-size: 0.85rem; }
+  .profile-card p { margin: 0.1rem 0 0.55rem; color: #6a6b75; font-size: 0.6rem; }
+  .portrait { position: relative; display: grid; min-height: 8.5rem; place-items: center; overflow: hidden; background: linear-gradient(145deg, #dfc3ac, #947769); }
+  .portrait::before { width: 3.3rem; height: 3.3rem; border-radius: 50%; background: rgba(255,255,255,0.55); content: ""; }
+  .portrait::after { position: absolute; bottom: -1.8rem; width: 7.4rem; height: 5.4rem; border-radius: 50% 50% 0 0; background: rgba(255,255,255,0.4); content: ""; }
+  .portrait > span { position: absolute; z-index: 1; color: #42424a; font-family: var(--mono); font-size: 0.58rem; font-weight: 800; }
+  .portrait em { position: absolute; right: 0.5rem; bottom: 0.5rem; z-index: 2; padding: 0.25rem 0.4rem; border-radius: 999px; background: #fff; color: #7d2440; font-size: 0.5rem; font-style: normal; font-weight: 800; }
+  .portrait-noor { background: linear-gradient(145deg, #c8c7de, #767b9d); }
+  .portrait-mateo { min-height: 7.2rem; background: linear-gradient(145deg, #b8d5d0, #58877d); }
+  .tag { display: inline-block; padding: 0.2rem 0.35rem; margin: 0 0.2rem 0.2rem 0; border-radius: 999px; background: #f5e9ec; color: #8c324a; font-size: 0.5rem; }
+  .preview-experience-community .concept-brand b, .preview-experience-community .concept-sidebar span.active { background: #dae8b9; color: #344320; }
+  .preview-experience-community .app-kicker { color: #566d27; }
+  .community-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(9rem, 0.75fr); gap: 0.8rem; }
+  .feed-card, .group-card { padding: 0.9rem; border: 1px solid #ddd9d1; border-radius: 0.75rem; background: white; }
+  .member-line { display: flex; align-items: center; gap: 0.55rem; }
+  .member-line div { display: grid; }
+  .member-line strong { font-size: 0.68rem; }
+  .member-line small, .group-card small { color: #85858c; font-size: 0.5rem; }
+  .mini-avatar { display: grid; width: 2rem; height: 2rem; place-items: center; border-radius: 50%; background: #f1c384; font-family: var(--mono); font-size: 0.48rem; font-weight: 800; }
+  .feed-card > p { margin: 0.8rem 0; font-size: 0.63rem; line-height: 1.5; }
+  .feed-visual { display: flex; min-height: 10rem; flex-direction: column; justify-content: space-between; padding: 0.9rem; border-radius: 0.55rem; background: linear-gradient(135deg, #86a9bd, #f3be82 60%, #6a7b69); color: white; }
+  .feed-visual span, .feed-visual small { font-size: 0.53rem; }
+  .feed-visual strong { font-family: var(--serif); font-size: 1.3rem; line-height: 0.9; }
+  .feed-meta { display: flex; justify-content: space-between; padding-top: 0.7rem; color: #777880; font-size: 0.52rem; }
+  .group-card h4 { margin: 0.35rem 0 1rem; font-family: var(--serif); font-size: 1rem; }
+  .group-card > div { display: flex; gap: 0.5rem; padding: 0.55rem 0; border-top: 1px solid #eceae5; }
+  .group-card > div > b { display: grid; width: 1.8rem; height: 1.8rem; flex: 0 0 auto; place-items: center; border-radius: 0.45rem; background: #e9efda; color: #4a5e24; font-size: 0.48rem; }
+  .group-card p { display: grid; margin: 0; }
+  .group-card strong { font-size: 0.6rem; }
+  .group-card .concept-button { width: 100%; margin-top: 0.65rem; border-color: #4e6227; background: #e1edc3; color: #3d4c20; }
+  .preview-experience-matchmaking .concept-brand b { background: #243757; }
+  .preview-experience-matchmaking .concept-sidebar span.active { background: #dfe7f5; color: #243757; }
+  .preview-experience-matchmaking .app-kicker { color: #496383; }
+  .matchmaking-main { background: #f7f4ed; }
+  .matchmaking-heading { max-width: 30rem; margin-bottom: 1rem; }
+  .matchmaking-heading > p { margin: 0.35rem 0 0; color: #696a73; font-size: 0.62rem; }
+  .introduction-card { display: grid; grid-template-columns: minmax(9rem, 0.7fr) minmax(0, 1fr); overflow: hidden; border: 1px solid #d8d5ce; border-radius: 0.8rem; background: white; }
+  .introduction-portrait { position: relative; display: grid; min-height: 21.5rem; place-items: center; overflow: hidden; background: linear-gradient(160deg, #c3d1dd, #688198); }
+  .introduction-portrait::before { width: 4.5rem; height: 4.5rem; border-radius: 50%; background: rgba(255,255,255,0.58); content: ""; }
+  .introduction-portrait::after { position: absolute; bottom: -2rem; width: 10rem; height: 8rem; border-radius: 50% 50% 0 0; background: rgba(255,255,255,0.4); content: ""; }
+  .introduction-portrait > span { position: absolute; z-index: 1; color: #354458; font-family: var(--mono); font-size: 0.62rem; font-weight: 800; }
+  .introduction-portrait small { position: absolute; right: 0.7rem; bottom: 0.7rem; left: 0.7rem; z-index: 2; padding: 0.4rem; border-radius: 0.3rem; background: rgba(25,36,55,0.75); color: white; font-size: 0.48rem; text-align: center; }
+  .introduction-copy { display: flex; flex-direction: column; justify-content: space-between; gap: 0.8rem; padding: 1rem; }
+  .match-score { color: #526b8a; font-family: var(--mono); font-size: 0.5rem; font-weight: 800; text-transform: uppercase; }
+  .introduction-copy h4 { margin: 0.1rem 0 0; font-family: var(--serif); font-size: 1.25rem; }
+  .introduction-copy > div:first-child p { margin: 0; color: #777880; font-size: 0.56rem; }
+  .match-reasons > strong { font-size: 0.62rem; }
+  .match-reasons p { display: grid; grid-template-columns: 1.4rem 1fr; gap: 0.4rem; align-items: start; padding: 0.4rem 0; margin: 0; border-bottom: 1px solid #eeece7; font-size: 0.55rem; line-height: 1.35; }
+  .match-reasons i { color: #758aa5; font-family: var(--mono); font-size: 0.48rem; font-style: normal; }
+  .match-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem; }
+  .match-actions .concept-button:first-child { border-color: #263a5a; background: #263a5a; color: white; }
+  @media (max-width: 980px) {
+    .preview-experience { grid-template-columns: 1fr; }
+    .preview-brief { display: grid; grid-template-columns: 1fr minmax(15rem, 0.55fr); border-right: 0; border-bottom: 1px solid #4a5169; }
+    .preview-brief .text-link { grid-column: 2; }
+  }
+
+  @media (max-width: 760px) {
+    .preview-heading { grid-template-columns: 1fr; }
+    .concept-sidebar { display: none; }
+    .concept-body { grid-template-columns: 1fr; }
+    .concept-topbar { grid-template-columns: 1fr auto; }
+    .concept-search { display: none; }
+  }
+
+  @media (max-width: 620px) {
+    .preview-tabs { grid-template-columns: 1fr; }
+    .preview-tabs button { min-height: 3.4rem; }
+    .preview-brief { display: flex; }
+    .preview-brief .text-link { grid-column: auto; }
+    .concept-browser { margin-inline: -0.35rem; padding: 0.45rem; }
+    .concept-app { min-height: 31rem; }
+    .concept-topbar { min-height: 3.6rem; }
+    .app-title-row { align-items: start; }
+    .app-title-row .concept-button { display: none; }
+    .profile-grid { grid-template-columns: 1fr; }
+    .profile-card:nth-child(2),
+    .profile-card-wide { display: none; }
+    .community-grid { grid-template-columns: 1fr; }
+    .group-card { display: none; }
+    .introduction-card { grid-template-columns: 1fr; }
+    .introduction-portrait { min-height: 10rem; }
+    .introduction-copy { min-height: 16rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .preview-tabs button { transition: none; }
+  }
+</style>
