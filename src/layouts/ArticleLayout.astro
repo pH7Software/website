@@ -26,6 +26,11 @@ const articleSchema = {
   mainEntityOfPage: `${site.origin}/${data.slug}/`,
   author: { "@id": `${site.origin}/#creator` },
   publisher: { "@id": `${site.origin}/#creator` },
+  articleSection: category,
+  keywords: data.tags,
+  inLanguage: "en",
+  isAccessibleForFree: true,
+  license: site.licence.url,
 };
 ---
 

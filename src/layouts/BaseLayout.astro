@@ -51,7 +51,8 @@ const baseSchema = {
       "@type": "Person",
       "@id": `${site.origin}/#creator`,
       name: site.author.name,
-      url: site.author.url,
+      url: `${site.origin}/about/`,
+      sameAs: [site.author.url, site.author.linkedinUrl],
     },
     {
       "@type": "SoftwareSourceCode",
@@ -61,6 +62,10 @@ const baseSchema = {
       codeRepository: site.githubUrl,
       programmingLanguage: "PHP",
       license: site.licence.url,
+      version: site.latestRelease,
+      inLanguage: "en",
+      isAccessibleForFree: true,
+      keywords: ["dating software", "matchmaking software", "community software", "open source", "self-hosted", "AI-ready"],
       author: { "@id": `${site.origin}/#creator` },
     },
     {
@@ -68,6 +73,8 @@ const baseSchema = {
       "@id": `${site.origin}/#website`,
       name: site.name,
       url: `${site.origin}/`,
+      description: site.description,
+      license: site.licence.url,
       publisher: { "@id": `${site.origin}/#creator` },
       inLanguage: "en",
     },
@@ -84,6 +91,7 @@ const schemas = schema
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <meta name="author" content={site.author.name} />
     <meta name="robots" content={robots} />
     <meta name="theme-color" content="#f4f2e9" />
     <meta property="og:site_name" content={site.name} />
