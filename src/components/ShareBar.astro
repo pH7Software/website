@@ -1,0 +1,169 @@
+---
+import { site } from "../data/site";
+
+type Props = {
+  title: string;
+  path: string;
+  description: string;
+};
+
+const { title, path, description } = Astro.props;
+const shareUrl = new URL(path, Astro.site ?? site.origin).toString();
+const xShareText = `${title} — pH7Builder`;
+const xShareUrl = `https://x.com/intent/post?text=${encodeURIComponent(xShareText)}&url=${encodeURIComponent(shareUrl)}`;
+const linkedInShareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+---
+
+<section
+  class="share-bar"
+  data-share-tools
+  data-share-title={title}
+  data-share-description={description}
+  data-share-url={shareUrl}
+  aria-labelledby="share-heading"
+>
+  <div>
+    <p class="eyebrow">Pass it on</p>
+    <h2 id="share-heading">Worth sharing with another builder?</h2>
+    <p>Send this article to the person who is shaping the same kind of product.</p>
+  </div>
+  <div class="share-bar-controls">
+    <div class="share-bar-actions" aria-label="Share this article">
+      <button class="share-action share-action-primary" type="button" data-native-share hidden>Share</button>
+      <a class="share-action" href={linkedInShareUrl} target="_blank" rel="noopener noreferrer">LinkedIn<span class="sr-only"> (opens in a new tab)</span></a>
+      <a class="share-action" href={xShareUrl} target="_blank" rel="noopener noreferrer">X<span class="sr-only"> (opens in a new tab)</span></a>
+      <button class="share-action" type="button" data-copy-share>Copy link</button>
+    </div>
+    <p class="share-bar-status" data-share-status aria-live="polite"></p>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-share-tools]").forEach((bar) => {
+    if (bar.dataset.shareReady === "true") return;
+    bar.dataset.shareReady = "true";
+
+    const title = bar.dataset.shareTitle ?? document.title;
+    const text = bar.dataset.shareDescription ?? "";
+    const url = bar.dataset.shareUrl ?? window.location.href;
+    const status = bar.querySelector<HTMLElement>("[data-share-status]");
+    const nativeButton = bar.querySelector<HTMLButtonElement>("[data-native-share]");
+    const copyButton = bar.querySelector<HTMLButtonElement>("[data-copy-share]");
+
+    if (nativeButton && navigator.share) {
+      nativeButton.hidden = false;
+      nativeButton.addEventListener("click", async () => {
+        try {
+          await navigator.share({ title, text, url });
+        } catch (error) {
+          if (error instanceof DOMException && error.name === "AbortError") return;
+          if (status) status.textContent = "Sharing is unavailable here. Copy the link instead.";
+        }
+      });
+    }
+
+    copyButton?.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(url);
+        if (status) status.textContent = "Link copied. Send it to someone who needs it.";
+      } catch {
+        if (status) status.textContent = "Use the browser address bar to copy this link.";
+      }
+    });
+  });
+</script>
+
+<style>
+  .share-bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 2.25rem;
+    padding-block: 2rem;
+    margin-top: 2.5rem;
+    border-block: 2px solid var(--ink);
+  }
+
+  .share-bar h2,
+  .share-bar p {
+    margin-bottom: 0;
+  }
+
+  .share-bar h2 {
+    max-width: 18ch;
+    margin-top: 0.4rem;
+    font-size: clamp(1.65rem, 3vw, 2.4rem);
+  }
+
+  .share-bar h2 + p {
+    max-width: 46rem;
+    margin-top: 0.7rem;
+    color: var(--ink-soft);
+  }
+
+  .share-bar-controls {
+    display: grid;
+    justify-items: end;
+    gap: 0.55rem;
+  }
+
+  .share-bar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  .share-action {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    padding: 0.65rem 0.85rem;
+    border: 2px solid var(--ink);
+    border-radius: 0.35rem;
+    background: var(--paper-strong);
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 140ms ease, color 140ms ease, transform 140ms ease;
+  }
+
+  .share-action-primary {
+    background: var(--lime);
+  }
+
+  .share-action:hover {
+    background: var(--ink);
+    color: var(--paper-strong);
+    transform: translateY(-2px);
+  }
+
+  .share-action:focus-visible {
+    outline: 3px solid var(--coral);
+    outline-offset: 3px;
+  }
+
+  .share-bar-status {
+    min-height: 1.2em;
+    color: var(--ink-soft);
+    font-size: 0.74rem;
+  }
+
+  @media (max-width: 760px) {
+    .share-bar {
+      grid-template-columns: 1fr;
+    }
+
+    .share-bar-controls {
+      justify-items: start;
+    }
+
+    .share-bar-actions {
+      justify-content: flex-start;
+    }
+  }
+</style>
