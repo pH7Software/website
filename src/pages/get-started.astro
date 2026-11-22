@@ -15,8 +15,8 @@ import { site } from "../data/site";
       <article>
         <span class="status-pill">Recommended</span>
         <h2>Install through Composer</h2>
-        <pre><code>composer create-project ph7software/ph7builder my-dating-app</code></pre>
-        <p>This creates an independent application copy with locked production dependencies. Future application upgrades are explicit rather than automatic Composer library updates.</p>
+        <pre><code>composer create-project ph7software/ph7builder:{site.latestRelease} my-dating-app</code></pre>
+        <p>This installs the current published release and creates an independent application copy with locked production dependencies. Future application upgrades are explicit rather than automatic Composer library updates.</p>
         <a class="button" href="/ai-builders/">Follow the AI builder path<ArrowIcon /></a>
       </article>
       <article>
