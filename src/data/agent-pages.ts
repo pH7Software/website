@@ -28,6 +28,7 @@ export const agentPages: AgentPage[] = [
 - [Create a portable product blueprint](${site.origin}/build/)
 - [Use pH7Builder with an AI coding agent](${site.origin}/ai-builders/)
 - [Install the published release](${site.origin}/get-started/)
+- [Review optional professional services](${site.origin}/services/)
 - [Review the release history](${site.origin}/changelog/)
 
 The blueprint tool records product intent in the visitor's browser. It does not deploy an application, call an AI model or submit the idea to pH7Builder.`,
@@ -70,20 +71,21 @@ pH7Builder does not currently advertise a public MCP server or stable public app
   },
   {
     path: "/build/",
-    title: "Create a portable dating product blueprint",
-    description: "Describe a dating or matchmaking idea and receive a portable specification plus a starter prompt for an AI coding agent.",
-    body: `The blueprint generator helps a visitor define an audience, product promise, discovery model, privacy choices, business model and launch requirements.
+    title: "Build a dating app with an AI coding agent",
+    description: "Describe a dating or matchmaking idea, select a coding agent and receive a complete execution prompt plus a portable pH7Builder blueprint.",
+    body: `The Build tool turns a visitor's dating or matchmaking idea into two local artefacts: a complete execution prompt for a capable coding agent and a portable product blueprint that stays with the application.
 
-The result is a portable starting specification. It is not a deployed application and does not claim that every proposed field maps to an existing pH7Builder setting.
+The prompt covers environment inspection, stable-release selection, installation, persistent local development, customisation, synthetic demonstration data, behavioural verification and an honest handover. The blueprint records the original idea, selected agent and working principles separately from implementation.
 
 ## Privacy and operation
 
 - The tool runs in the browser.
 - The idea is not submitted to pH7Builder.
 - The tool does not call an AI model.
-- The visitor can download the blueprint or copy a prompt for a capable coding agent.
+- The visitor can choose Codex, Claude Code, Cursor or another capable coding agent.
+- The visitor can copy the exact preview or download both files.
 
-An implementation agent should first inspect the selected pH7Builder release, map existing capabilities, identify required extensions and validate the result with behavioural tests.`,
+An implementation agent should have terminal and filesystem access. The generated prompt is not itself an application, and a local application is not automatically ready for production.`,
   },
   {
     path: "/get-started/",
@@ -150,6 +152,43 @@ An implementation agent must map these requirements to the real pH7Builder ${sit
     body: `Choose a product type and next milestone to receive a focused checklist. Progress stays in the browser and can be printed or saved as a clean copy.
 
 The checklist covers product decisions, trust and safety, privacy, delivery and launch operations. A checked item is a prompt for evidence, not proof by itself. Link completed work to the decision, test result, provider setting or operating document that proves it.`,
+  },
+  {
+    path: "/services/",
+    title: "pH7Builder services and pricing",
+    description: "Build independently for free or work directly with the pH7Builder creator on a launch, custom product, migration or ongoing engineering.",
+    body: `The free pH7Builder software and Build with AI tool remain complete. Professional help is optional.
+
+## Starting prices in USD
+
+- Build It Yourself: free.
+- Launch: from $3,000 USD, with a typical scope of $3,000–8,000 USD.
+- Custom Build: from $15,000 USD, with a typical scope of $15,000–50,000+ USD.
+- Managed & Ongoing: custom pricing.
+
+Prices are starting points. Scope, availability, responsibilities and third-party costs are agreed before work begins.
+
+Contact: [${site.contactEmail}](mailto:${site.contactEmail})`,
+  },
+  {
+    path: "/services/ai-prototype-to-production/",
+    title: "Take an AI-built dating app to production",
+    description: "Assess identity, data, matching, messaging, payments, moderation and operations before taking an AI-built dating prototype to production.",
+    body: `A polished prototype is not automatically production-ready. This service follows the product's highest-risk boundaries: identity and access, sensitive member data, connection flows, payment state, moderation, deployment, backups and operating costs.
+
+The result may strengthen the current stack, replace one unsafe boundary or introduce selected pH7Builder capabilities. It is not a promise that every external application has a simple migration path.
+
+Contact: [${site.contactEmail}](mailto:${site.contactEmail}?subject=AI%20dating%20prototype%20review)`,
+  },
+  {
+    path: "/services/migration/",
+    title: "Dating platform migration and modernisation",
+    description: "Assess a dating-platform migration without gambling with member identity, private conversations or established business behaviour.",
+    body: `Migration preflight inventories the current versions, schema, custom code, integrations and scheduled work. It maps member identity, profiles, messages, media, payments, consent and retention requirements before choosing a destination or cutover plan.
+
+No universal migration button is promised. The source platform, data quality, custom behaviour and acceptable downtime determine the work.
+
+Contact: [${site.contactEmail}](mailto:${site.contactEmail}?subject=Dating%20platform%20migration)`,
   },
   {
     path: "/services/custom-development/",

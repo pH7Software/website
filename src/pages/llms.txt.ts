@@ -14,8 +14,11 @@ Important boundaries: the website blueprint tool runs locally in the browser. It
 - [pH7Builder overview](${site.origin}/index.md): Identity, current release, licence and primary build paths.
 - [Get started](${site.origin}/get-started/index.md): Published release installation and production readiness boundaries.
 - [pH7Builder for AI builders](${site.origin}/ai-builders/index.md): Technical workflow, available agent context and current limitations.
-- [Portable blueprint generator](${site.origin}/build/index.md): What the browser tool produces, how it handles data and what an implementation agent should do next.
+- [Build with AI](${site.origin}/build/index.md): Generate a complete execution prompt and portable blueprint locally for Codex, Claude Code, Cursor or another capable coding agent.
 - [Nomad Connections example](${site.origin}/blueprints/nomad-connections/index.md): Worked product blueprint for travellers and people living abroad.
+- [Services and USD pricing](${site.origin}/services/index.md): Optional Launch, Custom Build and ongoing engineering paths alongside the complete free path.
+- [AI prototype to production](${site.origin}/services/ai-prototype-to-production/index.md): Production-readiness engineering for an existing AI-built dating application.
+- [Migration and modernisation](${site.origin}/services/migration/index.md): Evidence-led migration preflight for an existing dating platform.
 
 ## Agent instructions
 - [Repository agent guide](https://raw.githubusercontent.com/pH7Software/pH7-Social-Dating-CMS/18.x/AGENTS.md): Architecture, coding conventions, security invariants and verification for the public source tree.

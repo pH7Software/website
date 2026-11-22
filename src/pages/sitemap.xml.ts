@@ -14,7 +14,9 @@ const staticRoutes = [
   "/get-started/",
   "/privacy/",
   "/services/",
+  "/services/ai-prototype-to-production/",
   "/services/custom-development/",
+  "/services/migration/",
   "/tools/dating-site-launch-checklist/",
   "/vibe-coders/",
 ];
