@@ -52,7 +52,7 @@ const baseSchema = {
       description: site.description,
       codeRepository: site.githubUrl,
       programmingLanguage: "PHP",
-      license: "https://www.gnu.org/licenses/agpl-3.0.html",
+      license: site.licence.url,
       author: { "@id": `${site.origin}/#creator` },
     },
     {
@@ -140,7 +140,7 @@ const schemas = schema
           ))}
         </div>
         <div class="footer-bottom">
-          <p>© {new Date().getFullYear()} pH7Builder. Open-source software under the AGPL-3.0 licence.</p>
+          <p>© {new Date().getFullYear()} pH7Builder. Open-source software under the <a href={site.licence.url} target="_blank" rel="license noopener noreferrer">{site.licence.name} licence</a>.</p>
           <p>Created by <a href={site.author.url} target="_blank" rel="author noopener noreferrer">{site.author.name}</a>.</p>
         </div>
       </div>
