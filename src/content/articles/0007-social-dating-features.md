@@ -90,4 +90,4 @@ Review the cost per member and failure mode for each service. Keep credentials o
 
 A well-defined application API can eventually serve the website, native mobile clients, third-party developers and AI agents from the same business rules. That is a direction pH7Builder should approach carefully, with stable authorization and versioning rather than a broad endpoint surface created for appearances.
 
-The foundation is open source under AGPL-3.0. You can inspect it, run it on your infrastructure and build the distinctive product in your own repository.
+The foundation is open source under the MIT licence. You can inspect it, run it on your infrastructure and build the distinctive product in your own repository.
