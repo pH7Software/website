@@ -157,6 +157,17 @@ const currentRelease = siteSource.match(/latestRelease:\s*"([^"]+)"/)?.[1];
 const upcomingRelease = siteSource.match(/upcomingRelease:\s*"([^"]+)"/)?.[1];
 if (!currentRelease || !upcomingRelease) failures.add("Missing release metadata in site.ts");
 
+if (currentRelease) {
+  const installCommand = `ph7software/ph7builder:${currentRelease} my-dating-app --no-dev --prefer-dist`;
+  for (const route of ["get-started", "ai-builders"]) {
+    const pagePath = path.join(dist, route, "index.html");
+    if (await exists(pagePath)) {
+      const html = await readFile(pagePath, "utf8");
+      if (!html.includes(installCommand)) failures.add(`${route} does not provide the published release install command with production flags`);
+    }
+  }
+}
+
 if (await exists(path.join(dist, "llms.txt"))) {
   const llms = await readFile(path.join(dist, "llms.txt"), "utf8");
   if (!llms.startsWith("# pH7Builder\n\n> pH7Builder is")) failures.add("llms.txt does not begin with the canonical identity and summary");
