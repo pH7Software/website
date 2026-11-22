@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import Brand from "../components/Brand.astro";
 import FounderCard from "../components/FounderCard.astro";
+import { markdownPathForPage } from "../data/agent-pages";
 import { footerNavigation, primaryNavigation, site } from "../data/site";
 
 type Props = {
@@ -13,6 +14,7 @@ type Props = {
   robots?: string;
   publishedTime?: string;
   modifiedTime?: string;
+  markdownPath?: string;
   schema?: Record<string, unknown> | Record<string, unknown>[];
 };
 
@@ -25,11 +27,15 @@ const {
   robots = "index, follow, max-image-preview:large",
   publishedTime,
   modifiedTime,
+  markdownPath: explicitMarkdownPath,
   schema,
 } = Astro.props;
 const pageTitle = title === site.name ? title : `${title} | ${site.name}`;
 const canonical = new URL(path, Astro.site ?? site.origin).toString();
 const socialImage = new URL(image, Astro.site ?? site.origin).toString();
+const llmsUrl = new URL("/llms.txt", Astro.site ?? site.origin).toString();
+const markdownPath = explicitMarkdownPath ?? markdownPathForPage(path);
+const markdownUrl = markdownPath ? new URL(markdownPath, Astro.site ?? site.origin).toString() : undefined;
 const currentPath = Astro.url.pathname.replace(/\/+$/, "") || "/";
 const isCurrentPath = (href: string) => {
   const linkPath = href.replace(/\/+$/, "") || "/";
@@ -94,6 +100,8 @@ const schemas = schema
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImage} />
     <link rel="canonical" href={canonical} />
+    <link rel="describedby" href={llmsUrl} />
+    {markdownUrl && <link rel="alternate" type="text/markdown" title={`${title} in Markdown`} href={markdownUrl} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="alternate" type="application/rss+xml" title="pH7Builder articles" href="/rss.xml" />
     {schemas.map((item) => <script type="application/ld+json" set:html={JSON.stringify(item)} />)}

@@ -29,7 +29,7 @@ const articleSchema = {
 };
 ---
 
-<BaseLayout title={data.title} description={data.description} path={`/${data.slug}/`} type="article" publishedTime={publishedIso} modifiedTime={modifiedIso} schema={articleSchema}>
+<BaseLayout title={data.title} description={data.description} path={`/${data.slug}/`} type="article" publishedTime={publishedIso} modifiedTime={modifiedIso} markdownPath={`/${data.slug}/index.md`} schema={articleSchema}>
   <article>
     <header class="article-header shell">
       <div class="article-kicker"><span>{category}</span><span>{data.releaseStatus === "unreleased" ? "Unreleased" : dateFormatter.format(data.publishedAt)}</span></div>
