@@ -16,6 +16,10 @@ const dateFormatter = new Intl.DateTimeFormat("en", { day: "numeric", month: "lo
 const publishedIso = data.publishedAt.toISOString();
 const modifiedIso = data.updatedAt?.toISOString() ?? publishedIso;
 const category = data.categories[0] ?? (data.sourceType === "release" ? "Release notes" : "pH7Builder");
+const section = data.sourceType === "release" || data.categories.includes("Release archive")
+  ? { name: "Changelog", path: "/changelog/" }
+  : { name: "Articles", path: "/articles/" };
+const canonical = `${site.origin}/${data.slug}/`;
 const articleSchema = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
@@ -23,21 +27,52 @@ const articleSchema = {
   description: data.description,
   datePublished: publishedIso,
   dateModified: modifiedIso,
-  mainEntityOfPage: `${site.origin}/${data.slug}/`,
+  url: canonical,
+  mainEntityOfPage: { "@id": `${canonical}#webpage` },
+  image: {
+    "@type": "ImageObject",
+    url: `${site.origin}/social-card.png`,
+    width: 1200,
+    height: 630,
+  },
   author: { "@id": `${site.origin}/#creator` },
-  publisher: { "@id": `${site.origin}/#creator` },
+  publisher: { "@id": `${site.origin}/#organization` },
+  isPartOf: { "@id": `${site.origin}/#website` },
+  about: { "@id": `${site.origin}/#software` },
   articleSection: category,
   keywords: data.tags,
   inLanguage: "en",
   isAccessibleForFree: true,
   license: site.licence.url,
 };
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: `${site.origin}/` },
+    { "@type": "ListItem", position: 2, name: section.name, item: `${site.origin}${section.path}` },
+    { "@type": "ListItem", position: 3, name: data.title, item: canonical },
+  ],
+};
 ---
 
-<BaseLayout title={data.title} description={data.description} path={`/${data.slug}/`} type="article" publishedTime={publishedIso} modifiedTime={modifiedIso} markdownPath={`/${data.slug}/index.md`} schema={articleSchema}>
+<BaseLayout title={data.title} description={data.description} path={`/${data.slug}/`} type="article" publishedTime={publishedIso} modifiedTime={modifiedIso} markdownPath={`/${data.slug}/index.md`} schema={[articleSchema, breadcrumbSchema]}>
   <article>
     <header class="article-header shell">
-      <div class="article-kicker"><span>{category}</span><span>{data.releaseStatus === "unreleased" ? "Unreleased" : dateFormatter.format(data.publishedAt)}</span></div>
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li><a href={section.path}>{section.name}</a></li>
+          <li aria-current="page">{data.title}</li>
+        </ol>
+      </nav>
+      <div class="article-kicker">
+        <span>{category}</span>
+        {data.releaseStatus === "unreleased"
+          ? <span>Unreleased</span>
+          : <span>Published <time datetime={publishedIso}>{dateFormatter.format(data.publishedAt)}</time></span>}
+        {data.updatedAt && <span>Updated <time datetime={modifiedIso}>{dateFormatter.format(data.updatedAt)}</time></span>}
+      </div>
       <h1>{data.title}</h1>
       <p class="lede">{data.description}</p>
       <p class="article-byline">By <a href={site.author.url} rel="author" target="_blank">{site.author.name}<span class="sr-only"> (opens in a new tab)</span></a></p>
@@ -69,7 +104,11 @@ const articleSchema = {
 
 <style>
   .article-header { padding-block: clamp(5rem, 10vw, 9rem) clamp(3rem, 6vw, 5rem); }
-  .article-kicker { display: flex; gap: 1rem; margin-bottom: 2rem; font-family: var(--mono); font-size: .72rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+  .breadcrumbs { margin-bottom: 2rem; color: var(--ink-soft); font-family: var(--mono); font-size: .7rem; }
+  .breadcrumbs ol { display: flex; flex-wrap: wrap; gap: .45rem; padding: 0; margin: 0; list-style: none; }
+  .breadcrumbs li:not(:last-child)::after { margin-left: .45rem; content: "/"; color: var(--coral); }
+  .breadcrumbs li:last-child { max-width: 34rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .article-kicker { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; font-family: var(--mono); font-size: .72rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
   .article-kicker span:first-child { color: var(--coral); }
   .article-header h1 { max-width: 13ch; margin-bottom: 1.5rem; font-size: clamp(3rem, 7vw, 6.4rem); }
   .article-byline { margin: 1.5rem 0 0; font-size: .9rem; }

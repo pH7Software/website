@@ -32,7 +32,8 @@ import { site } from "../data/site";
     <h2>Evaluate locally before deploying</h2>
     <p>Want to explore the software on your own machine? Follow the <a href={`${site.githubUrl}#local-evaluation-with-docker`} target="_blank" rel="noopener noreferrer">local Docker instructions</a> to run a disposable test installation. No account, demo booking or meeting is required. Keep test data separate from anything you need to preserve.</p>
     <h2>Production requirements</h2>
-    <p>The published 19.4.0 release and the upcoming 20.0.0 line have different compatibility notes. Always use the release-specific documentation and lock file rather than assuming the development branch describes a published package.</p>
+    <p>pH7Builder {site.latestRelease} requires PHP 8.2 or newer, MySQL 8.0 or newer, HTTPS, URL rewriting, and Apache or nginx. Composer 2 is required only for a source installation; the versioned release ZIP includes locked production dependencies. Read the <a href={`${site.docsUrl}/QUICK_START.md`} target="_blank" rel="noopener noreferrer">release quick start<span class="sr-only"> (opens in a new tab)</span></a> for the complete extension and server requirements.</p>
+    <p>The published {site.latestRelease} release and the upcoming {site.upcomingRelease} line have different compatibility notes. Always use the release-specific documentation and lock file rather than assuming the development branch describes a published package.</p>
     <h2>Before real members arrive</h2>
     <p>Configure HTTPS, email delivery, backups, scheduled work and web-server rules for production. Review privacy and moderation decisions for the launch market. Then run the critical member journeys in the deployed environment.</p>
     <p><a href="/tools/dating-site-launch-checklist/">Use the dating product launch checklist</a> to keep those product and operational decisions together.</p>

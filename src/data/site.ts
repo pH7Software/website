@@ -1,9 +1,12 @@
 export const site = {
   name: "pH7Builder",
+  formerName: "pH7CMS",
   origin: "https://ph7builder.com",
   description:
-    "The open-source foundation for building, owning and operating dating and matchmaking applications with AI.",
+    "Open-source, self-hosted PHP software for building white-label dating websites, matchmaking platforms, social networks and online communities.",
   githubUrl: "https://github.com/pH7Software/pH7-Social-Dating-CMS",
+  githubOrganizationUrl: "https://github.com/pH7Software",
+  documentationUrl: "https://ph7builder.com/doc/",
   docsUrl: "https://github.com/pH7Software/pH7-Social-Dating-CMS/tree/18.x/docs",
   licence: {
     name: "MIT",
@@ -17,6 +20,8 @@ export const site = {
   sponsorUrl: "https://github.com/sponsors/pH-7",
   contactEmail: "hello@ph7builder.com",
   latestRelease: "19.4.0",
+  latestReleaseUrl: "https://github.com/pH7Software/pH7-Social-Dating-CMS/releases/tag/v19.4.0",
+  latestReleaseRequirements: "PHP 8.2 or newer, MySQL 8.0 or newer, HTTPS, URL rewriting, and Apache or nginx",
   upcomingRelease: "20.0.0",
 } as const;
 

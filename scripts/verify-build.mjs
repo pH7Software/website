@@ -20,6 +20,7 @@ const requiredFiles = [
   "robots.txt",
   "rss.xml",
   "sitemap.xml",
+  "social-card.png",
   "social-card.svg",
   "about/index.html",
   "about/index.md",
@@ -106,11 +107,23 @@ const allFiles = await walk(dist);
 const htmlFiles = allFiles.filter((file) => file.endsWith(".html"));
 let internalLinks = 0;
 let articlePages = 0;
+const titles = new Map();
+const descriptions = new Map();
+const canonicals = new Map();
+
+const recordUniqueValue = (values, value, relative, label) => {
+  if (!value) {
+    failures.add(`Missing ${label}: ${relative}`);
+    return;
+  }
+  values.set(value, [...(values.get(value) ?? []), relative]);
+};
 
 for (const file of htmlFiles) {
   const html = await readFile(file, "utf8");
   const relative = path.relative(dist, file).split(path.sep).join("/");
   const isRedirect = /http-equiv=["']refresh["']/i.test(html);
+  const isIndexable = !isRedirect && !/<meta\s+[^>]*name=["']robots["'][^>]*content=["'][^"']*noindex/i.test(html);
 
   if (!/<link\s+[^>]*rel=["']canonical["'][^>]*>/i.test(html)) failures.add(`Missing canonical link: ${relative}`);
   if (!isRedirect && !/<meta\s+[^>]*name=["']description["'][^>]*>/i.test(html)) failures.add(`Missing meta description: ${relative}`);
@@ -125,6 +138,29 @@ for (const file of htmlFiles) {
   if (/\/wp-content\/|\/wp-admin\/|socialdaringbuildersoftware\.WordPress/i.test(html)) failures.add(`Contains WordPress runtime or export residue: ${relative}`);
   if (retiredDestinations.test(html)) failures.add(`Contains a retired commercial or contact destination: ${relative}`);
   if (html.includes("class=\"article-byline\"")) articlePages += 1;
+
+  if (!isRedirect) {
+    const title = html.match(/<title>(.*?)<\/title>/s)?.[1];
+    const description = html.match(/<meta\s+[^>]*name=["']description["'][^>]*content="([^"]*)"/i)?.[1];
+    const canonical = html.match(/<link\s+[^>]*rel=["']canonical["'][^>]*href=["']([^"']*)["']/i)?.[1];
+    if (isIndexable) {
+      recordUniqueValue(titles, title, relative, "title");
+      recordUniqueValue(descriptions, description, relative, "meta description");
+      recordUniqueValue(canonicals, canonical, relative, "canonical URL");
+    }
+    const headings = html.match(/<h1\b/gi) ?? [];
+    if (headings.length !== 1) failures.add(`Expected one h1 in ${relative}, found ${headings.length}`);
+
+    const jsonLdBlocks = [...html.matchAll(/<script\s+[^>]*type=["']application\/ld\+json["'][^>]*>(.*?)<\/script>/gis)];
+    if (jsonLdBlocks.length === 0) failures.add(`Missing JSON-LD: ${relative}`);
+    for (const block of jsonLdBlocks) {
+      try {
+        JSON.parse(block[1]);
+      } catch (error) {
+        failures.add(`Invalid JSON-LD in ${relative}: ${error instanceof Error ? error.message : "unknown parse error"}`);
+      }
+    }
+  }
 
   const markdownFile = relative === "index.html"
     ? path.join(dist, "index.md")
@@ -161,6 +197,12 @@ for (const file of htmlFiles) {
   }
 }
 
+for (const [label, values] of [["title", titles], ["meta description", descriptions], ["canonical URL", canonicals]]) {
+  for (const [value, pages] of values) {
+    if (pages.length > 1) failures.add(`Duplicate ${label} in ${pages.join(", ")}: ${value}`);
+  }
+}
+
 if (htmlFiles.length < 235) failures.add(`Expected the migrated website to build at least 235 HTML pages, found ${htmlFiles.length}`);
 if (articlePages < 220) failures.add(`Expected at least 220 article/release pages, found ${articlePages}`);
 if (internalLinks < 500) failures.add(`Expected a connected static site, found only ${internalLinks} internal links`);
@@ -178,6 +220,10 @@ if (await exists(path.join(dist, "robots.txt"))) {
   const robots = await readFile(path.join(dist, "robots.txt"), "utf8");
   if (!robots.includes("Sitemap: https://ph7builder.com/sitemap.xml")) failures.add("robots.txt does not advertise the production sitemap");
   if (!robots.includes("Agentmap: https://ph7builder.com/.well-known/ard.json")) failures.add("robots.txt does not advertise the ARD manifest");
+  for (const crawler of ["Googlebot", "Bingbot", "OAI-SearchBot", "PerplexityBot"]) {
+    const group = new RegExp(`User-agent: ${crawler}\\nAllow: /`, "i");
+    if (!group.test(robots)) failures.add(`robots.txt does not explicitly allow ${crawler}`);
+  }
 }
 
 if (await exists(path.join(dist, "sitemap.xml"))) {
@@ -187,6 +233,11 @@ if (await exists(path.join(dist, "sitemap.xml"))) {
   }
   const urls = (sitemap.match(/<url>/g) ?? []).length;
   if (urls < 230) failures.add(`Sitemap contains too few public URLs: ${urls}`);
+  for (const value of sitemap.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value[1]) || Number.isNaN(Date.parse(`${value[1]}T00:00:00Z`))) {
+      failures.add(`Sitemap contains an invalid lastmod date: ${value[1]}`);
+    }
+  }
 }
 
 const siteSource = await readFile(new URL("../src/data/site.ts", import.meta.url), "utf8");
@@ -256,6 +307,9 @@ if (await exists(path.join(dist, ".well-known/ard.json"))) {
 if (await exists(path.join(dist, "index.html"))) {
   const homepage = await readFile(path.join(dist, "index.html"), "utf8");
   if (!homepage.includes("Build it yourself") || !homepage.includes("Work with the creator")) failures.add("Homepage does not expose the independent and professional paths");
+  if (!homepage.includes("pH7Builder, formerly pH7CMS") || !homepage.includes("PHP 8.2+") || !homepage.includes("MySQL 8.0+")) failures.add("Homepage does not expose the current product identity and requirements");
+  if (!homepage.includes('"SoftwareApplication"') || !homepage.includes('"SoftwareSourceCode"') || !homepage.includes('"Organization"')) failures.add("Homepage structured data does not identify the software and publisher entities");
+  if (!homepage.includes('"alternateName":"pH7CMS"') || !homepage.includes('"softwareVersion":"19.4.0"')) failures.add("Homepage structured data does not identify the former name and published version");
 }
 
 if (await exists(path.join(dist, "build/index.html"))) {
