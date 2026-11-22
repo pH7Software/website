@@ -13,6 +13,8 @@ const staticRoutes = [
   "/changelog/",
   "/get-started/",
   "/privacy/",
+  "/services/",
+  "/services/custom-development/",
   "/tools/dating-site-launch-checklist/",
   "/vibe-coders/",
 ];
