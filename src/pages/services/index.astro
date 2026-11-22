@@ -1,55 +1,81 @@
 ---
 import ArrowIcon from "../../components/ArrowIcon.astro";
-import CtaBand from "../../components/CtaBand.astro";
+import ServiceOffers from "../../components/ServiceOffers.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { site } from "../../data/site";
 ---
 
-<BaseLayout title="Custom dating product services" description="Work directly with pH7Builder creator Pierre-Henry Soria on architecture, custom development, migrations and release readiness." path="/services/">
+<BaseLayout
+  title="pH7Builder services and pricing"
+  description="Build independently for free or work directly with pH7Builder creator Pierre-Henry Soria on a focused launch, custom dating product or ongoing engineering."
+  path="/services/"
+>
   <header class="page-hero shell">
-    <p class="eyebrow">Services</p>
-    <h1>Experienced judgement where the product risk is real.</h1>
-    <p class="lede">Use the open-source software independently. When architecture, migration, privacy or launch quality needs direct attention, work with the person who knows the foundation from the inside.</p>
-    <a class="button" href="/services/custom-development/">Discuss a custom build<ArrowIcon /></a>
+    <p class="eyebrow">Build it yourself or work with the creator</p>
+    <h1>Choose the help your dating product actually needs.</h1>
+    <p class="lede">The software and Build with AI tool stay free. Professional work is available when your launch, migration or unique product logic needs direct engineering attention.</p>
+    <div class="hero-actions">
+      <a class="button" href="/build/">Build with AI<ArrowIcon /></a>
+      <a class="text-link" href={`mailto:${site.contactEmail}?subject=pH7Builder%20project`}>Discuss a project<ArrowIcon /></a>
+    </div>
   </header>
 
-  <section class="section surface">
+  <section class="section surface" aria-labelledby="service-options-title">
     <div class="shell">
       <div class="section-heading">
-        <div><p class="eyebrow">Focused engagements</p><h2>Work tied to a concrete outcome.</h2></div>
-        <p>No vague transformation programme. Start with the decision, deliverable or risk that is blocking the product.</p>
+        <div>
+          <p class="eyebrow">Four ways to move</p>
+          <h2 id="service-options-title">Start free. Add help only where it matters.</h2>
+        </div>
+        <p>All professional prices are starting points in USD. Final scope, availability, responsibilities and third-party costs are agreed before work begins.</p>
       </div>
-      <div class="service-list">
-        <article><span>01</span><h3>Product architecture</h3><p>Turn a dating or community concept into an implementable scope, module boundary and delivery plan before custom work spreads through core.</p></article>
-        <article><span>02</span><h3>Custom development</h3><p>Build the member experience, business rules, integrations and operational controls that distinguish the product.</p></article>
-        <article><span>03</span><h3>Modernisation</h3><p>Review an existing pH7Builder installation, reduce upgrade friction, replace stale dependencies and improve the evidence around releases.</p></article>
-        <article><span>04</span><h3>Launch readiness</h3><p>Audit the critical journeys, privacy decisions, deployment configuration and operational gaps before real members arrive.</p></article>
-      </div>
+      <ServiceOffers />
     </div>
   </section>
 
   <section class="section shell">
-    <div class="fit-grid">
-      <div><p class="eyebrow">Good fit</p><h2>When direct involvement makes sense.</h2></div>
-      <ul>
-        <li>You are building a differentiated dating, matchmaking or community product.</li>
-        <li>You need to protect an existing member base during migration or upgrade.</li>
-        <li>The work touches privacy, moderation, payment flows or an important business rule.</li>
-        <li>You want a maintainable result that another developer or agent can continue.</li>
-      </ul>
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Established products and prototypes</p>
+        <h2>Useful help is not limited to a fresh pH7Builder installation.</h2>
+      </div>
+      <p>Existing software deserves an honest technical assessment before anyone promises a migration, rewrite or production launch.</p>
+    </div>
+    <div class="service-paths">
+      <article>
+        <span>AI prototype</span>
+        <h3>Take an AI-built dating app from prototype to production.</h3>
+        <p>Review authentication, data access, matching, messaging, payments, moderation, deployment and operating costs. Preserve useful work instead of assuming the application must be rebuilt.</p>
+        <a class="text-link" href="/services/ai-prototype-to-production/">Review this service<ArrowIcon /></a>
+      </article>
+      <article>
+        <span>Existing platform</span>
+        <h3>Plan a dating-platform migration without gambling with member data.</h3>
+        <p>Map the current schema, custom behaviour, privacy obligations and operational dependencies before selecting a migration path.</p>
+        <a class="text-link" href="/services/migration/">Review migration support<ArrowIcon /></a>
+      </article>
     </div>
   </section>
 
-  <CtaBand eyebrow="Custom delivery" title="Bring the idea, the constraint and the evidence you already have." description="A useful first conversation should establish the outcome, present state, risks and whether pH7Builder is the right foundation." primaryLabel="See how an engagement works" primaryHref="/services/custom-development/" secondaryLabel="Start independently" secondaryHref="/build/" />
+  <section class="section-tight narrow-shell contact-brief">
+    <p class="eyebrow">A useful first message</p>
+    <h2>Send the idea, current state and desired outcome.</h2>
+    <p>Include the application or repository you already have, the audience, the decision or problem blocking progress, and an approximate USD budget. Sensitive credentials and member data do not belong in the first email.</p>
+    <a class="button" href={`mailto:${site.contactEmail}?subject=pH7Builder%20project%20enquiry`}>Email {site.contactEmail}<ArrowIcon /></a>
+    <p class="contact-note">This is a direct email link, not a form pretending to submit somewhere.</p>
+  </section>
 </BaseLayout>
 
 <style>
-  .service-list { border-top: 2px solid var(--ink); }
-  .service-list article { display: grid; grid-template-columns: 4rem minmax(12rem, 0.55fr) 1fr; gap: 2rem; padding: 2rem 0; border-bottom: 1px solid var(--line); }
-  .service-list span { font-family: var(--mono); font-weight: 800; }
-  .service-list h3, .service-list p { margin: 0; }
-  .service-list p { color: var(--ink-soft); }
-  .fit-grid { display: grid; grid-template-columns: minmax(0, 0.75fr) 1fr; gap: clamp(3rem, 8vw, 8rem); }
-  .fit-grid h2 { max-width: 11ch; }
-  .fit-grid li { padding: 1rem 0; border-bottom: 1px solid var(--line); font-size: 1.1rem; }
-  @media (max-width: 700px) { .service-list article, .fit-grid { grid-template-columns: 1fr; gap: 0.75rem; } }
+  .service-paths { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+  .service-paths article { display: flex; min-height: 26rem; flex-direction: column; padding: clamp(1.5rem, 4vw, 2.5rem); border: 2px solid var(--ink); border-radius: var(--radius); background: var(--paper-strong); }
+  .service-paths span { font-family: var(--mono); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+  .service-paths h3 { max-width: 18ch; margin-top: auto; font-family: var(--serif); font-size: clamp(2rem, 4vw, 3.2rem); }
+  .service-paths p { color: var(--ink-soft); }
+  .service-paths a { width: fit-content; margin-top: 1rem; }
+  .contact-brief { padding-inline: clamp(1.5rem, 5vw, 4rem); border: 2px solid var(--ink); border-radius: var(--radius); background: var(--lime); box-shadow: var(--shadow); }
+  .contact-brief h2 { max-width: 15ch; }
+  .contact-brief .button { margin-top: 1rem; }
+  .contact-note { margin: 0.8rem 0 0; font-size: 0.82rem; }
+  @media (max-width: 720px) { .service-paths { grid-template-columns: 1fr; } .service-paths article { min-height: 0; } }
 </style>

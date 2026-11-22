@@ -2,7 +2,7 @@ export const site = {
   name: "pH7Builder",
   origin: "https://ph7builder.com",
   description:
-    "The open-source, AI-ready foundation for independently owned dating apps, matchmaking services and online communities.",
+    "The open-source foundation for building, owning and operating dating and matchmaking applications with AI.",
   githubUrl: "https://github.com/pH7Software/pH7-Social-Dating-CMS",
   docsUrl: "https://github.com/pH7Software/pH7-Social-Dating-CMS/tree/18.x/docs",
   licence: {
@@ -23,6 +23,7 @@ export const site = {
 export const primaryNavigation = [
   { label: "Build", href: "/build/" },
   { label: "AI builders", href: "/ai-builders/" },
+  { label: "Services", href: "/services/" },
   { label: "Get started", href: "/get-started/" },
   { label: "Articles", href: "/articles/" },
   { label: "Changelog", href: "/changelog/" },
@@ -36,6 +37,7 @@ export const footerNavigation = [
       { label: "For AI builders", href: "/ai-builders/" },
       { label: "For vibe coders", href: "/vibe-coders/" },
       { label: "Nomad Connections", href: "/blueprints/nomad-connections/" },
+      { label: "Services and pricing", href: "/services/" },
     ],
   },
   {
