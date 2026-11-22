@@ -4,11 +4,19 @@ import { site } from "../data/site";
 export const GET: APIRoute = () => {
   const body = `# pH7Builder
 
-> pH7Builder is the open-source, AI-ready foundation for independently owned dating apps, matchmaking services and online communities.
+> pH7Builder is open-source, self-hosted PHP software for building white-label dating websites, matchmaking platforms, social networks and online communities.
 
-Canonical identity: pH7Builder is a self-hosted PHP application created by Pierre-Henry Soria and released under the MIT licence. The latest published release is ${site.latestRelease}. Version ${site.upcomingRelease} is unreleased. pH7Builder is not a hosted SaaS product.
+Canonical identity: pH7Builder, formerly pH7CMS, is a self-hosted PHP application created by Pierre-Henry Soria and released under the MIT licence. The latest published release is ${site.latestRelease}. Version ${site.upcomingRelease} is unreleased. pH7Builder is not a hosted SaaS product.
 
 Important boundaries: the website blueprint tool runs locally in the browser. It does not deploy an application, call an AI model or submit the visitor's idea. A public application API and MCP server are future directions, not currently advertised capabilities.
+
+## Verified current foundation
+- Member profiles and identity.
+- Discovery and matchmaking.
+- Private messaging and connection flows.
+- Memberships, moderation controls and administration.
+- Self-hosted deployment with source-code access.
+- Release ${site.latestRelease} requirements: ${site.latestReleaseRequirements}.
 
 ## Product
 - [pH7Builder overview](${site.origin}/index.md): Identity, current release, licence and primary build paths.
@@ -35,7 +43,9 @@ Important boundaries: the website blueprint tool runs locally in the browser. It
 
 ## Project sources
 - [Source repository](${site.githubUrl}): Canonical public codebase.
-- [Official release documentation](${site.docsUrl}): Versioned installation, configuration and operating documentation.
+- [Latest published release](${site.latestReleaseUrl}): Release package, checksums and notes for ${site.latestRelease}.
+- [Official documentation address](${site.documentationUrl}): Stable pH7Builder documentation entry point.
+- [Versioned release documentation](${site.docsUrl}): Installation, configuration and operating documentation maintained with the source.
 - [About pH7Builder](${site.origin}/about/index.md): Mission, ownership and product direction.
 - [Website privacy](${site.origin}/privacy/index.md): Static-site, local-storage and external-link data boundaries.
 

@@ -13,8 +13,10 @@ export const agentPages: AgentPage[] = [
   {
     path: "/",
     title: "pH7Builder",
-    description: "The open-source, AI-ready foundation for independently owned dating apps, matchmaking services and online communities.",
-    body: `pH7Builder is a self-hosted PHP application. It gives builders an established starting point for profiles, discovery, matchmaking, messaging, memberships, moderation and administration.
+    description: site.description,
+    body: `pH7Builder, formerly pH7CMS, is a self-hosted PHP application. It gives builders an established starting point for profiles, discovery, matchmaking, messaging, memberships, moderation and administration.
+
+The published ${site.latestRelease} release requires PHP 8.2 or newer, MySQL 8.0 or newer, HTTPS, URL rewriting, and a compatible Apache or nginx web server. It is MIT-licensed and runs on infrastructure selected by the operator.
 
 The website includes clearly labelled interactive concepts for social dating, a focused social network and private matchmaking. They show how the same foundation can support different member experiences without pretending that a generated preview is a finished application.
 
@@ -39,7 +41,7 @@ The blueprint tool records product intent in the visitor's browser. It does not 
     path: "/about/",
     title: "About pH7Builder",
     description: "Why pH7Builder is becoming an open-source, AI-ready foundation for independently owned dating, matchmaking and community products.",
-    body: `pH7Builder began as open-source dating and social software. Its purpose is to make that established foundation understandable and useful to builders working with coding agents.
+    body: `pH7Builder, formerly pH7CMS, began as open-source dating and social software. Its purpose is to make that established foundation understandable and useful to builders working with coding agents.
 
 The project is created and maintained by [${site.author.name}](${site.author.url}). Builders choose their own infrastructure and retain control of their application, source code and member relationships.
 
@@ -100,6 +102,8 @@ ${installCommand}
 \`\`\`
 
 Composer 2 is required for this source installation path. The target production environment must meet the version-specific requirements in the official documentation.
+
+For release ${site.latestRelease}, the verified baseline is PHP 8.2 or newer, MySQL 8.0 or newer, HTTPS, URL rewriting, and Apache or nginx.
 
 ## Before production
 

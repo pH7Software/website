@@ -33,6 +33,29 @@ import { site } from "../data/site";
     </div>
   </section>
 
+  <section class="section identity-section" aria-labelledby="what-is-ph7builder">
+    <div class="shell identity-grid">
+      <div>
+        <p class="eyebrow">What is pH7Builder?</p>
+        <h2 id="what-is-ph7builder">Open-source dating software you host and control.</h2>
+      </div>
+      <div class="identity-answer">
+        <p><strong>pH7Builder, formerly pH7CMS,</strong> is a self-hosted PHP platform for creating white-label dating websites, matchmaking services, social networks and online communities.</p>
+        <p>It provides established profiles, discovery, matchmaking, messaging, memberships, moderation and administration. Developers can adapt its modules, themes and business rules instead of rebuilding those product foundations from an empty repository.</p>
+        <dl>
+          <div><dt>Licence</dt><dd><a href={site.licence.url} target="_blank" rel="license noopener noreferrer">MIT open source<span class="sr-only"> (opens in a new tab)</span></a></dd></div>
+          <div><dt>Current release</dt><dd><a href={site.latestReleaseUrl} target="_blank" rel="noopener noreferrer">{site.latestRelease}<span class="sr-only"> (opens in a new tab)</span></a></dd></div>
+          <div><dt>Requirements</dt><dd>PHP 8.2+ and MySQL 8.0+</dd></div>
+          <div><dt>Deployment</dt><dd>Your own compatible web server</dd></div>
+        </dl>
+        <div class="identity-links">
+          <a class="text-link" href="/get-started/">How to install pH7Builder<ArrowIcon /></a>
+          <a class="text-link" href={site.docsUrl} target="_blank" rel="noopener noreferrer">Read the versioned documentation<ArrowIcon /><span class="sr-only"> (opens in a new tab)</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <ProductPreview />
 
   <section class="section surface">
@@ -110,6 +133,10 @@ import { site } from "../data/site";
     gap: clamp(3rem, 8vw, 7rem);
   }
 
+  .home-hero-grid > * {
+    min-width: 0;
+  }
+
   .home-hero h1 {
     max-width: 10ch;
     margin-bottom: 1.5rem;
@@ -151,6 +178,59 @@ import { site } from "../data/site";
   .foundation-grid strong,
   .foundation-grid span {
     display: block;
+  }
+
+  .identity-section {
+    background: var(--paper-strong);
+  }
+
+  .identity-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.75fr) minmax(20rem, 1fr);
+    gap: clamp(3rem, 8vw, 8rem);
+  }
+
+  .identity-grid h2 {
+    max-width: 12ch;
+    margin-bottom: 0;
+  }
+
+  .identity-answer > p {
+    max-width: 48rem;
+    font-size: 1.08rem;
+  }
+
+  .identity-answer dl {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 2rem 0;
+    border: 2px solid var(--ink);
+  }
+
+  .identity-answer dl div {
+    min-height: 7.5rem;
+    padding: 1.2rem;
+    border: 1px solid var(--ink);
+    background: var(--paper);
+  }
+
+  .identity-answer dt {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .identity-answer dd {
+    margin: 1.25rem 0 0;
+    font-weight: 800;
+  }
+
+  .identity-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem 2rem;
   }
 
   .foundation-grid span {
@@ -247,9 +327,10 @@ import { site } from "../data/site";
 
   @media (max-width: 900px) {
     .home-hero-grid,
+    .identity-grid,
     .capability-map,
     .principle-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .capability-connector {
@@ -269,6 +350,10 @@ import { site } from "../data/site";
     }
 
     .capability-foundation {
+      grid-template-columns: 1fr;
+    }
+
+    .identity-answer dl {
       grid-template-columns: 1fr;
     }
   }
