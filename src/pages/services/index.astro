@@ -1,5 +1,55 @@
 ---
-import LegacyRedirect from "../../components/LegacyRedirect.astro";
+import ArrowIcon from "../../components/ArrowIcon.astro";
+import CtaBand from "../../components/CtaBand.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
 ---
 
-<LegacyRedirect destination="/get-started/" />
+<BaseLayout title="Custom dating product services" description="Work directly with pH7Builder creator Pierre-Henry Soria on architecture, custom development, migrations and release readiness." path="/services/">
+  <header class="page-hero shell">
+    <p class="eyebrow">Services</p>
+    <h1>Experienced judgement where the product risk is real.</h1>
+    <p class="lede">Use the open-source software independently. When architecture, migration, privacy or launch quality needs direct attention, work with the person who knows the foundation from the inside.</p>
+    <a class="button" href="/services/custom-development/">Discuss a custom build<ArrowIcon /></a>
+  </header>
+
+  <section class="section surface">
+    <div class="shell">
+      <div class="section-heading">
+        <div><p class="eyebrow">Focused engagements</p><h2>Work tied to a concrete outcome.</h2></div>
+        <p>No vague transformation programme. Start with the decision, deliverable or risk that is blocking the product.</p>
+      </div>
+      <div class="service-list">
+        <article><span>01</span><h3>Product architecture</h3><p>Turn a dating or community concept into an implementable scope, module boundary and delivery plan before custom work spreads through core.</p></article>
+        <article><span>02</span><h3>Custom development</h3><p>Build the member experience, business rules, integrations and operational controls that distinguish the product.</p></article>
+        <article><span>03</span><h3>Modernisation</h3><p>Review an existing pH7Builder installation, reduce upgrade friction, replace stale dependencies and improve the evidence around releases.</p></article>
+        <article><span>04</span><h3>Launch readiness</h3><p>Audit the critical journeys, privacy decisions, deployment configuration and operational gaps before real members arrive.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section shell">
+    <div class="fit-grid">
+      <div><p class="eyebrow">Good fit</p><h2>When direct involvement makes sense.</h2></div>
+      <ul>
+        <li>You are building a differentiated dating, matchmaking or community product.</li>
+        <li>You need to protect an existing member base during migration or upgrade.</li>
+        <li>The work touches privacy, moderation, payment flows or an important business rule.</li>
+        <li>You want a maintainable result that another developer or agent can continue.</li>
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand eyebrow="Custom delivery" title="Bring the idea, the constraint and the evidence you already have." description="A useful first conversation should establish the outcome, present state, risks and whether pH7Builder is the right foundation." primaryLabel="See how an engagement works" primaryHref="/services/custom-development/" secondaryLabel="Start independently" secondaryHref="/build/" />
+</BaseLayout>
+
+<style>
+  .service-list { border-top: 2px solid var(--ink); }
+  .service-list article { display: grid; grid-template-columns: 4rem minmax(12rem, 0.55fr) 1fr; gap: 2rem; padding: 2rem 0; border-bottom: 1px solid var(--line); }
+  .service-list span { font-family: var(--mono); font-weight: 800; }
+  .service-list h3, .service-list p { margin: 0; }
+  .service-list p { color: var(--ink-soft); }
+  .fit-grid { display: grid; grid-template-columns: minmax(0, 0.75fr) 1fr; gap: clamp(3rem, 8vw, 8rem); }
+  .fit-grid h2 { max-width: 11ch; }
+  .fit-grid li { padding: 1rem 0; border-bottom: 1px solid var(--line); font-size: 1.1rem; }
+  @media (max-width: 700px) { .service-list article, .fit-grid { grid-template-columns: 1fr; gap: 0.75rem; } }
+</style>
