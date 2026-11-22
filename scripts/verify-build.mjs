@@ -10,25 +10,33 @@ const retiredDestinations = /(?:clients\.hizup\.com|hizup\.net\/clients|paypal\.
 
 const requiredFiles = [
   ".nojekyll",
+  ".well-known/ard.json",
   "CNAME",
   "404.html",
   "favicon.svg",
   "index.html",
+  "index.md",
   "llms.txt",
   "robots.txt",
   "rss.xml",
   "sitemap.xml",
   "social-card.svg",
   "about/index.html",
+  "about/index.md",
   "ai-builders/index.html",
+  "ai-builders/index.md",
   "articles/index.html",
   "blueprints/nomad-connections/index.html",
+  "blueprints/nomad-connections/index.md",
   "build/index.html",
+  "build/index.md",
   "changelog/index.html",
   "get-started/index.html",
+  "get-started/index.md",
   "doc/en/requirements/index.html",
   "doc/en/nginx-configuration/index.html",
   "privacy/index.html",
+  "privacy/index.md",
   "release-notes-19-4-0/index.html",
   "release-notes-20-0-0/index.html",
   "services/index.html",
@@ -36,7 +44,9 @@ const requiredFiles = [
   "social-dating-features/index.html",
   "dating-startup-by-step/index.html",
   "tools/dating-site-launch-checklist/index.html",
+  "tools/dating-site-launch-checklist/index.md",
   "vibe-coders/index.html",
+  "vibe-coders/index.md",
 ];
 
 const exists = async (file) => {
@@ -99,6 +109,9 @@ for (const file of htmlFiles) {
 
   if (!/<link\s+[^>]*rel=["']canonical["'][^>]*>/i.test(html)) failures.add(`Missing canonical link: ${relative}`);
   if (!isRedirect && !/<meta\s+[^>]*name=["']description["'][^>]*>/i.test(html)) failures.add(`Missing meta description: ${relative}`);
+  if (!isRedirect && !/<meta\s+[^>]*name=["']author["'][^>]*content=["']Pierre-Henry Soria["'][^>]*>/i.test(html)) failures.add(`Missing creator metadata: ${relative}`);
+  if (!isRedirect && !/<link\s+[^>]*rel=["']describedby["'][^>]*href=["']https:\/\/ph7builder\.com\/llms\.txt["'][^>]*>/i.test(html)) failures.add(`Missing llms.txt discovery link: ${relative}`);
+  if (!isRedirect && !/<link\s+[^>]*rel=["']ard["'][^>]*href=["']https:\/\/ph7builder\.com\/\.well-known\/ard\.json["'][^>]*>/i.test(html)) failures.add(`Missing ARD discovery link: ${relative}`);
   if (!isRedirect && !html.includes("Pierre-Henry Soria")) failures.add(`Missing creator attribution: ${relative}`);
   if (/AGPL-3\.0|gnu\.org\/licenses\/agpl/i.test(html)) failures.add(`Incorrect AGPL licence reference: ${relative}`);
   if (!isRedirect && (!html.includes(correctLicence) || !html.includes("MIT licence"))) failures.add(`Missing MIT licence in markup or structured data: ${relative}`);
@@ -107,6 +120,15 @@ for (const file of htmlFiles) {
   if (/\/wp-content\/|\/wp-admin\/|socialdaringbuildersoftware\.WordPress/i.test(html)) failures.add(`Contains WordPress runtime or export residue: ${relative}`);
   if (retiredDestinations.test(html)) failures.add(`Contains a retired commercial or contact destination: ${relative}`);
   if (html.includes("class=\"article-byline\"")) articlePages += 1;
+
+  const markdownFile = relative === "index.html"
+    ? path.join(dist, "index.md")
+    : relative.endsWith("/index.html")
+      ? path.join(dist, relative.slice(0, -"index.html".length), "index.md")
+      : undefined;
+  if (markdownFile && await exists(markdownFile) && !/<link\s+[^>]*rel=["']alternate["'][^>]*type=["']text\/markdown["'][^>]*>/i.test(html)) {
+    failures.add(`Missing Markdown alternate link: ${relative}`);
+  }
 
   const hrefPattern = /\bhref\s*=\s*(?:"([^"]*)"|'([^']*)')/gi;
   for (const match of html.matchAll(hrefPattern)) {
@@ -138,9 +160,19 @@ if (htmlFiles.length < 235) failures.add(`Expected the migrated website to build
 if (articlePages < 220) failures.add(`Expected at least 220 article/release pages, found ${articlePages}`);
 if (internalLinks < 500) failures.add(`Expected a connected static site, found only ${internalLinks} internal links`);
 
+const markdownFiles = allFiles.filter((file) => file.endsWith(".md"));
+if (markdownFiles.length < 230) failures.add(`Expected Markdown alternatives for the article archive and key pages, found ${markdownFiles.length}`);
+for (const file of markdownFiles) {
+  const markdown = await readFile(file, "utf8");
+  const relative = path.relative(dist, file).split(path.sep).join("/");
+  if (!markdown.startsWith("# ")) failures.add(`Markdown alternative does not start with a title: ${relative}`);
+  if (!markdown.includes("Canonical page:")) failures.add(`Markdown alternative does not identify its canonical page: ${relative}`);
+}
+
 if (await exists(path.join(dist, "robots.txt"))) {
   const robots = await readFile(path.join(dist, "robots.txt"), "utf8");
   if (!robots.includes("Sitemap: https://ph7builder.com/sitemap.xml")) failures.add("robots.txt does not advertise the production sitemap");
+  if (!robots.includes("Agentmap: https://ph7builder.com/.well-known/ard.json")) failures.add("robots.txt does not advertise the ARD manifest");
 }
 
 if (await exists(path.join(dist, "sitemap.xml"))) {
@@ -172,7 +204,48 @@ if (await exists(path.join(dist, "llms.txt"))) {
   const llms = await readFile(path.join(dist, "llms.txt"), "utf8");
   if (!llms.startsWith("# pH7Builder\n\n> pH7Builder is")) failures.add("llms.txt does not begin with the canonical identity and summary");
   if (currentRelease && upcomingRelease && (!llms.includes(`latest published release is ${currentRelease}`) || !llms.includes(`Version ${upcomingRelease} is unreleased`))) failures.add("llms.txt does not match the release metadata in site.ts");
-  if (!llms.includes("Install the published release")) failures.add("llms.txt does not link to the self-service install path");
+  if (!llms.includes("/get-started/index.md")) failures.add("llms.txt does not link to the Markdown installation guide");
+  if (!llms.includes("/AGENTS.md") || !llms.includes("/SKILL.md")) failures.add("llms.txt does not expose the public agent instructions");
+  if (!llms.includes("/.well-known/ard.json")) failures.add("llms.txt does not expose the ARD manifest");
+
+  const internalUrls = [...llms.matchAll(/\]\((https:\/\/ph7builder\.com\/[^)]+)\)/g)].map((match) => match[1]);
+  for (const url of internalUrls) {
+    const destination = new URL(url);
+    const candidates = pathCandidates(destination.pathname);
+    const found = await Promise.any(candidates.map(async (candidate) => {
+      if (await exists(candidate)) return true;
+      throw new Error("missing");
+    })).catch(() => false);
+    if (!found) failures.add(`Broken internal resource in llms.txt: ${destination.pathname}`);
+  }
+}
+
+if (await exists(path.join(dist, ".well-known/ard.json"))) {
+  const manifestPath = path.join(dist, ".well-known/ard.json");
+  let manifest;
+  try {
+    manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+  } catch {
+    failures.add("ARD manifest is not valid JSON");
+  }
+  if (manifest) {
+    if (!Array.isArray(manifest.entries) || manifest.entries.length !== 3) {
+      failures.add("ARD manifest must catalogue the three official pH7Builder skills");
+    } else {
+      const identifiers = new Set();
+      for (const entry of manifest.entries) {
+        if (entry["@context"] !== "https://agenticresourcediscovery.org/context/v1") failures.add(`ARD entry has an invalid context: ${entry.displayName ?? "unnamed"}`);
+        if (typeof entry.identifier !== "string" || !entry.identifier.startsWith("urn:air:ph7builder.com:skills:")) failures.add(`ARD entry has an invalid publisher identifier: ${entry.displayName ?? "unnamed"}`);
+        if (identifiers.has(entry.identifier)) failures.add(`ARD entry identifier is duplicated: ${entry.identifier}`);
+        identifiers.add(entry.identifier);
+        if (typeof entry.displayName !== "string" || entry.displayName.length === 0) failures.add("ARD entry is missing a display name");
+        if (entry.type !== "application/agent-skills+md") failures.add(`ARD entry has an invalid media type: ${entry.displayName ?? "unnamed"}`);
+        if ((typeof entry.url === "string") === (typeof entry.data === "string")) failures.add(`ARD entry must provide exactly one of url or data: ${entry.displayName ?? "unnamed"}`);
+        if (typeof entry.url !== "string" || !entry.url.startsWith("https://")) failures.add(`ARD entry must use an HTTPS skill URL: ${entry.displayName ?? "unnamed"}`);
+        if (!Array.isArray(entry.representativeQueries) || entry.representativeQueries.length < 2 || entry.representativeQueries.length > 5) failures.add(`ARD entry needs two to five representative queries: ${entry.displayName ?? "unnamed"}`);
+      }
+    }
+  }
 }
 
 if (await exists(path.join(dist, "index.html"))) {
