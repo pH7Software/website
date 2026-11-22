@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 const dist = fileURLToPath(new URL("../dist/", import.meta.url));
 const productionOrigin = "https://ph7builder.com";
 const failures = new Set();
+const correctLicence = "https://github.com/pH7Software/pH7-Social-Dating-CMS/blob/18.x/LICENSE.md";
 const retiredDestinations = /(?:clients\.hizup\.com|hizup\.net\/clients|paypal\.com\/cgi-bin\/webscr|goo\.gl\/forms|mailto:hi@ph7\.me|http:\/{3})/i;
 
 const requiredFiles = [
@@ -25,6 +26,8 @@ const requiredFiles = [
   "build/index.html",
   "changelog/index.html",
   "get-started/index.html",
+  "doc/en/requirements/index.html",
+  "doc/en/nginx-configuration/index.html",
   "privacy/index.html",
   "release-notes-19-4-0/index.html",
   "release-notes-20-0-0/index.html",
@@ -97,6 +100,8 @@ for (const file of htmlFiles) {
   if (!/<link\s+[^>]*rel=["']canonical["'][^>]*>/i.test(html)) failures.add(`Missing canonical link: ${relative}`);
   if (!isRedirect && !/<meta\s+[^>]*name=["']description["'][^>]*>/i.test(html)) failures.add(`Missing meta description: ${relative}`);
   if (!isRedirect && !html.includes("Pierre-Henry Soria")) failures.add(`Missing creator attribution: ${relative}`);
+  if (/AGPL-3\.0|gnu\.org\/licenses\/agpl/i.test(html)) failures.add(`Incorrect AGPL licence reference: ${relative}`);
+  if (!isRedirect && (!html.includes(correctLicence) || !html.includes("MIT licence"))) failures.add(`Missing MIT licence in markup or structured data: ${relative}`);
   if (/fonts\.googleapis\.com|googletagmanager|google-analytics|client\.crisp\.chat/i.test(html)) failures.add(`Contains an unapproved remote font, tracker or chat widget: ${relative}`);
   if (/<script\s+[^>]*src=["']https?:\/\//i.test(html)) failures.add(`Contains an external script: ${relative}`);
   if (/\/wp-content\/|\/wp-admin\/|socialdaringbuildersoftware\.WordPress/i.test(html)) failures.add(`Contains WordPress runtime or export residue: ${relative}`);
@@ -147,10 +152,21 @@ if (await exists(path.join(dist, "sitemap.xml"))) {
   if (urls < 230) failures.add(`Sitemap contains too few public URLs: ${urls}`);
 }
 
+const siteSource = await readFile(new URL("../src/data/site.ts", import.meta.url), "utf8");
+const currentRelease = siteSource.match(/latestRelease:\s*"([^"]+)"/)?.[1];
+const upcomingRelease = siteSource.match(/upcomingRelease:\s*"([^"]+)"/)?.[1];
+if (!currentRelease || !upcomingRelease) failures.add("Missing release metadata in site.ts");
+
 if (await exists(path.join(dist, "llms.txt"))) {
   const llms = await readFile(path.join(dist, "llms.txt"), "utf8");
   if (!llms.startsWith("# pH7Builder\n\n> pH7Builder is")) failures.add("llms.txt does not begin with the canonical identity and summary");
-  if (!llms.includes("latest published release is 19.4.0") || !llms.includes("Version 20.0.0 is unreleased")) failures.add("llms.txt does not distinguish the published and upcoming releases");
+  if (currentRelease && upcomingRelease && (!llms.includes(`latest published release is ${currentRelease}`) || !llms.includes(`Version ${upcomingRelease} is unreleased`))) failures.add("llms.txt does not match the release metadata in site.ts");
+  if (!llms.includes("Install the published release")) failures.add("llms.txt does not link to the self-service install path");
+}
+
+if (await exists(path.join(dist, "index.html"))) {
+  const homepage = await readFile(path.join(dist, "index.html"), "utf8");
+  if (homepage.includes("work with the creator") || homepage.includes("Discuss a custom build")) failures.add("Homepage still advertises bespoke consulting");
 }
 
 if (await exists(path.join(dist, "build/index.html"))) {
