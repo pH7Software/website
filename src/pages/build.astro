@@ -1,286 +1,156 @@
 ---
 import ArrowIcon from "../components/ArrowIcon.astro";
+import ServiceOffers from "../components/ServiceOffers.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { availableFeatures, defaultBlueprintInput } from "../lib/blueprint";
+import { buildAgents, exampleBuildIdeas, maximumIdeaLength, nomadBuildIdea } from "../lib/build-prompt";
 ---
 
-<BaseLayout title="Build your dating app blueprint" description="Describe your dating, matchmaking or community product and receive a portable pH7Builder blueprint plus a starter prompt. Everything runs in your browser." path="/build/">
+<BaseLayout
+  title="Build your dating app with AI"
+  description="Describe your dating or matchmaking idea, choose your coding agent and receive a complete pH7Builder execution prompt plus a portable blueprint. Everything runs in your browser."
+  path="/build/"
+>
   <header class="build-header shell">
     <div>
-      <p class="eyebrow">pH7Builder Blueprint</p>
-      <h1>What dating product would you love to create?</h1>
+      <p class="eyebrow">Build with AI</p>
+      <h1>Start building your unique dating app in minutes.</h1>
     </div>
-    <p>Describe the business in plain language. The tool creates a portable specification and starter prompt. It does not deploy an app or call an AI API. It does not submit your idea.</p>
+    <div>
+      <p class="lede">Describe your idea. Get a personalised prompt for your coding agent. Start with pH7Builder and own what you create.</p>
+      <p class="scope-note">This starts the build process. A customised production business takes further engineering, testing and operating work.</p>
+    </div>
   </header>
 
-  <main class="builder-shell shell" data-blueprint-builder>
-    <section class="builder-form-panel" aria-labelledby="blueprint-input-title">
+  <div class="builder-shell shell" data-build-prompt>
+    <section class="builder-form-panel" aria-labelledby="build-input-title">
       <div class="panel-heading">
         <span class="step-box">01</span>
-        <div><h2 id="blueprint-input-title">Describe the product</h2><p>Your entries stay in this browser page.</p></div>
-      </div>
-      <form id="blueprint-form">
-        <label>Product name<input name="productName" type="text" maxlength="100" value={defaultBlueprintInput.productName} autocomplete="off" /></label>
-        <label>Your idea<textarea name="idea" rows="4" maxlength="600">{defaultBlueprintInput.idea}</textarea></label>
-        <div class="form-pair">
-          <label>Who is it for?<input name="audience" type="text" maxlength="180" value={defaultBlueprintInput.audience} /></label>
-          <label>Where will it start?<input name="launchMarket" type="text" maxlength="180" value={defaultBlueprintInput.launchMarket} /></label>
+        <div>
+          <h2 id="build-input-title">Describe your idea</h2>
+          <p>Your idea stays in this browser page.</p>
         </div>
-        <label>Business model
-          <select name="businessModel">
-            <option>Freemium membership</option>
-            <option>Paid membership</option>
-            <option>Private matchmaking service</option>
-            <option>Free community</option>
-            <option>To be decided</option>
-          </select>
-        </label>
-        <label>What makes it different?<textarea name="differentiation" rows="3" maxlength="500">{defaultBlueprintInput.differentiation}</textarea></label>
+      </div>
+
+      <form id="build-form">
+        <label for="application-idea">What dating app do you want to build?</label>
+        <textarea id="application-idea" name="idea" rows="9" maxlength={maximumIdeaLength} required>{nomadBuildIdea}</textarea>
+        <p class="field-help"><span data-character-count>{nomadBuildIdea.length}</span> / {maximumIdeaLength} characters</p>
+
+        <div class="example-ideas" aria-labelledby="example-ideas-title">
+          <p id="example-ideas-title">Try an example</p>
+          <div>
+            {exampleBuildIdeas.map((idea, index) => (
+              <button type="button" data-example={idea}>{index === 0 ? "Travel and expat dating" : index === 1 ? "Fitness dating" : index === 2 ? "Serious matchmaking" : "Digital nomads"}</button>
+            ))}
+          </div>
+        </div>
+
         <fieldset>
-          <legend>Foundation areas to evaluate</legend>
-          <div class="feature-options">
-            {availableFeatures.map((feature) => (
-              <label><input type="checkbox" name="features" value={feature} checked={defaultBlueprintInput.features.includes(feature)} /><span>{feature}</span></label>
+          <legend>Choose your coding agent</legend>
+          <div class="agent-options">
+            {buildAgents.map((agent, index) => (
+              <label>
+                <input type="radio" name="agentId" value={agent.id} checked={index === 0} />
+                <span>{agent.label}</span>
+              </label>
             ))}
           </div>
         </fieldset>
-        <label>Safety requirement<textarea name="safetyRequirement" rows="2" maxlength="400">{defaultBlueprintInput.safetyRequirement}</textarea></label>
-        <label>Privacy requirement<textarea name="privacyRequirement" rows="2" maxlength="400">{defaultBlueprintInput.privacyRequirement}</textarea></label>
-        <label>One outcome that must work<textarea name="mustHave" rows="3" maxlength="500">{defaultBlueprintInput.mustHave}</textarea></label>
-        <button class="button button-dark" type="button" data-load-example>Load the Nomad Connections example<ArrowIcon /></button>
+
+        <button class="button button-dark" type="submit">Generate my build prompt<ArrowIcon /></button>
+        <p class="privacy-note">No account. No AI API. No idea stored or transmitted.</p>
       </form>
     </section>
 
-    <section class="builder-output-panel" aria-labelledby="blueprint-output-title">
+    <section class="builder-output-panel" aria-labelledby="build-output-title">
       <div class="panel-heading">
         <span class="step-box">02</span>
-        <div><h2 id="blueprint-output-title">Take the result</h2><p>Review it before giving it to an agent.</p></div>
+        <div>
+          <h2 id="build-output-title">Take the prompt</h2>
+          <p>Review it before giving it to your agent.</p>
+        </div>
       </div>
-      <div class="output-tabs" role="tablist" aria-label="Generated files">
-        <button id="yaml-tab" type="button" role="tab" aria-selected="true" aria-controls="yaml-panel">Blueprint YAML</button>
-        <button id="prompt-tab" type="button" role="tab" aria-selected="false" aria-controls="prompt-panel" tabindex="-1">Starter prompt</button>
+
+      <div class="output-tabs" role="tablist" aria-label="Generated build files">
+        <button id="prompt-tab" type="button" role="tab" aria-selected="true" aria-controls="prompt-panel">Execution prompt</button>
+        <button id="blueprint-tab" type="button" role="tab" aria-selected="false" aria-controls="blueprint-panel" tabindex="-1">Portable blueprint</button>
       </div>
-      <div id="yaml-panel" role="tabpanel" aria-labelledby="yaml-tab"><pre><code data-yaml-output></code></pre></div>
-      <div id="prompt-panel" role="tabpanel" aria-labelledby="prompt-tab" hidden><pre><code data-prompt-output></code></pre></div>
+      <div id="prompt-panel" role="tabpanel" aria-labelledby="prompt-tab"><pre tabindex="0"><code data-prompt-output></code></pre></div>
+      <div id="blueprint-panel" role="tabpanel" aria-labelledby="blueprint-tab" hidden><pre tabindex="0"><code data-blueprint-output></code></pre></div>
+
       <p class="output-status" aria-live="polite"></p>
       <div class="tool-actions">
-        <button class="button button-small" type="button" data-copy-output>Copy current file</button>
-        <button class="button button-secondary button-small" type="button" data-download-blueprint>Download blueprint</button>
-        <button class="button button-secondary button-small" type="button" data-download-prompt>Download prompt</button>
+        <button class="button button-small" type="button" data-copy-prompt>Copy execution prompt</button>
+        <button class="button button-secondary button-small" type="button" data-copy-blueprint>Copy blueprint</button>
+        <button class="button button-secondary button-small" type="button" data-download-files>Download both files</button>
       </div>
+
       <div class="output-note">
         <strong>What happens next?</strong>
-        <p>Save both files with the product repository. Give them to your coding agent together with the pH7Builder source, then ask for an implementation map before code.</p>
+        <ol>
+          <li>Open a new project folder in a capable coding agent with terminal and filesystem access.</li>
+          <li>Paste the execution prompt and let the agent inspect the environment.</li>
+          <li>Keep the downloaded blueprint with the application so another agent or developer can continue later.</li>
+        </ol>
       </div>
     </section>
-  </main>
-
-  <section class="section share-blueprint-section">
-    <div class="shell share-blueprint-grid">
-      <div class="share-blueprint-copy">
-        <p class="eyebrow">Built to travel</p>
-        <h2>Share the direction. Keep the private decisions private.</h2>
-        <p>Create a polished project card for a collaborator, community or social post. It includes the product name, audience and selected foundation areas.</p>
-        <p class="share-privacy-note"><strong>The card excludes your idea, launch market, business model, differentiation, safety, privacy and acceptance requirements.</strong></p>
-        <div class="tool-actions share-card-actions">
-          <button class="button button-small" type="button" data-share-card hidden>Share project card</button>
-          <button class="button button-secondary button-small" type="button" data-download-card>Download PNG</button>
-        </div>
-        <p class="output-status" data-share-card-status aria-live="polite"></p>
-      </div>
-      <figure class="share-card-preview">
-        <canvas
-          width="1200"
-          height="630"
-          data-share-card-canvas
-          role="img"
-          aria-label="Share card preview for My Dating Product, built for adults aged 18 and over"
-        ></canvas>
-        <figcaption>1200 × 630 PNG · generated only in this browser</figcaption>
-      </figure>
-    </div>
-  </section>
+  </div>
 
   <section class="section-tight narrow-shell build-explanation">
-    <p class="eyebrow">Portable by design</p>
-    <h2>The blueprint describes intent. It does not hide implementation decisions.</h2>
-    <p>The YAML records the audience, product promise, selected foundation areas, privacy choices and acceptance requirements. The agent still has to inspect pH7Builder and decide how each requirement should be implemented.</p>
-    <p>This separation matters. You can change agents, bring in a developer or upgrade the upstream foundation without losing the reason the product exists.</p>
+    <p class="eyebrow">What this gives you</p>
+    <h2>A serious starting brief, not a pretend generated application.</h2>
+    <p>The execution prompt tells a capable agent how to inspect, install, customise and verify the published pH7Builder release. The blueprint records your original intent separately from the implementation.</p>
+    <p>You still choose the tools, approve sensitive operations and decide when the application is ready for real members.</p>
+  </section>
+
+  <section class="section surface" aria-labelledby="build-help-title">
+    <div class="shell">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Choose your path</p>
+          <h2 id="build-help-title">Build independently or bring in experienced help.</h2>
+        </div>
+        <p>The free path remains complete. Professional work is optional and scoped around a real launch or product requirement.</p>
+      </div>
+      <ServiceOffers />
+      <p class="service-disclaimer">Professional prices are starting points in USD. Final scope, availability and responsibilities are agreed before work begins. Your own coding-agent, hosting and third-party service costs are separate.</p>
+    </div>
   </section>
 </BaseLayout>
 
 <script>
   import {
-    generateBlueprintYaml,
-    generateShareCardSummary,
-    generateStarterPrompt,
-    nomadBlueprintInput,
-    slugifyProductName,
-    type BlueprintFeature,
-    type BlueprintInput,
-  } from "../lib/blueprint";
+    buildAgents,
+    generateBuildBlueprint,
+    generateBuildPrompt,
+    type BuildAgentId,
+    type BuildPromptInput,
+  } from "../lib/build-prompt";
 
-  const root = document.querySelector<HTMLElement>("[data-blueprint-builder]");
-  const form = document.querySelector<HTMLFormElement>("#blueprint-form");
-  const yamlOutput = document.querySelector<HTMLElement>("[data-yaml-output]");
-  const promptOutput = document.querySelector<HTMLElement>("[data-prompt-output]");
+  const root = document.querySelector<HTMLElement>("[data-build-prompt]");
+  const form = root?.querySelector<HTMLFormElement>("#build-form");
+  const ideaField = root?.querySelector<HTMLTextAreaElement>("#application-idea");
+  const promptOutput = root?.querySelector<HTMLElement>("[data-prompt-output]");
+  const blueprintOutput = root?.querySelector<HTMLElement>("[data-blueprint-output]");
   const status = root?.querySelector<HTMLElement>(".output-status");
+  const characterCount = root?.querySelector<HTMLElement>("[data-character-count]");
   const tabs = Array.from(root?.querySelectorAll<HTMLButtonElement>("[role='tab']") ?? []);
-  const shareCanvas = document.querySelector<HTMLCanvasElement>("[data-share-card-canvas]");
-  const shareStatus = document.querySelector<HTMLElement>("[data-share-card-status]");
-  const shareButton = document.querySelector<HTMLButtonElement>("[data-share-card]");
-  const downloadCardButton = document.querySelector<HTMLButtonElement>("[data-download-card]");
 
-  const setField = (name: string, value: string) => {
-    const field = form?.elements.namedItem(name);
-    if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement) field.value = value;
+  const setStatus = (message: string) => {
+    if (status) status.textContent = message;
   };
 
-  const readForm = (): BlueprintInput => {
+  const readInput = (): BuildPromptInput => {
     const data = new FormData(form ?? undefined);
-    return {
-      productName: String(data.get("productName") ?? ""),
-      idea: String(data.get("idea") ?? ""),
-      audience: String(data.get("audience") ?? ""),
-      launchMarket: String(data.get("launchMarket") ?? ""),
-      businessModel: String(data.get("businessModel") ?? ""),
-      differentiation: String(data.get("differentiation") ?? ""),
-      safetyRequirement: String(data.get("safetyRequirement") ?? ""),
-      privacyRequirement: String(data.get("privacyRequirement") ?? ""),
-      mustHave: String(data.get("mustHave") ?? ""),
-      features: data.getAll("features").map(String) as BlueprintFeature[],
-    };
+    const requestedAgent = String(data.get("agentId") ?? "other");
+    const agentId = buildAgents.some((agent) => agent.id === requestedAgent) ? requestedAgent as BuildAgentId : "other";
+    return { idea: String(data.get("idea") ?? ""), agentId };
   };
 
-  const fitCanvasText = (context: CanvasRenderingContext2D, value: string, maxWidth: number): string => {
-    if (context.measureText(value).width <= maxWidth) return value;
-    let result = value;
-    while (result.length > 1 && context.measureText(`${result}…`).width > maxWidth) result = result.slice(0, -1);
-    return `${result.trimEnd()}…`;
-  };
-
-  const wrapCanvasText = (
-    context: CanvasRenderingContext2D,
-    value: string,
-    maxWidth: number,
-    maxLines: number,
-  ): string[] => {
-    const lines: string[] = [];
-    let line = "";
-    for (const word of value.split(/\s+/).filter(Boolean)) {
-      const candidate = line ? `${line} ${word}` : word;
-      if (context.measureText(candidate).width <= maxWidth) {
-        line = candidate;
-      } else {
-        if (line) lines.push(line);
-        line = context.measureText(word).width <= maxWidth ? word : fitCanvasText(context, word, maxWidth);
-      }
-    }
-    if (line) lines.push(line);
-    if (lines.length <= maxLines) return lines;
-    const visible = lines.slice(0, maxLines);
-    visible[maxLines - 1] = fitCanvasText(context, lines.slice(maxLines - 1).join(" "), maxWidth);
-    return visible;
-  };
-
-  const drawShareCard = (input: BlueprintInput) => {
-    const context = shareCanvas?.getContext("2d");
-    if (!shareCanvas || !context) return;
-    const summary = generateShareCardSummary(input);
-
-    context.fillStyle = "#111628";
-    context.fillRect(0, 0, shareCanvas.width, shareCanvas.height);
-    context.strokeStyle = "rgba(255, 255, 255, 0.08)";
-    context.lineWidth = 1;
-    for (let x = 0; x <= shareCanvas.width; x += 48) {
-      context.beginPath();
-      context.moveTo(x, 0);
-      context.lineTo(x, shareCanvas.height);
-      context.stroke();
-    }
-    for (let y = 0; y <= shareCanvas.height; y += 48) {
-      context.beginPath();
-      context.moveTo(0, y);
-      context.lineTo(shareCanvas.width, y);
-      context.stroke();
-    }
-
-    context.fillStyle = "#c8ef5a";
-    context.fillRect(0, 0, 18, shareCanvas.height);
-    context.fillRect(1090, 0, 110, 18);
-    context.fillStyle = "#ff6047";
-    context.beginPath();
-    context.arc(1100, 88, 12, 0, Math.PI * 2);
-    context.fill();
-
-    context.fillStyle = "#c8ef5a";
-    context.strokeStyle = "#fffdf7";
-    context.lineWidth = 3;
-    context.beginPath();
-    context.roundRect(72, 62, 72, 54, 9);
-    context.fill();
-    context.stroke();
-    context.fillStyle = "#111628";
-    context.font = "800 24px ui-monospace, SFMono-Regular, Consolas, monospace";
-    context.fillText("pH7", 86, 97);
-
-    context.fillStyle = "#fffdf7";
-    context.font = "800 29px ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
-    context.fillText("pH7Builder", 166, 99);
-    context.fillStyle = "#aeb4c8";
-    context.font = "700 19px ui-monospace, SFMono-Regular, Consolas, monospace";
-    context.fillText("PORTABLE PRODUCT BLUEPRINT", 798, 96);
-
-    context.fillStyle = "#fffdf7";
-    context.font = "800 72px ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
-    const productLines = wrapCanvasText(context, summary.productName, 920, 2);
-    productLines.forEach((line, index) => context.fillText(line, 72, 218 + (index * 78)));
-    const audienceY = productLines.length === 1 ? 304 : 374;
-    context.fillStyle = "#c8ef5a";
-    context.font = "700 29px ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
-    const audienceLines = wrapCanvasText(context, `Built for ${summary.audience}`, 920, 2);
-    audienceLines.forEach((line, index) => context.fillText(line, 74, audienceY + (index * 38)));
-
-    let chipX = 74;
-    let chipY = audienceY + (audienceLines.length * 38) + 36;
-    context.font = "700 19px ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif";
-    summary.features.forEach((feature) => {
-      const width = Math.ceil(context.measureText(feature).width) + 40;
-      if (chipX + width > 1126) {
-        chipX = 74;
-        chipY += 58;
-      }
-      context.fillStyle = "rgba(255, 253, 247, 0.06)";
-      context.strokeStyle = "#697089";
-      context.lineWidth = 2;
-      context.beginPath();
-      context.roundRect(chipX, chipY, width, 42, 7);
-      context.fill();
-      context.stroke();
-      context.fillStyle = "#fffdf7";
-      context.fillText(feature, chipX + 20, chipY + 28);
-      chipX += width + 12;
-    });
-
-    context.fillStyle = "#aeb4c8";
-    context.font = "700 17px ui-monospace, SFMono-Regular, Consolas, monospace";
-    context.fillText("CUSTOMER-OWNED  ·  AGENT-READY", 72, 577);
-    context.fillStyle = "#c8ef5a";
-    context.textAlign = "right";
-    context.fillText("ph7builder.com/build", 1128, 577);
-    context.textAlign = "left";
-
-    shareCanvas.setAttribute(
-      "aria-label",
-      `Share card preview for ${summary.productName}, built for ${summary.audience}`,
-    );
-  };
-
-  const updateOutputs = () => {
-    const input = readForm();
-    if (yamlOutput) yamlOutput.textContent = generateBlueprintYaml(input);
-    if (promptOutput) promptOutput.textContent = generateStarterPrompt(input);
-    drawShareCard(input);
+  const renderFiles = () => {
+    const input = readInput();
+    if (promptOutput) promptOutput.textContent = generateBuildPrompt(input);
+    if (blueprintOutput) blueprintOutput.textContent = generateBuildBlueprint(input);
   };
 
   const selectTab = (selected: HTMLButtonElement) => {
@@ -296,26 +166,61 @@ import { availableFeatures, defaultBlueprintInput } from "../lib/blueprint";
   tabs.forEach((tab, index) => {
     tab.addEventListener("click", () => selectTab(tab));
     tab.addEventListener("keydown", (event) => {
-      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      let nextIndex: number | undefined;
+      if (event.key === "ArrowRight") nextIndex = (index + 1) % tabs.length;
+      if (event.key === "ArrowLeft") nextIndex = (index - 1 + tabs.length) % tabs.length;
+      if (event.key === "Home") nextIndex = 0;
+      if (event.key === "End") nextIndex = tabs.length - 1;
+      if (nextIndex === undefined) return;
       event.preventDefault();
-      const direction = event.key === "ArrowRight" ? 1 : -1;
-      const next = tabs[(index + direction + tabs.length) % tabs.length];
-      selectTab(next);
-      next.focus();
+      selectTab(tabs[nextIndex]);
+      tabs[nextIndex].focus();
     });
   });
 
-  form?.addEventListener("input", updateOutputs);
-  root?.querySelector<HTMLButtonElement>("[data-load-example]")?.addEventListener("click", () => {
-    for (const [name, value] of Object.entries(nomadBlueprintInput)) {
-      if (name === "features") continue;
-      setField(name, String(value));
+  form?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (!ideaField || !ideaField.value.trim()) {
+      setStatus("Describe your application idea before generating the prompt.");
+      ideaField?.focus();
+      return;
     }
-    form?.querySelectorAll<HTMLInputElement>("input[name='features']").forEach((checkbox) => {
-      checkbox.checked = nomadBlueprintInput.features.includes(checkbox.value as BlueprintFeature);
+    renderFiles();
+    selectTab(tabs[0]);
+    setStatus("Your execution prompt and portable blueprint are ready.");
+    root?.querySelector<HTMLElement>("#build-output-title")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  form?.addEventListener("input", renderFiles);
+
+  root?.querySelectorAll<HTMLButtonElement>("[data-example]").forEach((button) => {
+    button.addEventListener("click", () => {
+      if (ideaField) {
+        ideaField.value = button.dataset.example ?? "";
+        ideaField.dispatchEvent(new Event("input", { bubbles: true }));
+        ideaField.focus();
+      }
     });
-    updateOutputs();
-    if (status) status.textContent = "Nomad Connections example loaded.";
+  });
+
+  ideaField?.addEventListener("input", () => {
+    if (characterCount && ideaField) characterCount.textContent = String(ideaField.value.length);
+  });
+
+  const copyText = async (content: string, successMessage: string) => {
+    try {
+      await navigator.clipboard.writeText(content);
+      setStatus(successMessage);
+    } catch {
+      setStatus("Copy is unavailable in this browser. Select the text in the preview and copy it manually.");
+    }
+  };
+
+  root?.querySelector<HTMLButtonElement>("[data-copy-prompt]")?.addEventListener("click", () => {
+    copyText(promptOutput?.textContent ?? "", "Execution prompt copied.");
+  });
+  root?.querySelector<HTMLButtonElement>("[data-copy-blueprint]")?.addEventListener("click", () => {
+    copyText(blueprintOutput?.textContent ?? "", "Portable blueprint copied.");
   });
 
   const download = (content: string, filename: string, type: string) => {
@@ -327,136 +232,57 @@ import { availableFeatures, defaultBlueprintInput } from "../lib/blueprint";
     URL.revokeObjectURL(url);
   };
 
-  root?.querySelector<HTMLButtonElement>("[data-copy-output]")?.addEventListener("click", async () => {
-    const currentPanel = root.querySelector<HTMLElement>("[role='tabpanel']:not([hidden]) code");
-    try {
-      await navigator.clipboard.writeText(currentPanel?.textContent ?? "");
-      if (status) status.textContent = "Current file copied.";
-    } catch {
-      if (status) status.textContent = "Copy was unavailable. Select the text above to copy it manually.";
-    }
+  root?.querySelector<HTMLButtonElement>("[data-download-files]")?.addEventListener("click", () => {
+    download(promptOutput?.textContent ?? "", "ph7builder-execution-prompt.md", "text/markdown;charset=utf-8");
+    download(blueprintOutput?.textContent ?? "", "ph7builder.blueprint.yaml", "text/yaml;charset=utf-8");
+    setStatus("Execution prompt and blueprint downloaded.");
   });
 
-  root?.querySelector<HTMLButtonElement>("[data-download-blueprint]")?.addEventListener("click", () => {
-    const input = readForm();
-    download(generateBlueprintYaml(input), `${slugifyProductName(input.productName)}.blueprint.yaml`, "text/yaml;charset=utf-8");
-    if (status) status.textContent = "Blueprint downloaded.";
-  });
-  root?.querySelector<HTMLButtonElement>("[data-download-prompt]")?.addEventListener("click", () => {
-    const input = readForm();
-    download(generateStarterPrompt(input), `${slugifyProductName(input.productName)}.prompt.md`, "text/markdown;charset=utf-8");
-    if (status) status.textContent = "Starter prompt downloaded.";
-  });
-
-  const shareCardBlob = (): Promise<Blob | null> => new Promise((resolve) => {
-    if (!shareCanvas) {
-      resolve(null);
-      return;
-    }
-    shareCanvas.toBlob(resolve, "image/png");
-  });
-
-  const downloadShareCard = async () => {
-    const input = readForm();
-    const blob = await shareCardBlob();
-    if (!blob) {
-      if (shareStatus) shareStatus.textContent = "The card could not be generated in this browser.";
-      return;
-    }
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${slugifyProductName(input.productName)}.blueprint-card.png`;
-    link.click();
-    URL.revokeObjectURL(url);
-    if (shareStatus) shareStatus.textContent = "Share card downloaded.";
-  };
-
-  downloadCardButton?.addEventListener("click", downloadShareCard);
-  if (shareButton && typeof navigator.share === "function" && typeof navigator.canShare === "function") {
-    const probe = new File(["pH7Builder"], "ph7builder.txt", { type: "text/plain" });
-    if (navigator.canShare({ files: [probe] })) shareButton.hidden = false;
-  }
-  shareButton?.addEventListener("click", async () => {
-    const input = readForm();
-    const blob = await shareCardBlob();
-    if (!blob) {
-      if (shareStatus) shareStatus.textContent = "The card could not be generated in this browser.";
-      return;
-    }
-    const file = new File([blob], `${slugifyProductName(input.productName)}.blueprint-card.png`, { type: "image/png" });
-    if (!navigator.canShare?.({ files: [file] })) {
-      await downloadShareCard();
-      return;
-    }
-    try {
-      await navigator.share({
-        files: [file],
-        title: `${generateShareCardSummary(input).productName} — pH7Builder blueprint`,
-        text: "A product direction created with the local-only pH7Builder blueprint tool.",
-      });
-      if (shareStatus) shareStatus.textContent = "Share card ready.";
-    } catch (error) {
-      if (error instanceof DOMException && error.name === "AbortError") return;
-      if (shareStatus) shareStatus.textContent = "Sharing was unavailable. Download the PNG instead.";
-    }
-  });
-
-  updateOutputs();
-  if (new URLSearchParams(window.location.search).get("example") === "nomad") {
-    root?.querySelector<HTMLButtonElement>("[data-load-example]")?.click();
-  }
+  renderFiles();
 </script>
 
 <style>
-  .build-header { display: grid; grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.55fr); align-items: end; gap: 3rem; padding-block: clamp(4rem, 8vw, 7rem); }
+  .build-header { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(20rem, 0.6fr); align-items: end; gap: clamp(2rem, 6vw, 6rem); padding-block: clamp(4rem, 8vw, 7rem); }
   .build-header h1 { max-width: 12ch; margin-bottom: 0; }
-  .build-header > p { margin-bottom: 0; color: var(--ink-soft); font-size: 1.1rem; }
-  .builder-shell { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); border: 2px solid var(--ink); background: var(--paper-strong); box-shadow: var(--shadow); }
+  .build-header .lede { margin-bottom: 1rem; }
+  .scope-note, .field-help, .privacy-note, .service-disclaimer { color: var(--ink-soft); font-size: 0.86rem; }
+  .builder-shell { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); border: 2px solid var(--ink); border-radius: var(--radius); background: var(--paper-strong); box-shadow: var(--shadow); overflow: hidden; }
   .builder-form-panel, .builder-output-panel { min-width: 0; padding: clamp(1.25rem, 4vw, 2.5rem); }
   .builder-form-panel { border-right: 2px solid var(--ink); background: var(--yellow); }
-  .builder-output-panel { background: var(--paper-strong); }
   .panel-heading { display: grid; grid-template-columns: 3.5rem 1fr; gap: 1rem; align-items: start; padding-bottom: 2rem; border-bottom: 2px solid var(--ink); }
   .panel-heading h2 { margin: 0; font-family: var(--sans); font-size: clamp(1.5rem, 3vw, 2.2rem); letter-spacing: -0.035em; }
   .panel-heading p { margin: 0.25rem 0 0; color: var(--ink-soft); }
   .step-box { display: grid; width: 3.5rem; height: 3.5rem; place-items: center; border: 2px solid var(--ink); border-radius: 0.4rem; background: var(--lime); font-family: var(--mono); font-weight: 800; }
   form { padding-top: 1.75rem; }
-  form > label, fieldset { display: grid; gap: 0.45rem; margin: 0 0 1.4rem; font-weight: 800; }
-  input[type="text"], textarea, select { width: 100%; padding: 0.85rem 0.9rem; border: 2px solid var(--ink); border-radius: 0.35rem; background: var(--paper-strong); font-weight: 500; resize: vertical; }
-  .form-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
-  .form-pair label { display: grid; align-content: start; gap: 0.45rem; font-weight: 800; }
-  fieldset { padding: 0; border: 0; }
-  legend { margin-bottom: 0.65rem; }
-  .feature-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; }
-  .feature-options label { position: relative; }
-  .feature-options input { position: absolute; opacity: 0; }
-  .feature-options span { display: block; padding: 0.7rem; border: 2px solid var(--ink); border-radius: 0.35rem; background: var(--paper-strong); font-size: 0.88rem; text-align: center; }
-  .feature-options input:checked + span { background: var(--lime); box-shadow: inset 0 0 0 2px var(--paper-strong); }
-  .feature-options input:focus-visible + span { outline: 3px solid var(--blue); outline-offset: 2px; }
+  form > label, fieldset { display: grid; gap: 0.45rem; margin: 0 0 1rem; font-weight: 800; }
+  textarea { width: 100%; min-height: 14rem; padding: 1rem; border: 2px solid var(--ink); border-radius: 0.5rem; background: var(--paper-strong); font-weight: 500; resize: vertical; }
+  .field-help { margin: -0.6rem 0 1.5rem; text-align: right; }
+  .example-ideas { padding: 1rem 0 1.5rem; border-top: 1px solid color-mix(in srgb, var(--ink) 35%, transparent); }
+  .example-ideas > p { margin-bottom: 0.6rem; font-weight: 800; }
+  .example-ideas > div { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+  .example-ideas button { padding: 0.5rem 0.65rem; border: 1px solid var(--ink); border-radius: 999px; background: var(--paper-strong); font-size: 0.78rem; font-weight: 700; }
+  fieldset { padding: 1.25rem 0 0; border: 0; border-top: 1px solid color-mix(in srgb, var(--ink) 35%, transparent); }
+  legend { margin-bottom: 0.75rem; }
+  .agent-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; }
+  .agent-options label { position: relative; }
+  .agent-options input { position: absolute; opacity: 0; }
+  .agent-options span { display: grid; min-height: 3.4rem; place-items: center; padding: 0.7rem; border: 2px solid var(--ink); border-radius: 0.4rem; background: var(--paper-strong); font-size: 0.86rem; text-align: center; }
+  .agent-options input:checked + span { background: var(--lime); box-shadow: inset 0 0 0 2px var(--paper-strong); }
+  .agent-options input:focus-visible + span { outline: 3px solid var(--blue); outline-offset: 2px; }
+  form > .button { margin-top: 0.75rem; }
+  .privacy-note { margin: 0.8rem 0 0; }
   .output-tabs { display: flex; gap: 0.25rem; padding-top: 1.75rem; border-bottom: 1px solid var(--line); }
   .output-tabs button { padding: 0.65rem 0.85rem; border: 0; border-bottom: 3px solid transparent; background: transparent; font-weight: 800; }
   .output-tabs button[aria-selected="true"] { border-bottom-color: var(--coral); }
-  [role="tabpanel"] pre { min-height: 36rem; max-height: 56rem; overflow: auto; padding: 1.25rem; margin: 1rem 0; border-radius: 0.5rem; background: var(--ink); color: #f3f5fb; white-space: pre-wrap; overflow-wrap: anywhere; }
+  [role="tabpanel"] pre { min-height: 38rem; max-height: 58rem; overflow: auto; padding: 1.25rem; margin: 1rem 0; border-radius: 0.5rem; background: var(--ink); color: #f3f5fb; white-space: pre-wrap; overflow-wrap: anywhere; }
   [role="tabpanel"] code { font-family: var(--mono); font-size: 0.78rem; line-height: 1.65; }
   .output-status { min-height: 1.5rem; margin: 0 0 0.5rem; color: var(--ink-soft); font-size: 0.85rem; }
   .output-note { padding: 1.2rem; margin-top: 2rem; border: 1px solid var(--ink); border-left: 0.45rem solid var(--blue); background: var(--blue-soft); }
-  .output-note p { margin: 0.3rem 0 0; }
-  .share-blueprint-section { border-block: 1px solid var(--line); background: var(--ink); color: var(--paper-strong); }
-  .share-blueprint-grid { display: grid; grid-template-columns: minmax(18rem, 0.65fr) minmax(0, 1.35fr); align-items: center; gap: clamp(2rem, 6vw, 5rem); }
-  .share-blueprint-copy h2 { max-width: 12ch; }
-  .share-blueprint-copy > p:not(.eyebrow) { max-width: 38rem; color: #c4c8d5; font-size: 1.06rem; }
-  .share-privacy-note { padding: 1rem 1.1rem; border-left: 0.35rem solid var(--lime); background: rgba(255, 255, 255, 0.06); }
-  .share-card-actions .button { border-color: var(--paper-strong); }
-  .share-card-actions .button-secondary { background: transparent; color: var(--paper-strong); }
-  .share-card-actions .button-secondary:hover { background: var(--paper-strong); color: var(--ink); }
-  [data-share-card-status] { color: #c4c8d5; }
-  .share-card-preview { margin: 0; }
-  .share-card-preview canvas { width: 100%; height: auto; border: 2px solid var(--paper-strong); border-radius: 0.75rem; box-shadow: 12px 12px 0 var(--lime); transition: transform 180ms ease, box-shadow 180ms ease; }
-  .share-card-preview:hover canvas { box-shadow: 16px 16px 0 var(--coral); transform: translate(-4px, -4px) rotate(-0.35deg); }
-  .share-card-preview figcaption { margin-top: 1.25rem; color: #aeb4c8; font-family: var(--mono); font-size: 0.75rem; text-align: right; text-transform: uppercase; }
+  .output-note ol { padding-left: 1.25rem; margin-bottom: 0; }
+  .output-note li + li { margin-top: 0.4rem; }
   .build-explanation h2 { max-width: 14ch; }
   .build-explanation p:not(.eyebrow) { color: var(--ink-soft); font-size: 1.1rem; }
-  @media (max-width: 900px) { .build-header, .builder-shell, .share-blueprint-grid { grid-template-columns: 1fr; } .builder-form-panel { border-right: 0; border-bottom: 2px solid var(--ink); } }
-  @media (max-width: 560px) { .form-pair, .feature-options { grid-template-columns: 1fr; } .builder-form-panel, .builder-output-panel { padding: 1rem; } }
-  @media (prefers-reduced-motion: reduce) { .share-card-preview canvas { transition: none; } .share-card-preview:hover canvas { transform: none; } }
+  .service-disclaimer { max-width: 54rem; margin: 2rem 0 0; }
+  @media (max-width: 900px) { .build-header, .builder-shell { grid-template-columns: 1fr; } .builder-form-panel { border-right: 0; border-bottom: 2px solid var(--ink); } }
+  @media (max-width: 560px) { .agent-options { grid-template-columns: 1fr; } .builder-form-panel, .builder-output-panel { padding: 1rem; } .tool-actions { display: grid; } }
 </style>
