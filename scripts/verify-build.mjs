@@ -256,6 +256,7 @@ if (await exists(path.join(dist, "index.html"))) {
 if (await exists(path.join(dist, "build/index.html"))) {
   const buildPage = await readFile(path.join(dist, "build/index.html"), "utf8");
   if (!buildPage.includes("does not deploy an app") || !buildPage.includes("does not submit your idea")) failures.add("Blueprint page is missing its local-only scope disclosure");
+  if (!buildPage.includes("data-share-card-canvas") || !buildPage.includes("The card excludes your idea")) failures.add("Blueprint page is missing the privacy-conscious share card");
 }
 
 if (failures.size > 0) {

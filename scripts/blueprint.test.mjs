@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   generateBlueprintYaml,
+  generateShareCardSummary,
   generateStarterPrompt,
   nomadBlueprintInput,
   slugifyProductName,
@@ -41,4 +42,23 @@ test("the starter prompt requires repository inspection before code generation",
 test("product filenames are portable and have a safe fallback", () => {
   assert.equal(slugifyProductName("Nomad Connections ✈️"), "nomad-connections");
   assert.equal(slugifyProductName("   "), "ph7builder-product");
+});
+
+test("the share card summary excludes private blueprint decisions", () => {
+  const summary = generateShareCardSummary({
+    ...nomadBlueprintInput,
+    idea: "PRIVATE product idea",
+    launchMarket: "PRIVATE launch market",
+    differentiation: "PRIVATE differentiator",
+    safetyRequirement: "PRIVATE safety requirement",
+    privacyRequirement: "PRIVATE privacy requirement",
+    mustHave: "PRIVATE acceptance requirement",
+  });
+
+  assert.deepEqual(summary, {
+    productName: "Nomad Connections",
+    audience: "Adult travellers and expats",
+    features: ["Profiles", "Discovery", "Matchmaking", "Messaging", "Memberships", "Moderation"],
+  });
+  assert.doesNotMatch(JSON.stringify(summary), /PRIVATE/);
 });

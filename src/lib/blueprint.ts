@@ -24,6 +24,12 @@ export type BlueprintInput = {
   features: BlueprintFeature[];
 };
 
+export type BlueprintShareCardSummary = {
+  productName: string;
+  audience: string;
+  features: BlueprintFeature[];
+};
+
 export const defaultBlueprintInput: BlueprintInput = {
   productName: "My Dating Product",
   idea: "A focused dating experience for a clearly defined community.",
@@ -82,6 +88,15 @@ const normalizedInput = (input: BlueprintInput): BlueprintInput => {
     privacyRequirement: clean(input.privacyRequirement) || defaultBlueprintInput.privacyRequirement,
     mustHave: clean(input.mustHave) || defaultBlueprintInput.mustHave,
     features: availableFeatures.filter((feature) => selectedFeatures.has(feature)),
+  };
+};
+
+export const generateShareCardSummary = (input: BlueprintInput): BlueprintShareCardSummary => {
+  const data = normalizedInput(input);
+  return {
+    productName: data.productName,
+    audience: data.audience,
+    features: data.features.length > 0 ? data.features : ["Profiles"],
   };
 };
 
