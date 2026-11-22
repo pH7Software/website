@@ -1,5 +1,61 @@
 ---
-import LegacyRedirect from "../../components/LegacyRedirect.astro";
+import ArrowIcon from "../../components/ArrowIcon.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { site } from "../../data/site";
 ---
 
-<LegacyRedirect destination="/get-started/" />
+<BaseLayout title="Custom pH7Builder development" description="Work directly with pH7Builder creator Pierre-Henry Soria to plan, build or modernise a dating, matchmaking or community product." path="/services/custom-development/">
+  <header class="page-hero shell">
+    <p class="eyebrow">Custom pH7Builder development</p>
+    <h1>Build the part competitors cannot copy from a feature list.</h1>
+    <p class="lede">Your audience, matching model, trust rules and operating method are the product. I can help turn those decisions into a maintainable application on the pH7Builder foundation.</p>
+    <a class="button" href={`mailto:${site.contactEmail}?subject=pH7Builder%20custom%20development`}>Email Pierre-Henry<ArrowIcon /></a>
+  </header>
+
+  <section class="section surface">
+    <div class="shell engagement-grid">
+      <div>
+        <p class="eyebrow">How I work</p>
+        <h2>Start with the riskiest decision.</h2>
+        <p class="lede">A useful engagement makes one important outcome measurably clearer or closer. Scope grows only when the evidence supports it.</p>
+      </div>
+      <ol>
+        <li><span>01</span><div><h3>Frame</h3><p>Define the customer, outcome, constraints, current code and what would make the work complete.</p></div></li>
+        <li><span>02</span><div><h3>De-risk</h3><p>Inspect the architecture, data, dependencies and critical journeys before committing to a broad build.</p></div></li>
+        <li><span>03</span><div><h3>Deliver</h3><p>Work in small, reviewable changes with behavioural evidence and an explicit boundary around custom code.</p></div></li>
+        <li><span>04</span><div><h3>Hand over</h3><p>Leave the repository, tests and product decisions clear enough for the next developer or agent to continue.</p></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section shell">
+    <div class="section-heading">
+      <div><p class="eyebrow">Before you write</p><h2>A short, useful first message.</h2></div>
+      <p>You do not need a polished specification. Concrete context is more valuable than a long pitch.</p>
+    </div>
+    <div class="brief-card">
+      <p><strong>Include:</strong></p>
+      <ul>
+        <li>Who the product is for and what connection it should make easier.</li>
+        <li>Whether there is an existing installation, repository or member base.</li>
+        <li>The outcome you need next, not every possible future feature.</li>
+        <li>Any fixed deadline, compliance concern or third-party dependency.</li>
+      </ul>
+      <a class="button button-dark" href={`mailto:${site.contactEmail}?subject=pH7Builder%20project`}>Start the conversation<ArrowIcon /></a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .engagement-grid { display: grid; grid-template-columns: minmax(0, 0.7fr) 1fr; gap: clamp(3rem, 8vw, 8rem); }
+  .engagement-grid h2 { max-width: 10ch; }
+  .engagement-grid ol { padding: 0; margin: 0; list-style: none; border-top: 2px solid var(--ink); }
+  .engagement-grid li { display: grid; grid-template-columns: 3rem 1fr; gap: 1rem; padding: 1.5rem 0; border-bottom: 1px solid var(--line); }
+  .engagement-grid li > span { font-family: var(--mono); font-weight: 800; }
+  .engagement-grid h3 { margin-bottom: 0.35rem; }
+  .engagement-grid p { margin-bottom: 0; color: var(--ink-soft); }
+  .brief-card { max-width: 52rem; padding: clamp(1.5rem, 5vw, 3.5rem); border: 2px solid var(--ink); border-radius: var(--radius); background: var(--yellow); box-shadow: var(--shadow); }
+  .brief-card li + li { margin-top: 0.7rem; }
+  .brief-card .button { margin-top: 1.5rem; }
+  @media (max-width: 760px) { .engagement-grid { grid-template-columns: 1fr; } }
+</style>
