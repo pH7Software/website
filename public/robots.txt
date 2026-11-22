@@ -1,3 +1,18 @@
+# Search and answer-engine crawlers are intentionally allowed to access the public site.
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+# Other crawlers retain the existing public-access policy. No separate
+# model-training crawler preference is introduced here.
 User-agent: *
 Allow: /
 

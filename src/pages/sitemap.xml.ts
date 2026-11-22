@@ -4,21 +4,21 @@ import { legacyRedirects } from "../data/redirects";
 import { site } from "../data/site";
 
 const staticRoutes = [
-  "/",
-  "/about/",
-  "/ai-builders/",
-  "/articles/",
-  "/blueprints/nomad-connections/",
-  "/build/",
-  "/changelog/",
-  "/get-started/",
-  "/privacy/",
-  "/services/",
-  "/services/ai-prototype-to-production/",
-  "/services/custom-development/",
-  "/services/migration/",
-  "/tools/dating-site-launch-checklist/",
-  "/vibe-coders/",
+  { path: "/", updatedAt: new Date("2026-11-23T00:00:00Z") },
+  { path: "/about/", updatedAt: new Date("2026-11-23T00:00:00Z") },
+  { path: "/ai-builders/", updatedAt: new Date("2026-11-23T00:00:00Z") },
+  { path: "/articles/", updatedAt: new Date("2026-11-21T00:00:00Z") },
+  { path: "/blueprints/nomad-connections/", updatedAt: new Date("2026-11-21T00:00:00Z") },
+  { path: "/build/", updatedAt: new Date("2026-11-23T00:00:00Z") },
+  { path: "/changelog/", updatedAt: new Date("2026-11-23T00:00:00Z") },
+  { path: "/get-started/", updatedAt: new Date("2026-11-23T00:00:00Z") },
+  { path: "/privacy/", updatedAt: new Date("2026-11-21T00:00:00Z") },
+  { path: "/services/", updatedAt: new Date("2026-11-23T00:00:00Z") },
+  { path: "/services/ai-prototype-to-production/", updatedAt: new Date("2026-11-23T00:00:00Z") },
+  { path: "/services/custom-development/", updatedAt: new Date("2026-11-23T00:00:00Z") },
+  { path: "/services/migration/", updatedAt: new Date("2026-11-23T00:00:00Z") },
+  { path: "/tools/dating-site-launch-checklist/", updatedAt: new Date("2026-11-21T00:00:00Z") },
+  { path: "/vibe-coders/", updatedAt: new Date("2026-11-21T00:00:00Z") },
 ];
 
 const escapeXml = (value: string): string => value
@@ -31,7 +31,7 @@ const escapeXml = (value: string): string => value
 export const GET: APIRoute = async () => {
   const articles = await getCollection("articles", ({ data }) => !data.draft && !(data.slug in legacyRedirects));
   const entries = [
-    ...staticRoutes.map((path) => ({ path, updatedAt: undefined as Date | undefined })),
+    ...staticRoutes,
     ...articles.map((article) => ({ path: `/${article.data.slug}/`, updatedAt: article.data.updatedAt ?? article.data.publishedAt })),
   ];
   const unique = [...new Map(entries.map((entry) => [entry.path, entry])).values()]
