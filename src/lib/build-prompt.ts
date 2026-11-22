@@ -14,6 +14,22 @@ export type BuildPromptInput = {
   agentId: BuildAgentId;
 };
 
+export type BuildShareCardInput = {
+  productName: string;
+  audience: string;
+};
+
+export type BuildShareCardSummary = BuildShareCardInput & {
+  badges: readonly string[];
+};
+
+export const defaultBuildShareCardInput: BuildShareCardInput = {
+  productName: "My pH7Builder Product",
+  audience: "A focused dating community",
+};
+
+const publicBuildBadges = ["Open source", "Self-hosted", "AI-ready"] as const;
+
 export const maximumIdeaLength = 4000;
 
 export const nomadBuildIdea = "I want to create a dating app for people who enjoy travelling and living abroad. Members should have a current city, upcoming travel destinations, interests and preferences for friendship or relationships. They should be able to discover compatible people and message one another.";
@@ -32,6 +48,30 @@ const normalizeIdea = (value: string): string => value
   .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "")
   .trim()
   .slice(0, maximumIdeaLength);
+
+const normalizePublicLabel = (value: string, maximumLength: number): string => value
+  .replace(/[\u0000-\u001F\u007F]/g, "")
+  .replace(/\s+/g, " ")
+  .trim()
+  .slice(0, maximumLength);
+
+export const generateBuildShareCardSummary = (input: BuildShareCardInput): BuildShareCardSummary => ({
+  productName: normalizePublicLabel(input.productName, 100) || defaultBuildShareCardInput.productName,
+  audience: normalizePublicLabel(input.audience, 180) || defaultBuildShareCardInput.audience,
+  badges: publicBuildBadges,
+});
+
+export const slugifyBuildProductName = (value: string): string => {
+  const slug = normalizePublicLabel(value, 100)
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 70);
+
+  return slug || "ph7builder-product";
+};
 
 const resolveAgent = (agentId: BuildAgentId) => buildAgents.find((agent) => agent.id === agentId) ?? buildAgents[3];
 

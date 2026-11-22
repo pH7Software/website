@@ -1,5 +1,6 @@
 ---
 import ArrowIcon from "../components/ArrowIcon.astro";
+import ShareCardBuilder from "../components/ShareCardBuilder.astro";
 import ServiceOffers from "../components/ServiceOffers.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { buildAgents, exampleBuildIdeas, maximumIdeaLength, nomadBuildIdea } from "../lib/build-prompt";
@@ -95,6 +96,8 @@ import { buildAgents, exampleBuildIdeas, maximumIdeaLength, nomadBuildIdea } fro
       </div>
     </section>
   </div>
+
+  <ShareCardBuilder />
 
   <section class="section-tight narrow-shell build-explanation">
     <p class="eyebrow">What this gives you</p>

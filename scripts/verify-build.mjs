@@ -262,6 +262,7 @@ if (await exists(path.join(dist, "build/index.html"))) {
   const buildPage = await readFile(path.join(dist, "build/index.html"), "utf8");
   if (!buildPage.includes("No account. No AI API. No idea stored or transmitted.")) failures.add("Build page is missing its local-only privacy disclosure");
   if (!buildPage.includes("A customised production business takes further engineering")) failures.add("Build page is missing the production-readiness boundary");
+  if (!buildPage.includes("data-share-card-canvas") || !buildPage.includes("Only the public product name and audience above can appear")) failures.add("Build page is missing the privacy-conscious share card");
 }
 
 if (await exists(path.join(dist, "services/index.html"))) {

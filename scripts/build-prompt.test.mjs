@@ -9,7 +9,13 @@ const compiled = ts.transpileModule(source, {
 }).outputText
   .replace('import { site } from "../data/site";', 'const site = { origin: "https://ph7builder.com", githubUrl: "https://github.com/pH7Software/pH7-Social-Dating-CMS", latestRelease: "19.4.0" };');
 const moduleUrl = `data:text/javascript;base64,${Buffer.from(compiled).toString("base64")}`;
-const { generateBuildBlueprint, generateBuildPrompt, maximumIdeaLength } = await import(moduleUrl);
+const {
+  generateBuildBlueprint,
+  generateBuildPrompt,
+  generateBuildShareCardSummary,
+  maximumIdeaLength,
+  slugifyBuildProductName,
+} = await import(moduleUrl);
 
 test("the execution prompt preserves multiline product requirements", () => {
   const prompt = generateBuildPrompt({
@@ -53,4 +59,23 @@ test("the portable blueprint records the published foundation without claiming d
   assert.match(blueprint, /published_version_at_generation: "19\.4\.0"/);
   assert.match(blueprint, /The application runs locally/);
   assert.doesNotMatch(blueprint, /production-ready in minutes/i);
+});
+
+test("the share card accepts only explicitly public fields", () => {
+  const summary = generateBuildShareCardSummary({
+    productName: "  Nomad Connections\u0000  ",
+    audience: "Adult travellers   and expats",
+  });
+
+  assert.deepEqual(summary, {
+    productName: "Nomad Connections",
+    audience: "Adult travellers and expats",
+    badges: ["Open source", "Self-hosted", "AI-ready"],
+  });
+  assert.deepEqual(Object.keys(summary), ["productName", "audience", "badges"]);
+});
+
+test("share card filenames are portable and have a safe fallback", () => {
+  assert.equal(slugifyBuildProductName("Nomad Connections ✈️"), "nomad-connections");
+  assert.equal(slugifyBuildProductName("   "), "ph7builder-product");
 });
