@@ -1,0 +1,73 @@
+{
+  "entries": [
+    {
+      "@context": "https://agenticresourcediscovery.org/context/v1",
+      "identifier": "urn:air:ph7builder.com:skills:installation",
+      "displayName": "pH7Builder installation",
+      "type": "application/agent-skills+md",
+      "url": "https://raw.githubusercontent.com/pH7Software/pH7-Social-Dating-CMS/18.x/.agents/skills/ph7builder-installation/SKILL.md",
+      "capabilities": [
+        "EvaluateInstallation",
+        "InstallPublishedRelease",
+        "CheckProductionRequirements"
+      ],
+      "description": "Evaluate or install a published pH7Builder release locally or on a prepared production host.",
+      "representativeQueries": [
+        "Install the latest published pH7Builder release on a prepared server",
+        "Run pH7Builder locally for evaluation",
+        "Check pH7Builder production requirements before deployment"
+      ],
+      "tags": [
+        "pH7Builder",
+        "installation",
+        "self-hosted dating software"
+      ]
+    },
+    {
+      "@context": "https://agenticresourcediscovery.org/context/v1",
+      "identifier": "urn:air:ph7builder.com:skills:module-development",
+      "displayName": "pH7Builder module development",
+      "type": "application/agent-skills+md",
+      "url": "https://raw.githubusercontent.com/pH7Software/pH7-Social-Dating-CMS/18.x/.agents/skills/ph7builder-module-development/SKILL.md",
+      "capabilities": [
+        "DevelopCustomModule",
+        "ReviewModuleSecurity",
+        "PreserveMvcConventions"
+      ],
+      "description": "Implement or review a pH7Builder custom module while preserving existing MVC, routing and security conventions.",
+      "representativeQueries": [
+        "Create a custom pH7Builder module",
+        "Review pH7Builder module security and routing",
+        "Add a database-backed feature without bypassing pH7Builder conventions"
+      ],
+      "tags": [
+        "pH7Builder",
+        "module development",
+        "PHP"
+      ]
+    },
+    {
+      "@context": "https://agenticresourcediscovery.org/context/v1",
+      "identifier": "urn:air:ph7builder.com:skills:upgrade-preflight",
+      "displayName": "pH7Builder upgrade preflight",
+      "type": "application/agent-skills+md",
+      "url": "https://raw.githubusercontent.com/pH7Software/pH7-Social-Dating-CMS/18.x/.agents/skills/ph7builder-upgrade-preflight/SKILL.md",
+      "capabilities": [
+        "AssessUpgradeCompatibility",
+        "PrepareBackupPlan",
+        "ReviewMigrations"
+      ],
+      "description": "Assess a pH7Builder version upgrade safely and prepare a read-only compatibility, backup and migration checklist.",
+      "representativeQueries": [
+        "Assess whether my pH7Builder installation can be upgraded safely",
+        "Prepare a read-only pH7Builder upgrade preflight",
+        "Identify migration and rollback requirements for a pH7Builder upgrade"
+      ],
+      "tags": [
+        "pH7Builder",
+        "upgrade",
+        "preflight"
+      ]
+    }
+  ]
+}

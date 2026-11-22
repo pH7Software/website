@@ -22,6 +22,7 @@ Important boundaries: the website blueprint tool runs locally in the browser. It
 - [Installation skill](https://raw.githubusercontent.com/pH7Software/pH7-Social-Dating-CMS/18.x/.agents/skills/ph7builder-installation/SKILL.md): Evaluate or install a published pH7Builder release.
 - [Module development skill](https://raw.githubusercontent.com/pH7Software/pH7-Social-Dating-CMS/18.x/.agents/skills/ph7builder-module-development/SKILL.md): Implement or review a custom module within pH7Builder conventions.
 - [Upgrade preflight skill](https://raw.githubusercontent.com/pH7Software/pH7-Social-Dating-CMS/18.x/.agents/skills/ph7builder-upgrade-preflight/SKILL.md): Prepare a read-only compatibility, backup and migration assessment.
+- [Agentic Resource Discovery manifest](${site.origin}/.well-known/ard.json): Machine-readable catalogue of the three official agent skills.
 
 ## Product guidance
 - [What pH7Builder gives a dating product](${site.origin}/social-dating-features/index.md): Product domains and practical foundation guidance.

@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://ph7builder.com/sitemap.xml
+Agentmap: https://ph7builder.com/.well-known/ard.json
