@@ -15,7 +15,7 @@ import { site } from "../data/site";
       <article>
         <span class="status-pill">Recommended</span>
         <h2>Install through Composer</h2>
-        <pre><code>composer create-project ph7software/ph7builder:{site.latestRelease} my-dating-app</code></pre>
+        <pre><code>composer create-project ph7software/ph7builder:{site.latestRelease} my-dating-app --no-dev --prefer-dist</code></pre>
         <p>This installs the current published release and creates an independent application copy with locked production dependencies. Future application upgrades are explicit rather than automatic Composer library updates.</p>
         <a class="button" href="/ai-builders/">Follow the AI builder path<ArrowIcon /></a>
       </article>
@@ -23,11 +23,14 @@ import { site } from "../data/site";
         <span class="status-pill">Source</span>
         <h2>Review it on GitHub</h2>
         <p>Read the production quick start, project conventions, current release notes and open-source licence before deployment.</p>
+        <p><a href={`${site.docsUrl}/QUICK_START.md`} target="_blank" rel="noopener noreferrer">Read the production quick start<span class="sr-only"> (opens in a new tab)</span></a> before setting up a public site.</p>
         <a class="button button-secondary" href={site.githubUrl} target="_blank" rel="noopener noreferrer">Open the repository<ArrowIcon /><span class="sr-only"> (opens in a new tab)</span></a>
       </article>
     </div>
   </section>
   <section class="section narrow-shell prose">
+    <h2>Evaluate locally before deploying</h2>
+    <p>Want to explore the software on your own machine? Follow the <a href={`${site.githubUrl}#local-evaluation-with-docker`} target="_blank" rel="noopener noreferrer">local Docker instructions</a> to run a disposable test installation. No account, demo booking or meeting is required. Keep test data separate from anything you need to preserve.</p>
     <h2>Production requirements</h2>
     <p>The published 19.4.0 release and the upcoming 20.0.0 line have different compatibility notes. Always use the release-specific documentation and lock file rather than assuming the development branch describes a published package.</p>
     <h2>Before real members arrive</h2>
