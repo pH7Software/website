@@ -29,15 +29,16 @@ Run the complete local CI sequence before pushing:
 npm run build:ci
 ```
 
-This command runs the unit tests, checks the repository for files that should
-not be public, type-checks and builds the Astro site, then verifies the
-generated pages and internal links.
+This command runs the unit tests, validates marketplace manifests and commerce
+boundaries, checks the repository for files that should not be public,
+type-checks and builds the Astro site, then verifies generated pages and links.
 
 The checks can also be run separately:
 
 | Command | Purpose |
 | --- | --- |
-| `npm test` | Run the blueprint and launch-checklist tests. |
+| `npm test` | Run product-tool and marketplace commerce tests. |
+| `npm run verify:marketplace` | Validate catalogue, pricing, release state and public commerce files. |
 | `npm run verify:public-repo` | Check tracked public files for unsafe content. |
 | `npm run build` | Type-check and build the production site. |
 | `npm run verify:build` | Verify generated pages and internal links. |
@@ -50,6 +51,8 @@ The checks can also be run separately:
 - `src/data/` and `src/lib/` contain typed site data and testable logic.
 - `public/` contains intentionally public static assets.
 - `scripts/` contains tests and build-verification checks.
+- `marketplace/catalog/` contains the versioned public product manifests.
+- `marketplace-worker/` contains the disabled-by-default PayPal and fulfilment boundary.
 
 Read [`AGENTS.md`](AGENTS.md) before making product, content or design changes.
 It records the repository's evidence, voice, accessibility and release rules.
@@ -65,6 +68,7 @@ migration input and is intentionally ignored.
 - [Product and website strategy](docs/PRODUCT_AND_WEBSITE_STRATEGY.md)
 - [Legacy URL migration](docs/LEGACY_URL_MIGRATION.md)
 - [Build journey acceptance record](docs/BUILD_ACCEPTANCE.md)
+- [Marketplace architecture and release gate](docs/MARKETPLACE.md)
 
 ## About Me
 
