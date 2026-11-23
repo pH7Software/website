@@ -5,8 +5,8 @@ import { site } from "../../data/site";
 type Props = { destination: string };
 
 export function getStaticPaths() {
-  const docsRoot = `${site.githubUrl}/tree/18.x/docs`;
-  const file = (name: string) => `${site.githubUrl}/blob/18.x/docs/${name}`;
+  const docsRoot = `${site.githubUrl}/tree/20.x/docs`;
+  const file = (name: string) => `${site.githubUrl}/blob/20.x/docs/${name}`;
   return [
     { params: { path: undefined }, props: { destination: docsRoot } },
     { params: { path: "en/hosting" }, props: { destination: file("QUICK_START.md") } },

@@ -7,10 +7,10 @@ export const site = {
   githubUrl: "https://github.com/pH7Software/pH7-Social-Dating-CMS",
   githubOrganizationUrl: "https://github.com/pH7Software",
   documentationUrl: "https://ph7builder.com/doc/",
-  docsUrl: "https://github.com/pH7Software/pH7-Social-Dating-CMS/tree/18.x/docs",
+  docsUrl: "https://github.com/pH7Software/pH7-Social-Dating-CMS/tree/20.x/docs",
   licence: {
     name: "MIT",
-    url: "https://github.com/pH7Software/pH7-Social-Dating-CMS/blob/18.x/LICENSE.md",
+    url: "https://github.com/pH7Software/pH7-Social-Dating-CMS/blob/20.x/LICENSE.md",
   },
   author: {
     name: "Pierre-Henry Soria",

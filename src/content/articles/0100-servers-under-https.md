@@ -33,7 +33,7 @@ If you are using pH7CMS Pro from 1.4.2 to version 5.0, your website may have bee
 
 <h4>Some other useful links:</h4>
 <ul>
-<li><a href="https://github.com/pH7Software/pH7-Social-Dating-CMS/tree/18.x/docs" rel="noopener noreferrer">Read the current pH7Builder documentation</a></li>
+<li><a href="https://github.com/pH7Software/pH7-Social-Dating-CMS/tree/20.x/docs" rel="noopener noreferrer">Read the current pH7Builder documentation</a></li>
 </ul>
 
 Hope this helps!
