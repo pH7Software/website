@@ -228,7 +228,7 @@ if (await exists(path.join(dist, "robots.txt"))) {
 
 if (await exists(path.join(dist, "sitemap.xml"))) {
   const sitemap = await readFile(path.join(dist, "sitemap.xml"), "utf8");
-  for (const route of ["/", "/build/", "/ai-builders/", "/services/", "/services/ai-prototype-to-production/", "/services/migration/", "/changelog/", "/social-dating-features/", "/dating-startup-by-step/", "/tools/dating-site-launch-checklist/"]) {
+  for (const route of ["/", "/build/", "/ai-builders/", "/marketplace/", "/marketplace/community-events-mini/", "/services/", "/services/ai-prototype-to-production/", "/services/migration/", "/changelog/", "/social-dating-features/", "/dating-startup-by-step/", "/tools/dating-site-launch-checklist/"]) {
     if (!sitemap.includes(`<loc>${productionOrigin}${route}</loc>`)) failures.add(`Sitemap is missing: ${route}`);
   }
   const urls = (sitemap.match(/<url>/g) ?? []).length;

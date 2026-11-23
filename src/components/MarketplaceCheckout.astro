@@ -1,0 +1,216 @@
+---
+import type { MarketplaceProduct } from "../data/marketplace";
+import { marketplace } from "../data/marketplace";
+import { formatUsd } from "../lib/marketplace.mjs";
+
+type Props = {
+  product: MarketplaceProduct;
+};
+
+const { product } = Astro.props;
+const checkoutAvailable = marketplace.checkout.enabled
+  && product.purchasable
+  && product.verification.status === "verified";
+---
+
+<section
+  class="checkout-panel"
+  aria-labelledby="checkout-title"
+  data-marketplace-checkout={checkoutAvailable ? "enabled" : "disabled"}
+  data-product-id={product.id}
+  data-product-version={product.version}
+  data-minimum={product.pricing.minimum}
+  data-api-origin={marketplace.checkout.apiOrigin}
+>
+  <div class="checkout-heading">
+    <div>
+      <p class="eyebrow">Pay what you wish</p>
+      <h2 id="checkout-title">Choose a fair contribution.</h2>
+    </div>
+    <p>
+      The minimum keeps the product paid. The recommended amount supports testing,
+      compatibility work and future fixes.
+    </p>
+  </div>
+
+  <form class="contribution-form" novalidate>
+    <fieldset disabled={!checkoutAvailable}>
+      <legend>Contribution in US dollars</legend>
+      <div class="contribution-options">
+        {product.pricing.options.map((amount) => (
+          <label class="contribution-option">
+            <input
+              type="radio"
+              name="contribution"
+              value={amount}
+              checked={amount === product.pricing.suggested}
+            />
+            <span>
+              <strong>{formatUsd(amount)}</strong>
+              {amount === product.pricing.suggested && <small>Recommended</small>}
+            </span>
+          </label>
+        ))}
+        <label class="contribution-option contribution-custom">
+          <input type="radio" name="contribution" value="custom" />
+          <span>
+            <strong>Custom</strong>
+            <small>{formatUsd(product.pricing.minimum)} or more</small>
+          </span>
+          <span class="custom-amount">
+            <span aria-hidden="true">$</span>
+            <input
+              type="number"
+              name="customAmount"
+              min={product.pricing.minimum}
+              step="0.01"
+              inputmode="decimal"
+              aria-label="Custom contribution in US dollars"
+            />
+          </span>
+        </label>
+      </div>
+    </fieldset>
+
+    <div class="checkout-summary" aria-live="polite">
+      <p>Final amount</p>
+      <strong data-final-amount>{formatUsd(product.pricing.suggested)} USD</strong>
+    </div>
+
+    {checkoutAvailable ? (
+      <>
+        <button class="button" type="submit">Continue with PayPal</button>
+        <paypal-button hidden></paypal-button>
+      </>
+    ) : (
+      <div class="checkout-paused" role="status">
+        <strong>Purchases are not open yet.</strong>
+        <span>The package is visible for review, but checkout stays disabled until sandbox fulfilment and the commercial terms receive final owner approval.</span>
+      </div>
+    )}
+
+    <p class="checkout-terms">
+      One payment. No subscription. Purchase means accepting the
+      <a href="/marketplace/terms/">licence terms</a> and
+      <a href="/marketplace/refunds/">refund policy</a>.
+    </p>
+    <p class="checkout-status" data-checkout-status aria-live="assertive"></p>
+    <div class="checkout-result" data-checkout-result hidden></div>
+  </form>
+</section>
+
+<script>
+  import "../scripts/marketplace-checkout";
+</script>
+
+<style>
+  .checkout-panel {
+    padding: clamp(1.5rem, 5vw, 3.5rem);
+    border: 2px solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--blue-soft);
+    box-shadow: var(--shadow);
+  }
+
+  .checkout-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(16rem, 0.62fr);
+    align-items: end;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .checkout-heading h2 { margin-bottom: 0; font-size: clamp(2.2rem, 5vw, 4rem); }
+  .checkout-heading > p { margin-bottom: 0; color: var(--ink-soft); }
+
+  fieldset { padding: 0; border: 0; }
+  legend { margin-bottom: 0.8rem; font-weight: 800; }
+  fieldset:disabled { opacity: 0.62; }
+
+  .contribution-options {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .contribution-option {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 0.65rem;
+    min-height: 5.5rem;
+    padding: 0.9rem;
+    border: 1px solid var(--ink);
+    border-radius: 0.55rem;
+    background: var(--paper-strong);
+  }
+
+  .contribution-option:has(input:checked) {
+    background: var(--lime);
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+
+  .contribution-option > span:not(.custom-amount) { display: grid; }
+  .contribution-option small { color: var(--ink-soft); }
+  .contribution-option input[type="radio"] { width: 1.2rem; height: 1.2rem; accent-color: var(--blue); }
+
+  .contribution-custom { grid-template-columns: auto auto; }
+  .custom-amount {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .custom-amount input {
+    width: 100%;
+    min-width: 0;
+    padding: 0.4rem 0.5rem;
+    border: 1px solid var(--ink);
+    border-radius: 0.3rem;
+    background: white;
+  }
+
+  .checkout-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-block: 1.5rem;
+    padding-block: 1rem;
+    border-block: 1px solid color-mix(in srgb, var(--ink) 25%, transparent);
+  }
+
+  .checkout-summary p { margin-bottom: 0; }
+  .checkout-summary strong { font-size: 1.3rem; }
+
+  .checkout-paused {
+    display: grid;
+    gap: 0.2rem;
+    padding: 1rem;
+    border: 1px solid var(--ink);
+    border-radius: 0.45rem;
+    background: var(--yellow);
+  }
+
+  .checkout-terms,
+  .checkout-status { margin: 1rem 0 0; font-size: 0.88rem; }
+  .checkout-status:empty { display: none; }
+
+  .checkout-result {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 2px solid var(--ink);
+    background: var(--lime);
+  }
+
+  @media (max-width: 800px) {
+    .checkout-heading { grid-template-columns: 1fr; }
+    .contribution-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 480px) {
+    .contribution-options { grid-template-columns: 1fr; }
+  }
+</style>

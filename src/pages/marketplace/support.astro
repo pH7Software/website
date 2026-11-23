@@ -1,0 +1,28 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { site } from "../../data/site";
+---
+
+<BaseLayout title="Marketplace Product Support" description="Bounded support for official pH7Builder marketplace products." path="/marketplace/support/">
+  <section class="page-hero"><div class="narrow-shell">
+    <p class="eyebrow"><a href="/marketplace/">Official Marketplace</a></p>
+    <h1>Support for the product you bought.</h1>
+    <p class="lede">Focused help for installation and reproducible product defects, without turning a small extension into an open-ended service engagement.</p>
+  </div></section>
+  <section class="section surface"><div class="narrow-shell prose-block">
+    <h2>Included</h2>
+    <ul>
+      <li>Purchase recovery and download-access problems.</li>
+      <li>Clarification of the documented installation steps.</li>
+      <li>Reproducible defects in an unmodified supported product version.</li>
+      <li>Security reports handled privately and prioritised appropriately.</li>
+    </ul>
+    <h2>Not included</h2>
+    <ul>
+      <li>Custom development, theme work or data migration.</li>
+      <li>Server administration, third-party service configuration or business advice.</li>
+      <li>Debugging unrelated core changes or unsupported pH7Builder versions.</li>
+    </ul>
+    <p>Email <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a> with the product version, pH7Builder version, PHP version and steps that reproduce the problem. Never send production credentials or private member data.</p>
+  </div></section>
+</BaseLayout>

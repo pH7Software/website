@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { site } from "../../data/site";
+---
+
+<BaseLayout title="Marketplace Refund Policy" description="Refund policy for official pH7Builder marketplace products." path="/marketplace/refunds/" robots="noindex, follow">
+  <section class="page-hero"><div class="narrow-shell">
+    <p class="eyebrow"><a href="/marketplace/">Official Marketplace</a></p>
+    <h1>Clear treatment of digital purchases.</h1>
+    <p class="lede">Checkout remains disabled while this policy and the complete fulfilment path are being verified.</p>
+  </div></section>
+  <section class="section surface"><div class="narrow-shell prose-block">
+    <h2>When a refund is appropriate</h2>
+    <p>Contact <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a> with the PayPal order ID when a payment was duplicated, the wrong amount was captured, or the unmodified product has a reproducible defect that prevents its documented use and cannot be corrected within a reasonable time.</p>
+    <h2>Digital delivery</h2>
+    <p>Change-of-mind refunds are normally available before the package is downloaded. After download, requests are assessed against the product description, compatibility information and applicable consumer law.</p>
+    <h2>Refund effects</h2>
+    <p>A full refund revokes future download access and ends the product licence. Refunds are issued through PayPal to the original payment method; no alternative transfer is offered.</p>
+    <p>Nothing here limits rights that cannot lawfully be excluded.</p>
+  </div></section>
+</BaseLayout>

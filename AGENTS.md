@@ -40,10 +40,32 @@ unrelated work.
   their generation logic here so it can be unit tested.
 - `public/`: intentionally public static assets only.
 - `scripts/`: deterministic tests and public-build checks.
+- `marketplace/catalog/`: public product manifests and release state.
+- `marketplace-worker/`: server-side PayPal verification and private delivery;
+  it is deployed separately from GitHub Pages.
 
 Do not commit WordPress exports, comments, private metadata, credentials,
 runtime output or machine-local files. The export filename patterns are
 intentionally ignored.
+
+## Marketplace invariants
+
+- The catalogue is official-only and manifest-driven. Do not add submissions,
+  sellers, reviews or a database-backed catalogue.
+- Keep candidates non-purchasable. A product becomes verified only after its
+  exact private artefact, checksum, compatibility and release evidence pass the
+  marketplace release gate.
+- Never move free core behaviour, security fixes or accessibility fixes into a
+  paid product.
+- The browser never authorises a price, product, payment or download. Validate
+  all of them in the Worker against its reviewed catalogue.
+- Keep packages private. Public source contains metadata and commerce code, not
+  paid ZIP files, buyer records or credentials.
+- `PURCHASES_ENABLED` and the separate production gate stay false until PayPal
+  sandbox fulfilment passes and the owner explicitly authorises activation.
+- Production credentials, payments, refunds and licence changes always require
+  explicit owner authorisation. Codex may prepare and test changes but must not
+  perform those actions autonomously.
 
 ## Content and voice
 

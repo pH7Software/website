@@ -25,6 +25,7 @@ Important boundaries: the website blueprint tool runs locally in the browser. It
 - [Build with AI](${site.origin}/build/index.md): Generate a complete execution prompt and portable blueprint locally for Codex, Claude Code, Cursor or another capable coding agent.
 - [Nomad Connections example](${site.origin}/blueprints/nomad-connections/index.md): Worked product blueprint for travellers and people living abroad.
 - [Services and USD pricing](${site.origin}/services/index.md): Optional Launch, Custom Build and ongoing engineering paths alongside the complete free path.
+- [Official marketplace](${site.origin}/marketplace/index.md): Verified first-party extensions, compatibility information and pay-what-you-wish pricing. Checkout remains closed until fulfilment and owner activation are complete.
 - [AI prototype to production](${site.origin}/services/ai-prototype-to-production/index.md): Production-readiness engineering for an existing AI-built dating application.
 - [Migration and modernisation](${site.origin}/services/migration/index.md): Evidence-led migration preflight for an existing dating platform.
 
@@ -48,6 +49,7 @@ Important boundaries: the website blueprint tool runs locally in the browser. It
 - [Versioned release documentation](${site.docsUrl}): Installation, configuration and operating documentation maintained with the source.
 - [About pH7Builder](${site.origin}/about/index.md): Mission, ownership and product direction.
 - [Website privacy](${site.origin}/privacy/index.md): Static-site, local-storage and external-link data boundaries.
+- [Marketplace support](${site.origin}/marketplace/support/index.md): Scope and security boundaries for official product support.
 
 ## Optional
 - [Complete article archive](${site.origin}/articles/): All migrated articles and release notes; each article advertises a Markdown alternative.

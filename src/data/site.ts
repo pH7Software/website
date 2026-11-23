@@ -28,9 +28,9 @@ export const site = {
 export const primaryNavigation = [
   { label: "Build", href: "/build/" },
   { label: "AI builders", href: "/ai-builders/" },
+  { label: "Marketplace", href: "/marketplace/" },
   { label: "Services", href: "/services/" },
   { label: "Get started", href: "/get-started/" },
-  { label: "Articles", href: "/articles/" },
   { label: "Changelog", href: "/changelog/" },
 ] as const;
 
@@ -42,6 +42,7 @@ export const footerNavigation = [
       { label: "For AI builders", href: "/ai-builders/" },
       { label: "For vibe coders", href: "/vibe-coders/" },
       { label: "Nomad Connections", href: "/blueprints/nomad-connections/" },
+      { label: "Official marketplace", href: "/marketplace/" },
       { label: "Services and pricing", href: "/services/" },
     ],
   },
@@ -51,6 +52,7 @@ export const footerNavigation = [
       { label: "Launch checklist", href: "/tools/dating-site-launch-checklist/" },
       { label: "Articles", href: "/articles/" },
       { label: "Changelog", href: "/changelog/" },
+      { label: "Marketplace support", href: "/marketplace/support/" },
       { label: "Documentation", href: site.docsUrl, external: true },
     ],
   },

@@ -1,0 +1,99 @@
+---
+import type { MarketplaceProduct } from "../data/marketplace";
+import { formatUsd } from "../lib/marketplace.mjs";
+
+type Props = {
+  product: MarketplaceProduct;
+};
+
+const { product } = Astro.props;
+const isVerified = product.verification.status === "verified";
+---
+
+<article class="marketplace-card">
+  <div class="marketplace-card-topline">
+    <span>{product.category}</span>
+    <span class:list={["release-state", { verified: isVerified }]}>
+      {isVerified ? "Verified release" : "Release candidate"}
+    </span>
+  </div>
+  <div>
+    <h2>{product.name}</h2>
+    <p>{product.summary}</p>
+  </div>
+  <ul class="plain-list compact-list">
+    {product.outcomes.slice(0, 3).map((outcome) => <li>{outcome}</li>)}
+  </ul>
+  <div class="marketplace-card-footer">
+    <p>
+      <span>{isVerified ? "Pay what you wish" : "Planned contribution"}</span>
+      <strong>{formatUsd(product.pricing.minimum)} minimum</strong>
+    </p>
+    <a class="button button-small" href={`/marketplace/${product.id}/`}>View product</a>
+  </div>
+</article>
+
+<style>
+  .marketplace-card {
+    display: grid;
+    min-height: 100%;
+    gap: 1.5rem;
+    padding: clamp(1.4rem, 3vw, 2rem);
+    border: 2px solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--paper-strong);
+    box-shadow: var(--shadow);
+  }
+
+  .marketplace-card-topline,
+  .marketplace-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .marketplace-card-topline {
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .release-state {
+    padding: 0.3rem 0.55rem;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    background: var(--yellow);
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  .release-state.verified { background: var(--lime); }
+
+  h2 {
+    margin-bottom: 0.8rem;
+    font-size: clamp(2rem, 4vw, 3.35rem);
+  }
+
+  .marketplace-card p { color: var(--ink-soft); }
+
+  .marketplace-card-footer {
+    align-self: end;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .marketplace-card-footer p {
+    display: grid;
+    margin-bottom: 0;
+    color: var(--ink);
+    font-size: 0.82rem;
+  }
+
+  @media (max-width: 620px) {
+    .marketplace-card-footer { align-items: stretch; flex-direction: column; }
+    .marketplace-card-footer .button { width: 100%; }
+  }
+</style>
