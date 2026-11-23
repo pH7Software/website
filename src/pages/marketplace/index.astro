@@ -1,0 +1,161 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import MarketplaceProductCard from "../../components/MarketplaceProductCard.astro";
+import { marketplace, marketplaceProducts } from "../../data/marketplace";
+
+const description = "Official premium pH7Builder extensions with transparent pay-what-you-wish pricing, verified compatibility and no subscription.";
+const activeProducts = marketplaceProducts.filter((product) => product.verification.status !== "retired");
+---
+
+<BaseLayout title="Official Marketplace" description={description} path="/marketplace/">
+  <section class="page-hero marketplace-hero">
+    <div class="shell marketplace-hero-grid">
+      <div>
+        <p class="eyebrow">Official products only</p>
+        <h1>Add what your community genuinely needs.</h1>
+        <p class="lede">
+          Small, installable pH7Builder extensions. Each product has one job.
+          Downloads open only with explicit compatibility and a verified release package.
+        </p>
+      </div>
+      <aside class="marketplace-principle" aria-label="Marketplace promise">
+        <strong>The core stays complete.</strong>
+        <p>Existing features, security fixes and accessibility work remain in the free MIT-licensed project.</p>
+        <span>Pay once · choose your contribution · no subscription</span>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section surface" aria-labelledby="catalogue-title">
+    <div class="shell">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Lean by design</p>
+          <h2 id="catalogue-title">A catalogue that earns its place.</h2>
+        </div>
+        <p>
+          The launch catalogue is intentionally small. A candidate can appear for review, but sales
+          open only after its package, tests, documentation and compatibility evidence are ready.
+        </p>
+      </div>
+      <div class="marketplace-grid">
+        {activeProducts.map((product) => <MarketplaceProductCard product={product} />)}
+      </div>
+      {!marketplace.checkout.enabled && (
+        <p class="catalogue-notice">
+          <strong>Checkout is currently paused.</strong> Product information is public for review;
+          no payment can be started until sandbox fulfilment and owner activation are complete.
+        </p>
+      )}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="standards-title">
+    <div class="shell standards-grid">
+      <div>
+        <p class="eyebrow">What every release must prove</p>
+        <h2 id="standards-title">Paid does not mean complicated.</h2>
+      </div>
+      <ol class="standard-list">
+        <li><strong>Useful alone.</strong><span>One clear operator outcome, without forced bundles.</span></li>
+        <li><strong>Native fit.</strong><span>Uses pH7Builder modules and conventions instead of creating another plugin system.</span></li>
+        <li><strong>Reversible.</strong><span>Documented installation, uninstall behaviour and data impact.</span></li>
+        <li><strong>Verified.</strong><span>Deterministic package, checksum, tests and a declared compatibility range.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section-tight marketplace-links">
+    <div class="shell marketplace-link-grid">
+      <a href="/marketplace/terms/"><strong>Licence terms</strong><span>What a purchase permits.</span></a>
+      <a href="/marketplace/refunds/"><strong>Refund policy</strong><span>Clear treatment of digital purchases.</span></a>
+      <a href="/marketplace/support/"><strong>Product support</strong><span>A bounded, practical support policy.</span></a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .marketplace-hero { overflow: hidden; }
+  .marketplace-hero-grid,
+  .standards-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.62fr);
+    align-items: center;
+    gap: clamp(2rem, 7vw, 6rem);
+  }
+
+  .marketplace-principle {
+    position: relative;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border: 2px solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--lime);
+    box-shadow: var(--shadow);
+    transform: rotate(1.2deg);
+  }
+
+  .marketplace-principle::before {
+    position: absolute;
+    top: -1rem;
+    right: 1.5rem;
+    padding: 0.35rem 0.65rem;
+    border: 1px solid var(--ink);
+    background: var(--coral);
+    color: white;
+    content: "OFFICIAL";
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  .marketplace-principle strong { font-family: var(--serif); font-size: 2rem; }
+  .marketplace-principle p { margin-block: 0.8rem 1.5rem; }
+  .marketplace-principle span { font-family: var(--mono); font-size: 0.76rem; font-weight: 800; }
+
+  .marketplace-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; }
+  .marketplace-grid > :only-child { grid-column: span 2; max-width: 48rem; }
+
+  .catalogue-notice {
+    max-width: 58rem;
+    margin: 2.5rem 0 0;
+    padding: 1rem 1.2rem;
+    border-left: 0.4rem solid var(--coral);
+    background: var(--paper-strong);
+  }
+
+  .standards-grid { align-items: start; }
+  .standard-list { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; counter-reset: standards; }
+  .standard-list li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--line);
+    counter-increment: standards;
+  }
+  .standard-list li::before {
+    grid-row: span 2;
+    content: "0" counter(standards);
+    color: var(--blue);
+    font-family: var(--mono);
+    font-weight: 900;
+  }
+  .standard-list span { color: var(--ink-soft); }
+
+  .marketplace-links { border-block: 1px solid var(--line); background: var(--ink); color: white; }
+  .marketplace-link-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .marketplace-link-grid a { display: grid; gap: 0.3rem; padding: 1.5rem; border-right: 1px solid #4a5169; text-decoration: none; }
+  .marketplace-link-grid a:first-child { border-left: 1px solid #4a5169; }
+  .marketplace-link-grid span { color: #c4c8d6; }
+
+  @media (max-width: 780px) {
+    .marketplace-hero-grid,
+    .standards-grid,
+    .marketplace-grid,
+    .marketplace-link-grid { grid-template-columns: 1fr; }
+    .marketplace-grid > :only-child { grid-column: auto; }
+    .marketplace-link-grid a,
+    .marketplace-link-grid a:first-child { border: 0; border-bottom: 1px solid #4a5169; }
+  }
+</style>

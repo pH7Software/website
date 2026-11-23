@@ -1,6 +1,7 @@
 import { getCollection } from "astro:content";
 import type { APIRoute } from "astro";
 import { legacyRedirects } from "../data/redirects";
+import { marketplaceProducts } from "../data/marketplace";
 import { site } from "../data/site";
 
 const staticRoutes = [
@@ -12,6 +13,9 @@ const staticRoutes = [
   { path: "/build/", updatedAt: new Date("2026-11-23T00:00:00Z") },
   { path: "/changelog/", updatedAt: new Date("2026-11-23T00:00:00Z") },
   { path: "/get-started/", updatedAt: new Date("2026-11-23T00:00:00Z") },
+  { path: "/marketplace/", updatedAt: new Date("2026-11-23T00:00:00Z") },
+  { path: "/marketplace/refunds/", updatedAt: new Date("2026-11-23T00:00:00Z") },
+  { path: "/marketplace/support/", updatedAt: new Date("2026-11-23T00:00:00Z") },
   { path: "/privacy/", updatedAt: new Date("2026-11-21T00:00:00Z") },
   { path: "/services/", updatedAt: new Date("2026-11-23T00:00:00Z") },
   { path: "/services/ai-prototype-to-production/", updatedAt: new Date("2026-11-23T00:00:00Z") },
@@ -32,6 +36,9 @@ export const GET: APIRoute = async () => {
   const articles = await getCollection("articles", ({ data }) => !data.draft && !(data.slug in legacyRedirects));
   const entries = [
     ...staticRoutes,
+    ...marketplaceProducts
+      .filter((product) => product.verification.status !== "retired")
+      .map((product) => ({ path: `/marketplace/${product.id}/`, updatedAt: new Date(`${product.updatedAt}T00:00:00Z`) })),
     ...articles.map((article) => ({ path: `/${article.data.slug}/`, updatedAt: article.data.updatedAt ?? article.data.publishedAt })),
   ];
   const unique = [...new Map(entries.map((entry) => [entry.path, entry])).values()]

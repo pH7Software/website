@@ -1,0 +1,8 @@
+{
+  "catalogUpdatedAt": "2026-11-23",
+  "checkout": {
+    "enabled": false,
+    "environment": "sandbox",
+    "apiOrigin": "https://marketplace-api.ph7builder.com"
+  }
+}

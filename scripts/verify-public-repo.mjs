@@ -41,7 +41,11 @@ const textOnlyPatterns = [
 const findings = [];
 for (const file of publicFiles) {
   for (const [category, pattern] of sensitivePaths) {
-    if (file !== ".env.example" && pattern.test(file)) findings.push({ file, category });
+    const isReviewedSchemaMigration = category === "database or data dump"
+      && /^marketplace-worker\/migrations\/\d{4}_[a-z0-9_]+\.sql$/.test(file);
+    if (file !== ".env.example" && !isReviewedSchemaMigration && pattern.test(file)) {
+      findings.push({ file, category });
+    }
   }
   const absolute = path.join(root, file);
   if (!fs.existsSync(absolute) || !fs.statSync(absolute).isFile()) continue;

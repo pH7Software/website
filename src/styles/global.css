@@ -168,6 +168,47 @@ h3 {
   color: var(--ink-soft);
 }
 
+.plain-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.compact-list {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.compact-list li {
+  position: relative;
+  padding-left: 1.25rem;
+}
+
+.compact-list li::before {
+  position: absolute;
+  top: 0.72em;
+  left: 0;
+  width: 0.48rem;
+  height: 0.48rem;
+  border: 1px solid var(--ink);
+  background: var(--lime);
+  content: "";
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.prose-block {
+  font-size: 1.06rem;
+}
+
+.prose-block h2,
+.prose-block h3 {
+  margin-top: 2.5rem;
+}
+
+.prose-block h2:first-child {
+  margin-top: 0;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

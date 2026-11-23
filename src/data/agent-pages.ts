@@ -116,6 +116,28 @@ For release ${site.latestRelease}, the verified baseline is PHP 8.2 or newer, My
 Version ${site.upcomingRelease} is not yet a published release. Do not use its requirements or upgrade path as though it were available.`,
   },
   {
+    path: "/marketplace/",
+    title: "Official pH7Builder marketplace",
+    description: "Official premium pH7Builder extensions with transparent pay-what-you-wish pricing and verified compatibility.",
+    body: `The marketplace contains first-party pH7Builder products only. It does not accept public submissions, third-party sellers, reviews or recurring subscriptions.
+
+Products use version-controlled manifests for identity, compatibility, pricing, licence, package checksum and verification state. A product is not purchasable until its release package and fulfilment path are verified.
+
+The free MIT-licensed pH7Builder core remains complete. Existing functionality, essential security fixes and required accessibility fixes are not moved into paid products.
+
+Checkout is currently disabled while PayPal sandbox fulfilment and the commercial activation terms receive final owner approval. No live payment can be started from the public site.`,
+  },
+  {
+    path: "/marketplace/support/",
+    title: "pH7Builder marketplace product support",
+    description: "Bounded support for official pH7Builder marketplace products.",
+    body: `Marketplace support covers purchase recovery, documented installation questions, reproducible defects in an unmodified supported product version and private security reports.
+
+It does not include custom development, server administration, data migration, business advice or debugging unrelated core changes.
+
+Never send production credentials or private member data with a support request.`,
+  },
+  {
     path: "/privacy/",
     title: "pH7Builder website privacy",
     description: "How the static pH7Builder website handles visitors' data and browser-only tools.",

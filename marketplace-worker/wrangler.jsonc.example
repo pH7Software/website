@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ph7builder-marketplace-api",
+  "main": "src/index.mjs",
+  "compatibility_date": "2026-11-23",
+  "workers_dev": false,
+  "vars": {
+    "API_ORIGIN": "https://marketplace-api.ph7builder.com",
+    "MARKETPLACE_ORIGIN": "https://ph7builder.com",
+    "PAYPAL_ENVIRONMENT": "sandbox",
+    "PURCHASES_ENABLED": "false",
+    "ALLOW_PRODUCTION": "false"
+  },
+  "d1_databases": [
+    {
+      "binding": "ORDERS",
+      "database_name": "ph7builder-marketplace",
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "PRODUCTS",
+      "bucket_name": "ph7builder-marketplace-products"
+    }
+  ]
+}

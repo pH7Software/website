@@ -1,0 +1,84 @@
+{
+  "id": "community-events-mini",
+  "name": "Community Events Mini",
+  "category": "Community",
+  "summary": "Publish small community events and let signed-in members manage their own RSVPs.",
+  "description": [
+    "Community Events Mini adds a focused events directory to pH7Builder without introducing a calendar platform or external service.",
+    "Operators can publish an event with a title, description, venue and capacity. Members can RSVP or withdraw, while the module keeps attendance counts without exposing the attendee list publicly."
+  ],
+  "outcomes": [
+    "Give a dating or community product a practical reason for members to return.",
+    "Run online or in-person events without sending member data to another platform.",
+    "Keep event publishing and attendance inside the existing pH7Builder administration model."
+  ],
+  "version": "1.0.0",
+  "releasedAt": "2026-11-23",
+  "updatedAt": "2026-11-23",
+  "compatibility": {
+    "pH7Builder": {
+      "min": "20.0.0",
+      "maxExclusive": "21.0.0"
+    },
+    "php": "^8.3"
+  },
+  "dependencies": [],
+  "contents": [
+    "Optional pH7Builder module with public event pages",
+    "Administrator-only event publishing controls",
+    "Member RSVP and withdrawal workflow",
+    "MySQL installation and uninstall migrations",
+    "Installation guide, changelog and licence"
+  ],
+  "installation": {
+    "target": "_repository/module/community-events-mini/",
+    "steps": [
+      "Back up the application files and database.",
+      "Extract the community-events-mini folder into _repository/module/.",
+      "Open the pH7Builder admin panel and install Community Events Mini from Modules.",
+      "Review the new module before publishing the first event."
+    ],
+    "uninstall": "Use the module manager to uninstall the module. Uninstalling removes the module tables and their event data after the administrator confirms the action."
+  },
+  "pricing": {
+    "currency": "USD",
+    "minimum": 9,
+    "suggested": 29,
+    "options": [
+      19,
+      29,
+      49
+    ]
+  },
+  "licence": {
+    "name": "pH7Builder Marketplace Commercial Licence",
+    "url": "/marketplace/terms/"
+  },
+  "support": {
+    "periodDays": 30,
+    "policy": "Installation questions and reproducible defects are covered by email for 30 days. Customisation and operating advice are not included."
+  },
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2026-11-23",
+      "items": [
+        "Adds administrator-managed events.",
+        "Adds member RSVP and withdrawal actions.",
+        "Adds capacity enforcement and private attendance counts."
+      ]
+    }
+  ],
+  "package": {
+    "filename": "community-events-mini-1.0.0.zip",
+    "artifactKey": "community-events-mini/1.0.0/community-events-mini-1.0.0.zip",
+    "sha256": "TO_BE_REPLACED_AFTER_REPRODUCIBLE_BUILD",
+    "sizeBytes": 0
+  },
+  "verification": {
+    "status": "candidate",
+    "verifiedAt": null,
+    "checks": []
+  },
+  "purchasable": false
+}

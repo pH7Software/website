@@ -1,0 +1,170 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import MarketplaceCheckout from "../../components/MarketplaceCheckout.astro";
+import { marketplaceProducts } from "../../data/marketplace";
+import { formatUsd } from "../../lib/marketplace.mjs";
+import { site } from "../../data/site";
+
+export const getStaticPaths = () => marketplaceProducts
+  .filter((product) => product.verification.status !== "retired")
+  .map((product) => ({ params: { product: product.id }, props: { product } }));
+
+const { product } = Astro.props;
+const path = `/marketplace/${product.id}/`;
+const isVerified = product.verification.status === "verified";
+const description = isVerified
+  ? `${product.summary} Official pH7Builder extension from ${formatUsd(product.pricing.minimum)} USD.`
+  : `${product.summary} Official pH7Builder extension candidate under release review.`;
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: product.name,
+  description: product.summary,
+  url: `${site.origin}${path}`,
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "pH7Builder",
+  softwareVersion: product.version,
+  softwareRequirements: `pH7Builder ${product.compatibility.pH7Builder.min} up to, but not including, ${product.compatibility.pH7Builder.maxExclusive}; PHP ${product.compatibility.php}`,
+  author: { "@id": `${site.origin}/#creator` },
+  publisher: { "@id": `${site.origin}/#organization` },
+  ...(product.purchasable ? {
+    offers: {
+      "@type": "Offer",
+      price: product.pricing.minimum,
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+      url: `${site.origin}${path}`,
+    },
+  } : {}),
+};
+---
+
+<BaseLayout title={product.name} description={description} path={path} schema={schema}>
+  <section class="page-hero product-hero">
+    <div class="shell product-hero-grid">
+      <div>
+        <p class="eyebrow"><a href="/marketplace/">Official Marketplace</a> / {product.category}</p>
+        <h1>{product.name}</h1>
+        <p class="lede">{product.summary}</p>
+        <div class="product-meta">
+          <span>Version {product.version}</span>
+          <span>pH7Builder {product.compatibility.pH7Builder.min}–20.x</span>
+          <span class:list={["release-pill", { verified: isVerified }]}>{isVerified ? "Verified" : "Candidate"}</span>
+        </div>
+      </div>
+      <aside class="product-ticket" aria-label="Product price">
+        <span>{isVerified ? "Pay what you wish" : "Planned pay what you wish"}</span>
+        <strong>{formatUsd(product.pricing.minimum)}+</strong>
+        <p>Recommended contribution: {formatUsd(product.pricing.suggested)} USD</p>
+        <small>One payment · no subscription</small>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section surface">
+    <div class="shell product-story-grid">
+      <div class="product-description">
+        {product.description.map((paragraph) => <p>{paragraph}</p>)}
+      </div>
+      <div>
+        <p class="eyebrow">What changes for the operator</p>
+        <ul class="plain-list outcome-list">
+          {product.outcomes.map((outcome) => <li>{outcome}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell"><MarketplaceCheckout product={product} /></div>
+  </section>
+
+  <section class="section surface" aria-labelledby="package-title">
+    <div class="shell package-grid">
+      <div>
+        <p class="eyebrow">Inside the package</p>
+        <h2 id="package-title">Small enough to understand.</h2>
+        <ul class="plain-list compact-list">
+          {product.contents.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+      <dl class="package-facts">
+        <div><dt>pH7Builder</dt><dd>{product.compatibility.pH7Builder.min} to 20.x</dd></div>
+        <div><dt>PHP</dt><dd>{product.compatibility.php}</dd></div>
+        <div><dt>Dependencies</dt><dd>{product.dependencies.length ? product.dependencies.join(", ") : "None"}</dd></div>
+        <div><dt>Updated</dt><dd>{product.updatedAt}</dd></div>
+        <div><dt>Licence</dt><dd><a href={product.licence.url}>{product.licence.name}</a></dd></div>
+        <div><dt>Checksum</dt><dd><code>{isVerified ? product.package.sha256 : "Published after final verification"}</code></dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="installation-title">
+    <div class="narrow-shell prose-block">
+      <p class="eyebrow">Installation</p>
+      <h2 id="installation-title">Use the existing module manager.</h2>
+      <ol>
+        {product.installation.steps.map((step) => <li>{step}</li>)}
+      </ol>
+      <p><strong>Uninstall:</strong> {product.installation.uninstall}</p>
+      <p><strong>Support:</strong> {product.support.policy} <a href="/marketplace/support/">Read the support policy.</a></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .product-hero-grid,
+  .product-story-grid,
+  .package-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.7fr);
+    gap: clamp(2rem, 7vw, 6rem);
+    align-items: start;
+  }
+
+  .product-meta { display: flex; flex-wrap: wrap; gap: 0.65rem; }
+  .product-meta span {
+    padding: 0.35rem 0.65rem;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    background: var(--paper-strong);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 800;
+  }
+  .product-meta .release-pill { background: var(--yellow); }
+  .product-meta .release-pill.verified { background: var(--lime); }
+
+  .product-ticket {
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border: 2px solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--coral);
+    color: white;
+    box-shadow: var(--shadow);
+  }
+  .product-ticket > span,
+  .product-ticket small { font-family: var(--mono); font-weight: 800; }
+  .product-ticket strong { display: block; margin-block: 0.25rem; font-family: var(--serif); font-size: clamp(4rem, 8vw, 6.5rem); line-height: 1; }
+  .product-ticket p { margin-bottom: 1.3rem; }
+
+  .product-description { font-family: var(--serif); font-size: clamp(1.35rem, 3vw, 2rem); line-height: 1.4; }
+  .product-description p:last-child { margin-bottom: 0; }
+  .outcome-list { display: grid; gap: 1rem; }
+  .outcome-list li { padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
+
+  .package-facts { margin: 0; border-top: 1px solid var(--line); }
+  .package-facts div { display: grid; grid-template-columns: 8rem 1fr; gap: 1rem; padding-block: 0.8rem; border-bottom: 1px solid var(--line); }
+  .package-facts dt { font-weight: 800; }
+  .package-facts dd { margin: 0; overflow-wrap: anywhere; }
+  .package-facts code { font-size: 0.72rem; }
+  .prose-block ol { padding-left: 1.4rem; }
+  .prose-block li { margin-bottom: 0.8rem; }
+
+  @media (max-width: 760px) {
+    .product-hero-grid,
+    .product-story-grid,
+    .package-grid { grid-template-columns: 1fr; }
+    .product-ticket { max-width: 28rem; }
+  }
+</style>
