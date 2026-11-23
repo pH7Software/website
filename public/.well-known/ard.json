@@ -5,7 +5,7 @@
       "identifier": "urn:air:ph7builder.com:skills:installation",
       "displayName": "pH7Builder installation",
       "type": "application/agent-skills+md",
-      "url": "https://raw.githubusercontent.com/pH7Software/pH7-Social-Dating-CMS/18.x/.agents/skills/ph7builder-installation/SKILL.md",
+      "url": "https://raw.githubusercontent.com/pH7Software/pH7-Social-Dating-CMS/20.x/.agents/skills/ph7builder-installation/SKILL.md",
       "capabilities": [
         "EvaluateInstallation",
         "InstallPublishedRelease",
@@ -28,7 +28,7 @@
       "identifier": "urn:air:ph7builder.com:skills:module-development",
       "displayName": "pH7Builder module development",
       "type": "application/agent-skills+md",
-      "url": "https://raw.githubusercontent.com/pH7Software/pH7-Social-Dating-CMS/18.x/.agents/skills/ph7builder-module-development/SKILL.md",
+      "url": "https://raw.githubusercontent.com/pH7Software/pH7-Social-Dating-CMS/20.x/.agents/skills/ph7builder-module-development/SKILL.md",
       "capabilities": [
         "DevelopCustomModule",
         "ReviewModuleSecurity",
@@ -51,7 +51,7 @@
       "identifier": "urn:air:ph7builder.com:skills:upgrade-preflight",
       "displayName": "pH7Builder upgrade preflight",
       "type": "application/agent-skills+md",
-      "url": "https://raw.githubusercontent.com/pH7Software/pH7-Social-Dating-CMS/18.x/.agents/skills/ph7builder-upgrade-preflight/SKILL.md",
+      "url": "https://raw.githubusercontent.com/pH7Software/pH7-Social-Dating-CMS/20.x/.agents/skills/ph7builder-upgrade-preflight/SKILL.md",
       "capabilities": [
         "AssessUpgradeCompatibility",
         "PrepareBackupPlan",

@@ -69,7 +69,7 @@ Technical visitors can inspect the source, read the agent guidance and install t
 - profiles, discovery, matchmaking, messaging, memberships, moderation and administration represented in the application;
 - PHP 8.2 compatibility declared by the published package.
 
-### Available on the 18.x development branch
+### Available on the 20.x development branch
 
 - PHP 8.3 platform requirement for the planned 20.0.0 line;
 - repository agent guidance and three official agent skills;

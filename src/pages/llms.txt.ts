@@ -30,10 +30,10 @@ Important boundaries: the website blueprint tool runs locally in the browser. It
 - [Migration and modernisation](${site.origin}/services/migration/index.md): Evidence-led migration preflight for an existing dating platform.
 
 ## Agent instructions
-- [Repository agent guide](https://raw.githubusercontent.com/pH7Software/pH7-Social-Dating-CMS/18.x/AGENTS.md): Architecture, coding conventions, security invariants and verification for the public source tree.
-- [Installation skill](https://raw.githubusercontent.com/pH7Software/pH7-Social-Dating-CMS/18.x/.agents/skills/ph7builder-installation/SKILL.md): Evaluate or install a published pH7Builder release.
-- [Module development skill](https://raw.githubusercontent.com/pH7Software/pH7-Social-Dating-CMS/18.x/.agents/skills/ph7builder-module-development/SKILL.md): Implement or review a custom module within pH7Builder conventions.
-- [Upgrade preflight skill](https://raw.githubusercontent.com/pH7Software/pH7-Social-Dating-CMS/18.x/.agents/skills/ph7builder-upgrade-preflight/SKILL.md): Prepare a read-only compatibility, backup and migration assessment.
+- [Repository agent guide](https://raw.githubusercontent.com/pH7Software/pH7-Social-Dating-CMS/20.x/AGENTS.md): Architecture, coding conventions, security invariants and verification for the public source tree.
+- [Installation skill](https://raw.githubusercontent.com/pH7Software/pH7-Social-Dating-CMS/20.x/.agents/skills/ph7builder-installation/SKILL.md): Evaluate or install a published pH7Builder release.
+- [Module development skill](https://raw.githubusercontent.com/pH7Software/pH7-Social-Dating-CMS/20.x/.agents/skills/ph7builder-module-development/SKILL.md): Implement or review a custom module within pH7Builder conventions.
+- [Upgrade preflight skill](https://raw.githubusercontent.com/pH7Software/pH7-Social-Dating-CMS/20.x/.agents/skills/ph7builder-upgrade-preflight/SKILL.md): Prepare a read-only compatibility, backup and migration assessment.
 - [Agentic Resource Discovery manifest](${site.origin}/.well-known/ard.json): Machine-readable catalogue of the three official agent skills.
 
 ## Product guidance

@@ -26,7 +26,7 @@ Target agent: Codex.
 - The GitHub release publishes `pH7Builder-v19.4.0.zip` and its SHA-256 file.
 - The 171 MB release archive downloaded successfully and its calculated SHA-256 matched the published checksum: `1503ba04cfbc8e0ee4481e74fe731d7e0e75228873525a02a957288d9db7e2ca`.
 - The release archive contains both root and installer production dependencies, including `_protected/vendor/autoload.php` and `_install/vendor/autoload.php`.
-- The 18.x branch declares PHP `^8.3` for the unreleased 20.0.0 line and must not be presented as stable 19.4.0 behaviour.
+- The 20.x branch declares PHP `^8.3` for the unreleased 20.0.0 line and must not be presented as stable 19.4.0 behaviour.
 
 ## Environment limitations found
 

@@ -17,7 +17,7 @@ If you currently have this issue, the way to solve the problem is to remove the 
 /YOUR-PROTECTED-FOLDER/framework/Core/Kernel.class.php
 /YOUR-PROTECTED-FOLDER/framework/Core/License.class.php
 </code>
-and refresh the page through your Web browser, then check (or re-enter) the license through your admin panel and it should be solved. For current guidance, review the <a href="https://github.com/pH7Software/pH7-Social-Dating-CMS/tree/18.x/docs" rel="noopener noreferrer">pH7Builder documentation</a>.
+and refresh the page through your Web browser, then check (or re-enter) the license through your admin panel and it should be solved. For current guidance, review the <a href="https://github.com/pH7Software/pH7-Social-Dating-CMS/tree/20.x/docs" rel="noopener noreferrer">pH7Builder documentation</a>.
 
 Again, if you still have some other issues, please feel free to contact the support in your member area and the team will be more than happy to assist you!
 

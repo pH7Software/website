@@ -5,7 +5,7 @@ slug: "release-notes-20-0-0"
 publishedAt: "2026-11-20T00:00:00Z"
 sourceType: "release"
 releaseStatus: "unreleased"
-sourceUrl: "https://github.com/pH7Software/pH7-Social-Dating-CMS/blob/18.x/docs/RELEASE_NOTES_20.0.0.md"
+sourceUrl: "https://github.com/pH7Software/pH7-Social-Dating-CMS/blob/20.x/docs/RELEASE_NOTES_20.0.0.md"
 categories: ["Release notes"]
 tags: []
 historical: false

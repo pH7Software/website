@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 const dist = fileURLToPath(new URL("../dist/", import.meta.url));
 const productionOrigin = "https://ph7builder.com";
 const failures = new Set();
-const correctLicence = "https://github.com/pH7Software/pH7-Social-Dating-CMS/blob/18.x/LICENSE.md";
+const correctLicence = "https://github.com/pH7Software/pH7-Social-Dating-CMS/blob/20.x/LICENSE.md";
 const retiredDestinations = /(?:clients\.hizup\.com|hizup\.net\/clients|paypal\.com\/cgi-bin\/webscr|goo\.gl\/forms|mailto:hi@ph7\.me|http:\/{3})/i;
 
 const requiredFiles = [
