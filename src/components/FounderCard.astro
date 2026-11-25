@@ -16,12 +16,12 @@ import { site } from "../data/site";
       </svg>
     </span>
     <span class="footer-founder-copy">
-      <strong>Built independently by {site.author.name}</strong>
+      <strong>Built independently by {site.author.firstName}</strong>
       <small>Follow the creator on LinkedIn</small>
     </span>
   </a>
   <div class="footer-founder-actions" aria-label="Work with the creator or support pH7Builder">
-    <a href="/services/custom-development/">Hire Pierre-Henry</a>
+    <a href="/services/custom-development/">Hire {site.author.firstName}</a>
     <a href={site.sponsorUrl} target="_blank" rel="noopener noreferrer">Support the project<span class="sr-only"> on GitHub Sponsors (opens in a new tab)</span></a>
   </div>
 </div>

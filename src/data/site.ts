@@ -14,6 +14,7 @@ export const site = {
   },
   author: {
     name: "Pierre-Henry Soria",
+    firstName: "Pierre-Henry",
     url: "https://github.com/pH-7",
     linkedinUrl: "https://www.linkedin.com/in/ph7enry/",
   },
