@@ -185,7 +185,7 @@ The checklist covers product decisions, trust and safety, privacy, delivery and 
     path: "/services/",
     title: "pH7Builder services and pricing",
     description: "Build independently for free or work directly with the pH7Builder creator on a launch, custom product, migration or ongoing engineering.",
-    body: `The free pH7Builder software and Build with AI tool remain complete. Professional help is optional.
+    body: `The free pH7Builder software and product blueprint workbench remain complete. Professional help is optional.
 
 ## Starting prices in USD
 

@@ -22,7 +22,7 @@ export const serviceOffers: readonly ServiceOffer[] = [
       "Portable product blueprint",
       "Documentation and self-hosting",
     ],
-    cta: "Build with AI",
+    cta: "Create your blueprint",
     href: "/build/",
   },
   {
@@ -45,7 +45,7 @@ export const serviceOffers: readonly ServiceOffer[] = [
     name: "Custom Build",
     price: "From $15,000 USD",
     range: "Typical scope: $15,000–50,000+ USD",
-    description: "For a differentiated dating or matchmaking product with unique workflows, integrations or business rules.",
+    description: "For a differentiated dating or matchmaking product with distinct workflows, integrations or business rules.",
     includes: [
       "Custom product functionality",
       "Matching and discovery improvements",
