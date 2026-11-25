@@ -38,7 +38,7 @@ These prices are starting points for review before public deployment. Undefined 
 
 ### Evaluate the software
 
-Technical visitors can inspect the source, read the agent guidance and install the current published release. Release-specific requirements remain separate from the unreleased development branch.
+Technical visitors can inspect the source, read the agent guidance and install the current published release. Release-specific requirements remain explicit instead of being inferred from another branch or an older package.
 
 ## Information architecture
 
@@ -60,20 +60,17 @@ Technical visitors can inspect the source, read the agent guidance and install t
 
 ## Capability truth
 
-### Published in 19.4.0
+### Published in 20.0.0
 
 - MIT-licensed, self-hosted PHP application;
 - Packagist project package `ph7software/ph7builder`;
 - versioned GitHub release ZIP and checksum;
 - browser installation workflow;
 - profiles, discovery, matchmaking, messaging, memberships, moderation and administration represented in the application;
-- PHP 8.2 compatibility declared by the published package.
-
-### Available on the 20.x development branch
-
-- PHP 8.3 platform requirement for the planned 20.0.0 line;
+- PHP 8.3 through 8.5 compatibility declared by the published package;
 - repository agent guidance and three official agent skills;
-- dependency and architecture changes that are not part of 19.4.0 until released.
+- a verified release gate, operator health report and release provenance;
+- safe CSV previews and a scoped UNA 14 migration adapter.
 
 ### Roadmap, not current product claims
 
@@ -108,5 +105,5 @@ If privacy-conscious measurement is approved, record only aggregate events such 
 - Approve the public service prices and current availability.
 - Confirm that `hello@ph7builder.com` is monitored and can receive enquiries.
 - Complete the browser acceptance pass at desktop and mobile widths.
-- Finish the stable-release end-to-end installation proof in an environment with working Docker Compose or a non-crashing Composer network stack.
+- Keep marketplace checkout disabled until one exact product package and the complete PayPal sandbox purchase-to-download lifecycle pass their release gates.
 - Review the Cloudflare redirect plan before replacing legacy WordPress responses.

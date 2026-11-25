@@ -1,50 +1,77 @@
 ---
-title: "pH7Builder 20.0.0 — Release Notes (Unreleased)"
-description: "Draft notes for the upcoming PHP 8.3+ release. No 20.0.0 tag or package is published yet."
+title: "pH7Builder 20.0.0 — Release Notes"
+description: "pH7Builder 20.0.0 adds a verified release gate, safer migration tools, PHP 8.3–8.5 support and modernised installation dependencies."
 slug: "release-notes-20-0-0"
-publishedAt: "2026-11-20T00:00:00Z"
+publishedAt: "2026-11-25T00:00:00Z"
 sourceType: "release"
-releaseStatus: "unreleased"
+releaseStatus: "published"
 sourceUrl: "https://github.com/pH7Software/pH7-Social-Dating-CMS/blob/20.x/docs/RELEASE_NOTES_20.0.0.md"
 categories: ["Release notes"]
-tags: []
+tags: ["PHP 8.3", "Security", "Migration"]
 historical: false
-featured: false
+featured: true
 draft: false
 ---
-These are draft notes for the upcoming release. The v20.0.0 tag and release
-package are not available yet.
+pH7Builder 20.0.0 was released on 25 November 2026. The release makes
+installation, migration, security checks and release verification more
+predictable while modernising the supported PHP foundation.
 
 ## Breaking changes
 
-- Requires PHP 8.3 or newer. pH7Builder 19.4.0 is the final release that
-  supports PHP 8.2.
-- Removes the deprecated Braintree Drop-in checkout. Operators using Braintree
-  must migrate to a supported payment integration before upgrading.
+- PHP 8.2 support has ended. Version 20.0.0 supports PHP 8.3 through 8.5.
+  pH7Builder 19.4.0 remains the final release for PHP 8.2.
+- The deprecated Braintree Drop-in checkout has been removed. Operators using
+  Braintree must move to a supported payment integration before upgrading.
 
 ## Installer and dependency updates
 
-- Upgrades the installation wizard to Smarty 5.8.5. This is an internal
-  installer dependency; pH7Builder site themes continue to use PH7Tpl.
-- Keeps FakerPHP and all 29 existing profile-generator locales. Invalid locale
-  submissions are rejected server-side instead of falling back implicitly.
-- Keeps Clickatell SMS support while replacing its unmaintained GPL wrapper
-  with the existing MIT-licensed HTTP client and Clickatell's current API.
+- The installation wizard now requires Smarty 5.8.5 or newer and the release
+  locks Smarty 5.9.0. Site themes continue to use PH7Tpl.
+- Xefi Faker replaces FakerPHP while retaining all 29 profile-generator
+  locales. Invalid locale submissions remain rejected server-side.
+- Clickatell support now uses the existing MIT-licensed HTTP client and
+  Clickatell's current API instead of the retired GPL wrapper.
+
+## Reliability and security
+
+- The release gate verifies a packaged fresh installation, the 19.4.0 to
+  20.0.0 migration, a restore rehearsal, static analysis, browser journeys,
+  production dependencies and release metadata.
+- The GitHub release includes the application ZIP, a SHA-256 checksum, an SPDX
+  SBOM and a build manifest.
+- A read-only operator health report checks runtime compatibility, writable
+  paths, cron, mail, caches, migrations and unsafe production settings.
+- Output encoding, CSRF comparison, FFmpeg argument validation, compiler
+  transport security, module permissions and IP-ban permissions have been
+  strengthened.
+- jQuery has been updated to 3.8.0 to address its upstream selector ReDoS
+  issue.
+
+## Migration and product experience
+
+- Safe CSV migration previews and a read-only, resumable UNA 14 migration
+  adapter are included. Compatibility with other UNA versions is not claimed.
+- Profile generation and milestone celebration remain optional module features
+  on fresh installations and upgrades.
+- Mobile splash and signup layouts are improved, splash video loading is
+  deferred, empty profile-rating pages remain usable and maps no longer load
+  without an API key.
 
 ## Database and upgrade notes
 
 The SQL schema advances to `1.6.7`. Existing installations must apply
-`_repository/upgrade/19.4.0-20.0.0/data/sql/MySQL/upgrade.sql` so the profile
-generator and milestone celebration modules can be controlled from the module
-manager. It widens the module folder identifier to store the milestone module's
-full name. The migration is idempotent and preserves both modules' existing
-enabled behavior.
+`_repository/upgrade/19.4.0-20.0.0/data/sql/MySQL/upgrade.sql`. The migration is
+idempotent and preserves the existing enabled behaviour of the affected
+modules.
 
-Before deploying 20.0.0, upgrade the server runtime to PHP 8.3 or newer and
-confirm that the locked dependencies support it. Sites that must remain on PHP
-8.2 should stay on 19.4.0.
+Use PHP 8.3, 8.4 or 8.5 before upgrading. The locked Xefi Faker dependency does
+not yet support PHP 8.6, so the installer rejects that runtime instead of
+claiming unverified compatibility.
 
-For source deployments, install the locked production dependencies with
-`composer install`. For existing sites, preserve configuration and user data,
-remove or block the installer, and clear application, template, and
-browser/CDN caches after deployment.
+Automatic in-place upgrades remain unavailable. Rehearse the documented manual
+upgrade on staging and verify a real restore before changing production. The
+bundled legacy Stripe flow also remains disabled until it is migrated and
+independently verified.
+
+Download the release and its verification artefacts from the
+[v20.0.0 GitHub release](https://github.com/pH7Software/pH7-Social-Dating-CMS/releases/tag/v20.0.0).

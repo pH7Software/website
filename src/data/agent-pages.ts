@@ -16,14 +16,14 @@ export const agentPages: AgentPage[] = [
     description: site.description,
     body: `pH7Builder, formerly pH7CMS, is a self-hosted PHP application. It gives builders an established starting point for profiles, discovery, matchmaking, messaging, memberships, moderation and administration.
 
-The published ${site.latestRelease} release requires PHP 8.2 or newer, MySQL 8.0 or newer, HTTPS, URL rewriting, and a compatible Apache or nginx web server. It is MIT-licensed and runs on infrastructure selected by the operator.
+The published ${site.latestRelease} release supports PHP 8.3 through 8.5 and requires MySQL 8.0 or newer, HTTPS, URL rewriting, and a compatible Apache or nginx web server. It is MIT-licensed and runs on infrastructure selected by the operator.
 
 The website includes clearly labelled interactive concepts for social dating, a focused social network and private matchmaking. They show how the same foundation can support different member experiences without pretending that a generated preview is a finished application.
 
 ## Current release
 
 - Latest published release: **${site.latestRelease}**
-- Next planned major release: **${site.upcomingRelease}**, not yet published
+- Released: **${site.latestReleaseDate}**
 - Licence: [${site.licence.name}](${site.licence.url})
 - Source: [GitHub](${site.githubUrl})
 
@@ -103,7 +103,7 @@ ${installCommand}
 
 Composer 2 is required for this source installation path. The target production environment must meet the version-specific requirements in the official documentation.
 
-For release ${site.latestRelease}, the verified baseline is PHP 8.2 or newer, MySQL 8.0 or newer, HTTPS, URL rewriting, and Apache or nginx.
+For release ${site.latestRelease}, the verified baseline is PHP 8.3 through 8.5, MySQL 8.0 or newer, HTTPS, URL rewriting, and Apache or nginx.
 
 ## Before production
 
@@ -113,7 +113,7 @@ For release ${site.latestRelease}, the verified baseline is PHP 8.2 or newer, My
 - Complete the guided browser installer.
 - Run applicable checks before accepting real member data.
 
-Version ${site.upcomingRelease} is not yet a published release. Do not use its requirements or upgrade path as though it were available.`,
+The v20 release ZIP includes locked production dependencies, a SHA-256 checksum, an SPDX SBOM and build metadata. Existing installations still use the documented manual upgrade path; automatic in-place upgrades are not available.`,
   },
   {
     path: "/marketplace/",

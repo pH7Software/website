@@ -20,7 +20,7 @@
       "min": "20.0.0",
       "maxExclusive": "21.0.0"
     },
-    "php": "^8.3"
+    "php": ">=8.3 <8.6"
   },
   "dependencies": [],
   "contents": [

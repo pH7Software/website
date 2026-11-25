@@ -27,7 +27,7 @@ composer create-project ph7software/ph7builder my-dating-app
 
 This creates an independent application copy. It is not the same as adding a library that will later replace the whole application through `composer update`. Keep your project in Git from the beginning so upstream changes and customer changes remain visible.
 
-The latest published release is **pH7Builder 19.4.0**. pH7Builder 20.0.0 is in development and has different runtime requirements, so use release-specific documentation rather than assuming the development branch describes the current package.
+The latest published release is **pH7Builder 20.0.0**. It supports PHP 8.3 through 8.5. Use its versioned documentation and locked dependencies rather than assuming another branch or release has the same runtime requirements.
 
 ## Give the agent a product brief
 

@@ -19,10 +19,10 @@ export const site = {
   },
   sponsorUrl: "https://github.com/sponsors/pH-7",
   contactEmail: "hello@ph7builder.com",
-  latestRelease: "19.4.0",
-  latestReleaseUrl: "https://github.com/pH7Software/pH7-Social-Dating-CMS/releases/tag/v19.4.0",
-  latestReleaseRequirements: "PHP 8.2 or newer, MySQL 8.0 or newer, HTTPS, URL rewriting, and Apache or nginx",
-  upcomingRelease: "20.0.0",
+  latestRelease: "20.0.0",
+  latestReleaseDate: "25 November 2026",
+  latestReleaseUrl: "https://github.com/pH7Software/pH7-Social-Dating-CMS/releases/tag/v20.0.0",
+  latestReleaseRequirements: "PHP 8.3 through 8.5, MySQL 8.0 or newer, HTTPS, URL rewriting, and Apache or nginx",
 } as const;
 
 export const primaryNavigation = [

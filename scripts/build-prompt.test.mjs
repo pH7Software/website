@@ -7,7 +7,7 @@ const source = await (await import("node:fs/promises")).readFile(sourcePath, "ut
 const compiled = ts.transpileModule(source, {
   compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 },
 }).outputText
-  .replace('import { site } from "../data/site";', 'const site = { origin: "https://ph7builder.com", githubUrl: "https://github.com/pH7Software/pH7-Social-Dating-CMS", latestRelease: "19.4.0" };');
+  .replace('import { site } from "../data/site";', 'const site = { origin: "https://ph7builder.com", githubUrl: "https://github.com/pH7Software/pH7-Social-Dating-CMS", latestRelease: "20.0.0" };');
 const moduleUrl = `data:text/javascript;base64,${Buffer.from(compiled).toString("base64")}`;
 const {
   generateBuildBlueprint,
@@ -56,7 +56,7 @@ test("excessive input is bounded in both generated artefacts", () => {
 test("the portable blueprint records the published foundation without claiming deployment", () => {
   const blueprint = generateBuildBlueprint({ idea: "A serious matchmaking service", agentId: "codex" });
 
-  assert.match(blueprint, /published_version_at_generation: "19\.4\.0"/);
+  assert.match(blueprint, /published_version_at_generation: "20\.0\.0"/);
   assert.match(blueprint, /The application runs locally/);
   assert.doesNotMatch(blueprint, /production-ready in minutes/i);
 });

@@ -33,6 +33,7 @@ const verifiedProduct = () => ({
 
 test("catalogue accepts a complete candidate but prevents its purchase", () => {
   assert.equal(validateProductManifest(product).verification.status, "candidate");
+  assert.equal(product.compatibility.php, ">=8.3 <8.6");
   assert.equal(product.purchasable, false);
   assert.throws(
     () => validateProductManifest({ ...structuredClone(product), purchasable: true }),
