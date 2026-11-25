@@ -156,6 +156,10 @@ import { site } from "../data/site";
     font-size: 0.86rem;
   }
 
+  .release-note a {
+    overflow-wrap: anywhere;
+  }
+
   .foundation-strip {
     border-block: 1px solid var(--ink);
     background: var(--lime);
@@ -340,6 +344,17 @@ import { site } from "../data/site";
   }
 
   @media (max-width: 680px) {
+    .home-hero .eyebrow {
+      font-size: 0.68rem;
+      letter-spacing: 0.07em;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .release-note {
+      align-items: flex-start;
+    }
+
     .foundation-grid {
       grid-template-columns: 1fr;
     }
