@@ -22,7 +22,7 @@ Important boundaries: the website blueprint tool runs locally in the browser. It
 - [pH7Builder overview](${site.origin}/index.md): Identity, current release, licence and primary build paths.
 - [Get started](${site.origin}/get-started/index.md): Published release installation and production readiness boundaries.
 - [pH7Builder for AI builders](${site.origin}/ai-builders/index.md): Technical workflow, available agent context and current limitations.
-- [Build with AI](${site.origin}/build/index.md): Generate a complete execution prompt and portable blueprint locally for Codex, Claude Code, Cursor or another capable coding agent.
+- [Product blueprint workbench](${site.origin}/build/index.md): Generate a complete execution prompt and portable blueprint locally for Codex, Claude Code, Cursor or another capable coding agent.
 - [Nomad Connections example](${site.origin}/blueprints/nomad-connections/index.md): Worked product blueprint for travellers and people living abroad.
 - [Services and USD pricing](${site.origin}/services/index.md): Optional Launch, Custom Build and ongoing engineering paths alongside the complete free path.
 - [Official marketplace](${site.origin}/marketplace/index.md): Verified first-party extensions, compatibility information and pay-what-you-wish pricing. Checkout remains closed until fulfilment and owner activation are complete.
