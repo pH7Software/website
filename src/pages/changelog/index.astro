@@ -16,7 +16,7 @@ const historical = entries
 const dateFormatter = new Intl.DateTimeFormat("en", { day: "numeric", month: "short", year: "numeric" });
 ---
 
-<BaseLayout title="Changelog" description="Published pH7Builder release notes, the upcoming 20.0.0 plan and the preserved historical release archive." path="/changelog/">
+<BaseLayout title="Changelog" description="Published pH7Builder release notes and the preserved historical release archive." path="/changelog/">
   <header class="page-hero shell changelog-hero">
     <div>
       <p class="eyebrow">pH7Builder changelog</p>
@@ -26,17 +26,17 @@ const dateFormatter = new Intl.DateTimeFormat("en", { day: "numeric", month: "sh
     <aside class="current-release">
       <span class="status-pill">Latest published</span>
       <strong>{site.latestRelease}</strong>
-      <p>Released 10 November 2026</p>
-      <a class="button button-small" href="/release-notes-19-4-0/">Read the release notes<ArrowIcon /></a>
+      <p>Released {site.latestReleaseDate}</p>
+      <a class="button button-small" href="/release-notes-20-0-0/">Read the release notes<ArrowIcon /></a>
     </aside>
   </header>
 
   {upcoming && <section class="upcoming-release">
     <div class="shell upcoming-grid">
-      <div><p class="eyebrow">Upcoming · not yet published</p><h2>pH7Builder {site.upcomingRelease}</h2></div>
+      <div><p class="eyebrow">Upcoming · not yet published</p><h2>{upcoming.data.title.replace(" — Release Notes", "")}</h2></div>
       <div>
         <p>{upcoming.data.description}</p>
-        <p>No tag or release package is available yet. The published 19.4.0 release remains the current download.</p>
+        <p>No tag or release package is available yet. pH7Builder {site.latestRelease} remains the current download.</p>
         <a class="text-link" href={`/${upcoming.data.slug}/`}>Read the draft notes<ArrowIcon /></a>
       </div>
     </div>

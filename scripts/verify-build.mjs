@@ -242,8 +242,8 @@ if (await exists(path.join(dist, "sitemap.xml"))) {
 
 const siteSource = await readFile(new URL("../src/data/site.ts", import.meta.url), "utf8");
 const currentRelease = siteSource.match(/latestRelease:\s*"([^"]+)"/)?.[1];
-const upcomingRelease = siteSource.match(/upcomingRelease:\s*"([^"]+)"/)?.[1];
-if (!currentRelease || !upcomingRelease) failures.add("Missing release metadata in site.ts");
+const currentReleaseDate = siteSource.match(/latestReleaseDate:\s*"([^"]+)"/)?.[1];
+if (!currentRelease || !currentReleaseDate) failures.add("Missing release metadata in site.ts");
 
 if (currentRelease) {
   const installCommand = `ph7software/ph7builder:${currentRelease} my-dating-app --no-dev --prefer-dist`;
@@ -259,7 +259,7 @@ if (currentRelease) {
 if (await exists(path.join(dist, "llms.txt"))) {
   const llms = await readFile(path.join(dist, "llms.txt"), "utf8");
   if (!llms.startsWith("# pH7Builder\n\n> pH7Builder is")) failures.add("llms.txt does not begin with the canonical identity and summary");
-  if (currentRelease && upcomingRelease && (!llms.includes(`latest published release is ${currentRelease}`) || !llms.includes(`Version ${upcomingRelease} is unreleased`))) failures.add("llms.txt does not match the release metadata in site.ts");
+  if (currentRelease && currentReleaseDate && (!llms.includes(`latest published release is ${currentRelease}`) || !llms.includes(`released on ${currentReleaseDate}`))) failures.add("llms.txt does not match the release metadata in site.ts");
   if (!llms.includes("/get-started/index.md")) failures.add("llms.txt does not link to the Markdown installation guide");
   if (!llms.includes("/AGENTS.md") || !llms.includes("/SKILL.md")) failures.add("llms.txt does not expose the public agent instructions");
   if (!llms.includes("/.well-known/ard.json")) failures.add("llms.txt does not expose the ARD manifest");
@@ -307,9 +307,9 @@ if (await exists(path.join(dist, ".well-known/ard.json"))) {
 if (await exists(path.join(dist, "index.html"))) {
   const homepage = await readFile(path.join(dist, "index.html"), "utf8");
   if (!homepage.includes("Build it yourself") || !homepage.includes("Work with the creator")) failures.add("Homepage does not expose the independent and professional paths");
-  if (!homepage.includes("pH7Builder, formerly pH7CMS") || !homepage.includes("PHP 8.2+") || !homepage.includes("MySQL 8.0+")) failures.add("Homepage does not expose the current product identity and requirements");
+  if (!homepage.includes("pH7Builder, formerly pH7CMS") || !homepage.includes("PHP 8.3–8.5") || !homepage.includes("MySQL 8.0+")) failures.add("Homepage does not expose the current product identity and requirements");
   if (!homepage.includes('"SoftwareApplication"') || !homepage.includes('"SoftwareSourceCode"') || !homepage.includes('"Organization"')) failures.add("Homepage structured data does not identify the software and publisher entities");
-  if (!homepage.includes('"alternateName":"pH7CMS"') || !homepage.includes('"softwareVersion":"19.4.0"')) failures.add("Homepage structured data does not identify the former name and published version");
+  if (!homepage.includes('"alternateName":"pH7CMS"') || !homepage.includes('"softwareVersion":"20.0.0"')) failures.add("Homepage structured data does not identify the former name and published version");
 }
 
 if (await exists(path.join(dist, "build/index.html"))) {

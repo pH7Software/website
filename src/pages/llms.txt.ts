@@ -6,7 +6,7 @@ export const GET: APIRoute = () => {
 
 > pH7Builder is open-source, self-hosted PHP software for building white-label dating websites, matchmaking platforms, social networks and online communities.
 
-Canonical identity: pH7Builder, formerly pH7CMS, is a self-hosted PHP application created by Pierre-Henry Soria and released under the MIT licence. The latest published release is ${site.latestRelease}. Version ${site.upcomingRelease} is unreleased. pH7Builder is not a hosted SaaS product.
+Canonical identity: pH7Builder, formerly pH7CMS, is a self-hosted PHP application created by Pierre-Henry Soria and released under the MIT licence. The latest published release is ${site.latestRelease}, released on ${site.latestReleaseDate}. pH7Builder is not a hosted SaaS product.
 
 Important boundaries: the website blueprint tool runs locally in the browser. It does not deploy an application, call an AI model or submit the visitor's idea. A public application API and MCP server are future directions, not currently advertised capabilities.
 

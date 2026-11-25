@@ -2,6 +2,7 @@
 import ArrowIcon from "../../components/ArrowIcon.astro";
 import CtaBand from "../../components/CtaBand.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { site } from "../../data/site";
 ---
 
 <BaseLayout title="Nomad Connections blueprint" description="A worked pH7Builder product blueprint for a dating business serving travellers and people living abroad." path="/blueprints/nomad-connections/">
@@ -18,7 +19,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
       <dl>
         <div><dt>Audience</dt><dd>Adult travellers and expats</dd></div>
         <div><dt>Core promise</dt><dd>Meet compatible people across current and future locations</dd></div>
-        <div><dt>Foundation</dt><dd>pH7Builder {"19.4.0"}</dd></div>
+        <div><dt>Foundation</dt><dd>pH7Builder {site.latestRelease}</dd></div>
         <div><dt>Status</dt><dd>Concept blueprint, not a deployed application</dd></div>
       </dl>
     </div>
@@ -47,7 +48,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 
 foundation:
   package: "ph7software/ph7builder"
-  version: "19.4.0"
+  version: "{site.latestRelease}"
 
 experience:
   discovery:

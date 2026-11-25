@@ -55,7 +55,7 @@ export const validateProductManifest = (product) => {
   assert(datePattern.test(product.releasedAt) && datePattern.test(product.updatedAt), `${product.id}: release dates are invalid.`);
   assert(semanticVersionPattern.test(product.compatibility?.pH7Builder?.min), `${product.id}: minimum pH7Builder version is invalid.`);
   assert(semanticVersionPattern.test(product.compatibility?.pH7Builder?.maxExclusive), `${product.id}: maximum pH7Builder version is invalid.`);
-  assert(/^\^\d+\.\d+$/.test(product.compatibility?.php), `${product.id}: PHP compatibility is invalid.`);
+  assert(/^(?:\^\d+\.\d+|>=\d+\.\d+ <\d+\.\d+)$/.test(product.compatibility?.php), `${product.id}: PHP compatibility is invalid.`);
   assert(Array.isArray(product.dependencies), `${product.id}: dependencies must be an array.`);
   assert(Array.isArray(product.contents) && product.contents.length >= 3, `${product.id}: package contents are incomplete.`);
   assert(product.installation?.target === `_repository/module/${product.id}/`, `${product.id}: installation target is invalid.`);
