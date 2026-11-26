@@ -309,7 +309,7 @@ if (await exists(path.join(dist, "index.html"))) {
   if (!homepage.includes("Build it yourself") || !homepage.includes("Work with the creator")) failures.add("Homepage does not expose the independent and professional paths");
   if (!homepage.includes("pH7Builder, formerly pH7CMS") || !homepage.includes("PHP 8.3–8.5") || !homepage.includes("MySQL 8.0+")) failures.add("Homepage does not expose the current product identity and requirements");
   if (!homepage.includes('"SoftwareApplication"') || !homepage.includes('"SoftwareSourceCode"') || !homepage.includes('"Organization"')) failures.add("Homepage structured data does not identify the software and publisher entities");
-  if (!homepage.includes('"alternateName":"pH7CMS"') || !homepage.includes('"softwareVersion":"20.0.0"')) failures.add("Homepage structured data does not identify the former name and published version");
+  if (!homepage.includes('"alternateName":"pH7CMS"') || !currentRelease || !homepage.includes(`"softwareVersion":"${currentRelease}"`)) failures.add("Homepage structured data does not identify the former name and published version");
 }
 
 if (await exists(path.join(dist, "build/index.html"))) {
