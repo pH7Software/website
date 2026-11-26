@@ -2,14 +2,20 @@ const paypalBaseUrl = (environment) => environment === "production"
   ? "https://api-m.paypal.com"
   : "https://api-m.sandbox.paypal.com";
 
+class PayPalApiError extends Error {
+  constructor(status, details) {
+    super("PayPal request failed.");
+    this.name = "PayPalApiError";
+    this.status = status;
+    this.details = details;
+  }
+}
+
 const readJson = async (response) => {
   const text = await response.text();
   const data = text ? JSON.parse(text) : {};
   if (!response.ok) {
-    const error = new Error("PayPal request failed.");
-    error.status = response.status;
-    error.details = data;
-    throw error;
+    throw new PayPalApiError(response.status, data);
   }
   return data;
 };
