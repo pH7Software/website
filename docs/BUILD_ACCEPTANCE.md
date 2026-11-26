@@ -27,8 +27,8 @@ Target agent: Codex.
 
 ## Published-release evidence
 
-- GitHub publishes stable release `v20.0.0`, dated 25 November 2026.
-- Packagist resolves `ph7software/ph7builder` `v20.0.0` to the tagged release
+- GitHub publishes stable release `v20.0.1`, dated 26 November 2026.
+- Packagist resolves `ph7software/ph7builder` `v20.0.1` to the tagged release
   commit.
 - The package supports PHP 8.3 through 8.5 and declares its required PHP
   extensions.
