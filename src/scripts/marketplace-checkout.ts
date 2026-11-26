@@ -1,5 +1,7 @@
 export {};
 
+import { normalizeUsdAmount, parseUsdCents } from "../lib/marketplace.mjs";
+
 type MarketplaceApiConfig = {
   enabled: boolean;
   environment: "sandbox" | "production";
@@ -39,15 +41,16 @@ const statusMessage = panel?.querySelector<HTMLElement>("[data-checkout-status]"
 const result = panel?.querySelector<HTMLElement>("[data-checkout-result]");
 const finalAmount = panel?.querySelector<HTMLElement>("[data-final-amount]");
 const minimum = Number(panel?.dataset.minimum ?? "0");
+const minimumCents = parseUsdCents(minimum);
 
 const selectedAmount = () => {
   const selected = form?.querySelector<HTMLInputElement>("input[name='contribution']:checked");
   if (!selected) return null;
-  if (selected.value !== "custom") return Number(selected.value).toFixed(2);
+  if (selected.value !== "custom") return normalizeUsdAmount(selected.value);
 
   const custom = form?.elements.namedItem("customAmount");
   return custom instanceof HTMLInputElement && custom.value !== ""
-    ? Number(custom.value).toFixed(2)
+    ? normalizeUsdAmount(custom.value)
     : null;
 };
 
@@ -97,7 +100,8 @@ form?.addEventListener("input", updateAmount);
 form?.addEventListener("submit", async (event) => {
   event.preventDefault();
   const amount = selectedAmount();
-  if (!amount || Number(amount) < minimum) {
+  const amountCents = amount === null ? null : parseUsdCents(amount);
+  if (amountCents === null || minimumCents === null || amountCents < minimumCents) {
     showStatus(`Choose at least $${minimum.toFixed(2)} USD.`);
     return;
   }
@@ -148,6 +152,21 @@ form?.addEventListener("submit", async (event) => {
           method: "POST",
           headers: { "Idempotency-Key": `capture-${idempotencyKey}` },
         });
+        if (capture.status === "PENDING") {
+          showStatus(`PayPal is still processing this payment. Keep order ${orderId} and recover the download once it completes.`);
+          if (result) {
+            result.hidden = false;
+            result.replaceChildren();
+            const link = document.createElement("a");
+            link.href = "/marketplace/recover/";
+            link.textContent = "Open purchase recovery";
+            result.append(link);
+          }
+          return;
+        }
+        if (capture.status !== "COMPLETED" || typeof capture.downloadUrl !== "string") {
+          throw new Error("PayPal has not completed this payment.");
+        }
         if (result) {
           result.hidden = false;
           result.replaceChildren();
@@ -159,7 +178,7 @@ form?.addEventListener("submit", async (event) => {
           link.textContent = "Download verified package";
           result.append(heading, document.createElement("br"), link);
         }
-        showStatus("Keep your PayPal order ID for purchase recovery.");
+        showStatus(`Payment verified. Keep PayPal order ${orderId} for purchase recovery.`);
       },
       onCancel: () => showStatus("Checkout cancelled. No payment was captured."),
       onError: () => showStatus("PayPal could not complete checkout. No download was granted."),

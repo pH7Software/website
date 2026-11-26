@@ -54,6 +54,7 @@ export type MarketplaceProduct = {
 };
 
 export function parseUsdCents(value: string | number): number | null;
+export function normalizeUsdAmount(value: string | number): string | null;
 export function formatUsd(value: string | number): string;
 export function validateMarketplaceConfig(config: unknown): Readonly<MarketplaceConfig>;
 export function validateProductManifest(product: unknown): Readonly<MarketplaceProduct>;

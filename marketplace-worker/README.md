@@ -18,6 +18,8 @@ e-commerce backend.
 - No PayPal secret, download signing secret, payer email or package is stored in
   the public website.
 - Refund and reversal webhooks revoke future downloads.
+- Pending captures never grant a download. A verified completion webhook moves
+  them forward without asking the customer to pay twice.
 
 ## Required Cloudflare resources
 
@@ -26,13 +28,16 @@ e-commerce backend.
 2. Create the D1 database and apply `migrations/0001_orders.sql`.
 3. Create the private R2 bucket and upload only packages that match the public
    manifest key and SHA-256 checksum.
-4. Add Worker secrets with `wrangler secret put`:
+4. Set the sandbox PayPal merchant ID as `PAYPAL_MERCHANT_ID` in the untracked
+   Worker configuration. The Worker verifies it on captures and completion
+   webhooks so another merchant cannot fulfil an order accidentally.
+5. Add Worker secrets with `wrangler secret put`:
    `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_WEBHOOK_ID`, and
    `DOWNLOAD_SIGNING_SECRET`.
-5. Register `https://marketplace-api.ph7builder.com/v1/webhooks/paypal` for
-   `PAYMENT.CAPTURE.COMPLETED`, `PAYMENT.CAPTURE.REFUNDED`,
+6. Register `https://marketplace-api.ph7builder.com/v1/webhooks/paypal` for
+   `PAYMENT.CAPTURE.PENDING`, `PAYMENT.CAPTURE.COMPLETED`, `PAYMENT.CAPTURE.REFUNDED`,
    `PAYMENT.CAPTURE.REVERSED`, and `PAYMENT.CAPTURE.DENIED`.
-6. Keep purchases disabled while running PayPal sandbox tests.
+7. Keep purchases disabled while running PayPal sandbox tests.
 
 Secrets must be entered directly through Cloudflare tooling. Do not place them
 in a file, command argument, GitHub variable or chat message.

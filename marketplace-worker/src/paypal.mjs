@@ -14,6 +14,19 @@ const readJson = async (response) => {
   return data;
 };
 
+export const paypalWebhookVerificationPayload = (headers, rawEvent, webhookId) => {
+  const fields = {
+    auth_algo: headers.get("paypal-auth-algo"),
+    cert_url: headers.get("paypal-cert-url"),
+    transmission_id: headers.get("paypal-transmission-id"),
+    transmission_sig: headers.get("paypal-transmission-sig"),
+    transmission_time: headers.get("paypal-transmission-time"),
+    webhook_id: webhookId,
+  };
+  const prefix = JSON.stringify(fields).slice(0, -1);
+  return `${prefix},"webhook_event":${rawEvent}}`;
+};
+
 export const createPayPalClient = ({ fetchImpl = fetch } = {}) => {
   const accessToken = async (env) => {
     const response = await fetchImpl(`${paypalBaseUrl(env.PAYPAL_ENVIRONMENT)}/v1/oauth2/token`, {
@@ -52,27 +65,20 @@ export const createPayPalClient = ({ fetchImpl = fetch } = {}) => {
       headers: { "PayPal-Request-Id": requestId },
     }),
     getOrder: (env, orderId) => request(env, `/v2/checkout/orders/${encodeURIComponent(orderId)}`),
-    verifyWebhook: (env, headers, event) => request(env, "/v1/notifications/verify-webhook-signature", {
+    verifyWebhook: (env, headers, rawEvent) => request(env, "/v1/notifications/verify-webhook-signature", {
       method: "POST",
-      body: JSON.stringify({
-        auth_algo: headers.get("paypal-auth-algo"),
-        cert_url: headers.get("paypal-cert-url"),
-        transmission_id: headers.get("paypal-transmission-id"),
-        transmission_sig: headers.get("paypal-transmission-sig"),
-        transmission_time: headers.get("paypal-transmission-time"),
-        webhook_id: env.PAYPAL_WEBHOOK_ID,
-        webhook_event: event,
-      }),
+      body: paypalWebhookVerificationPayload(headers, rawEvent, env.PAYPAL_WEBHOOK_ID),
     }),
   };
 };
 
-export const paypalOrderPayload = ({ product, amount, reference, marketplaceOrigin }) => ({
+export const paypalOrderPayload = ({ product, amount, reference, merchantId, marketplaceOrigin }) => ({
   intent: "CAPTURE",
   purchase_units: [{
     reference_id: reference,
     custom_id: `${product.id}@${product.version}`,
     description: product.name,
+    payee: { merchant_id: merchantId },
     amount: { currency_code: "USD", value: amount },
   }],
   payment_source: {

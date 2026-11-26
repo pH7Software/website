@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import { createMarketplaceWorker } from "../marketplace-worker/src/index.mjs";
+import { paypalWebhookVerificationPayload } from "../marketplace-worker/src/paypal.mjs";
 import { createDownloadToken } from "../marketplace-worker/src/security.mjs";
 
 const baseProduct = JSON.parse(await readFile(
@@ -73,9 +74,27 @@ class MockD1 {
               }
               return { success: true };
             }
+            if (sql.includes("status = 'PENDING'") || sql.includes("status = 'DENIED'")) {
+              const order = database.orders.find((item) => item.paypal_order_id === values[2]);
+              if (order) {
+                order.status = sql.includes("status = 'PENDING'") ? "PENDING" : "DENIED";
+                order.paypal_capture_id = values[0];
+                order.updated_at = values[1];
+              }
+              return { success: true };
+            }
             if (sql.includes("download_count = download_count + 1")) {
               const order = database.orders.find((item) => item.paypal_order_id === values[1]);
               if (order) order.download_count += 1;
+              return { success: true };
+            }
+            if (sql.includes("SET status = ?, paypal_capture_id")) {
+              const order = database.orders.find((item) => item.paypal_order_id === values[3]);
+              if (order) {
+                order.status = values[0];
+                order.paypal_capture_id = values[1];
+                order.updated_at = values[2];
+              }
               return { success: true };
             }
             if (sql.includes("SET status = ?")) {
@@ -96,7 +115,14 @@ class MockD1 {
 }
 
 const paypal = () => {
-  const state = { createCalls: 0, captureCalls: 0, verifyCalls: 0, mismatchedCapture: false };
+  const state = {
+    createCalls: 0,
+    captureCalls: 0,
+    verifyCalls: 0,
+    captureStatus: "COMPLETED",
+    mismatchedCapture: false,
+    mismatchedMerchant: false,
+  };
   return {
     state,
     async createOrder(_env, payload) {
@@ -111,19 +137,25 @@ const paypal = () => {
         status: "COMPLETED",
         purchase_units: [{
           custom_id: `${product.id}@${product.version}`,
+          payee: { merchant_id: state.mismatchedMerchant ? "2WRNGMERCHANT" : "2BCDEFGHJKLMN" },
           payments: { captures: [{
             id: "CAPTURE123456",
-            status: "COMPLETED",
+            status: state.captureStatus,
             amount: { currency_code: "USD", value: state.mismatchedCapture ? "99.00" : "29.00" },
           }] },
         }],
       };
     },
     async getOrder() {
-      return { status: "COMPLETED", payer: { email_address: "buyer@example.com" } };
+      return {
+        status: "COMPLETED",
+        payer: { email_address: "buyer@example.com" },
+        purchase_units: [{ payee: { merchant_id: "2BCDEFGHJKLMN" } }],
+      };
     },
-    async verifyWebhook() {
+    async verifyWebhook(_env, _headers, rawEvent) {
       state.verifyCalls += 1;
+      state.lastWebhookRaw = rawEvent;
       return { verification_status: "SUCCESS" };
     },
   };
@@ -144,6 +176,7 @@ const environment = (database = new MockD1()) => ({
   PAYPAL_CLIENT_ID: "sandbox-client-id",
   PAYPAL_CLIENT_SECRET: "sandbox-client-secret-for-tests",
   PAYPAL_WEBHOOK_ID: "sandbox-webhook",
+  PAYPAL_MERCHANT_ID: "2BCDEFGHJKLMN",
   DOWNLOAD_SIGNING_SECRET: "a-test-secret-long-enough-for-hmac",
   PURCHASES_ENABLED: "true",
   ALLOW_PRODUCTION: "false",
@@ -204,6 +237,7 @@ test("order creation uses verified manifest data and is idempotent", async () =>
   assert.equal(first.status, 201);
   assert.deepEqual(await first.json(), { orderId: "ORDER123456789", status: "CREATED" });
   assert.equal(client.state.lastPayload.purchase_units[0].custom_id, `${product.id}@${product.version}`);
+  assert.equal(client.state.lastPayload.purchase_units[0].payee.merchant_id, "2BCDEFGHJKLMN");
   assert.equal(client.state.lastPayload.purchase_units[0].amount.value, "29.00");
   assert.equal(
     client.state.lastPayload.payment_source.paypal.experience_context.return_url,
@@ -226,6 +260,59 @@ test("capture rejects a PayPal amount that does not match the stored order", asy
   }), env);
   assert.equal(response.status, 502);
   assert.equal(env.ORDERS.orders[0].status, "CREATED");
+});
+
+test("capture rejects a payment routed to another merchant", async () => {
+  const client = paypal();
+  const worker = newWorker(client);
+  const env = environment();
+  await createOrder(worker, env);
+  client.state.mismatchedMerchant = true;
+  const response = await worker.fetch(request("/v1/orders/ORDER123456789/capture", {
+    method: "POST",
+    headers: { "Idempotency-Key": "capture-key-merchant" },
+  }), env);
+  assert.equal(response.status, 502);
+  assert.equal(env.ORDERS.orders[0].status, "CREATED");
+});
+
+test("pending capture grants nothing until a verified completion webhook arrives", async () => {
+  const client = paypal();
+  client.state.captureStatus = "PENDING";
+  const worker = newWorker(client);
+  const env = environment();
+  await createOrder(worker, env);
+  const pending = await worker.fetch(request("/v1/orders/ORDER123456789/capture", {
+    method: "POST",
+    headers: { "Idempotency-Key": "capture-key-pending" },
+  }), env);
+  assert.equal(pending.status, 202);
+  assert.deepEqual(await pending.json(), {
+    status: "PENDING",
+    orderId: "ORDER123456789",
+    message: "PayPal is still processing this payment.",
+  });
+  assert.equal(env.ORDERS.orders[0].status, "PENDING");
+
+  const event = {
+    id: "WH-COMPLETE-123",
+    event_type: "PAYMENT.CAPTURE.COMPLETED",
+    resource: {
+      id: "CAPTURE123456",
+      amount: { currency_code: "USD", value: "29.00" },
+      payee: { merchant_id: "2BCDEFGHJKLMN" },
+      supplementary_data: { related_ids: { order_id: "ORDER123456789" } },
+    },
+  };
+  const rawEvent = JSON.stringify(event, null, 2);
+  const webhook = await worker.fetch(new Request("https://marketplace-api.ph7builder.com/v1/webhooks/paypal", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: rawEvent,
+  }), env);
+  assert.equal(webhook.status, 200);
+  assert.equal(client.state.lastWebhookRaw, rawEvent);
+  assert.equal(env.ORDERS.orders[0].status, "COMPLETED");
 });
 
 test("completed capture grants an expiring link to the manifest package only", async () => {
@@ -331,4 +418,18 @@ test("download tokens reject path-shaped product identifiers", async () => {
     env,
   );
   assert.equal(response.status, 404);
+});
+
+test("PayPal webhook verification keeps the original event JSON", () => {
+  const headers = new Headers({
+    "paypal-auth-algo": "SHA256withRSA",
+    "paypal-cert-url": "https://api.paypal.com/cert.pem",
+    "paypal-transmission-id": "transmission-123",
+    "paypal-transmission-sig": "signature-123",
+    "paypal-transmission-time": "2026-11-27T00:00:00Z",
+  });
+  const rawEvent = '{\n  "id": "WH-RAW-123",\n  "event_type": "PAYMENT.CAPTURE.COMPLETED"\n}';
+  const payload = paypalWebhookVerificationPayload(headers, rawEvent, "webhook-123");
+  assert.ok(payload.endsWith(`"webhook_event":${rawEvent}}`));
+  assert.equal(JSON.parse(payload).webhook_event.id, "WH-RAW-123");
 });

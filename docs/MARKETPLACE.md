@@ -39,12 +39,17 @@ fulfilment have release evidence.
    against its own catalogue before creating a PayPal order.
 3. PayPal approval returns an order ID. The Worker captures it with a
    server-derived idempotency key and verifies amount, currency, product and
-   capture state before recording completion.
+   merchant before recording completion. Pending captures remain unavailable
+   until PayPal sends a verified completion webhook.
 4. The Worker signs a short-lived token bound to the stored order, product and
    version. Downloads resolve only to the manifest-selected R2 key.
 5. A verified refund, reversal or denial webhook revokes future downloads.
 6. Recovery requires the PayPal order ID and matching PayPal payer email. The
    email is checked against PayPal and is not stored locally.
+
+Webhook verification preserves the exact event JSON received from PayPal when
+it calls PayPal's signature-verification endpoint. Parsing and serialising the
+event first can invalidate verification even when its data appears unchanged.
 
 The Worker logs event identifiers and state changes, never credentials or payer
 details. A browser redirect alone cannot grant a package.

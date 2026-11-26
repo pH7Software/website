@@ -11,12 +11,17 @@ const assert = (condition, message) => {
 const isPositiveInteger = (value) => Number.isSafeInteger(value) && value > 0;
 
 export const parseUsdCents = (value) => {
-  const normalized = typeof value === "number" ? value.toFixed(2) : String(value).trim();
+  const normalized = typeof value === "number" ? String(value) : String(value).trim();
   if (!/^(?:0|[1-9]\d*)(?:\.\d{1,2})?$/.test(normalized)) return null;
 
   const [dollars, fraction = ""] = normalized.split(".");
   const cents = Number(dollars) * 100 + Number(fraction.padEnd(2, "0"));
   return Number.isSafeInteger(cents) ? cents : null;
+};
+
+export const normalizeUsdAmount = (value) => {
+  const cents = parseUsdCents(value);
+  return cents === null ? null : (cents / 100).toFixed(2);
 };
 
 export const formatUsd = (value) => {

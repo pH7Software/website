@@ -6,6 +6,7 @@ import { isContributionAllowed, parseUsdCents } from "../../src/lib/marketplace.
 const jsonHeaders = { "Content-Type": "application/json; charset=utf-8", "X-Content-Type-Options": "nosniff", "Cache-Control": "no-store" };
 const idempotencyPattern = /^[A-Za-z0-9_-]{16,108}$/;
 const paypalOrderPattern = /^[A-Za-z0-9-]{10,64}$/;
+const paypalMerchantPattern = /^[2-9A-HJ-NP-Z]{13}$/;
 const maximumBodyBytes = 8192;
 const downloadLifetimeMs = 24 * 60 * 60 * 1000;
 
@@ -26,17 +27,23 @@ const json = (request, env, body, status = 200) => new Response(JSON.stringify(b
   headers: { ...jsonHeaders, ...corsHeaders(request, env) },
 });
 
-const readBody = async (request) => {
+const readBodyText = async (request) => {
   const declared = Number(request.headers.get("Content-Length") ?? "0");
   if (declared > maximumBodyBytes) throw new HttpError(413, "Request is too large.");
   const text = await request.text();
   if (text.length > maximumBodyBytes) throw new HttpError(413, "Request is too large.");
+  return text;
+};
+
+const parseBody = (text) => {
   try {
     return JSON.parse(text || "{}");
   } catch {
     throw new HttpError(400, "Request body must be valid JSON.");
   }
 };
+
+const readBody = async (request) => parseBody(await readBodyText(request));
 
 const requireOrigin = (request, env) => {
   if (request.headers.get("Origin") !== env.MARKETPLACE_ORIGIN) {
@@ -67,6 +74,7 @@ const purchasesEnabled = (env) => env.PURCHASES_ENABLED === "true"
   && typeof env.PAYPAL_CLIENT_ID === "string" && env.PAYPAL_CLIENT_ID.length >= 10
   && typeof env.PAYPAL_CLIENT_SECRET === "string" && env.PAYPAL_CLIENT_SECRET.length >= 20
   && typeof env.PAYPAL_WEBHOOK_ID === "string" && env.PAYPAL_WEBHOOK_ID.length >= 10
+  && paypalMerchantPattern.test(env.PAYPAL_MERCHANT_ID ?? "")
   && typeof env.DOWNLOAD_SIGNING_SECRET === "string" && env.DOWNLOAD_SIGNING_SECRET.length >= 32;
 
 const readVerifiedProduct = (catalog, productId, productVersion) => {
@@ -95,14 +103,15 @@ const newDownloadToken = (order, env, now) => createDownloadToken({
 
 const orderCapture = (response) => response.purchase_units?.[0]?.payments?.captures?.[0];
 
-const verifyCapture = (order, response) => {
+const verifiedCapture = (order, response, env) => {
   const capture = orderCapture(response);
   const unit = response.purchase_units?.[0];
   return response.status === "COMPLETED"
-    && capture?.status === "COMPLETED"
+    && capture
     && capture.amount?.currency_code === order.currency
     && capture.amount?.value === order.amount
     && unit?.custom_id === `${order.product_id}@${order.product_version}`
+    && unit?.payee?.merchant_id === env.PAYPAL_MERCHANT_ID
     && typeof capture.id === "string"
     ? capture
     : null;
@@ -171,6 +180,7 @@ const createOrder = async (request, env, catalog, paypal, now, randomUUID) => {
     product,
     amount,
     reference,
+    merchantId: env.PAYPAL_MERCHANT_ID,
     marketplaceOrigin: env.MARKETPLACE_ORIGIN,
   }), idempotencyKey);
   if (!paypalOrderPattern.test(order.id ?? "") || order.status !== "CREATED") {
@@ -205,13 +215,37 @@ const captureOrder = async (request, env, paypal, orderId, now) => {
     const token = await newDownloadToken(order, env, now);
     return json(request, env, { status: "COMPLETED", downloadUrl: `${env.API_ORIGIN}/v1/download/${token}` });
   }
+  if (order.status === "PENDING") {
+    return json(request, env, {
+      status: "PENDING",
+      orderId,
+      message: "PayPal is still processing this payment.",
+    }, 202);
+  }
   if (order.status !== "CREATED" && order.status !== "APPROVED") {
     throw new HttpError(409, "Order cannot be captured.");
   }
 
   const response = await paypal.captureOrder(env, orderId, `capture-${order.reference}`);
-  const capture = verifyCapture(order, response);
+  const capture = verifiedCapture(order, response, env);
   if (!capture) throw new HttpError(502, "Captured payment did not match the order.");
+  if (capture.status === "PENDING") {
+    await env.ORDERS.prepare(
+      "UPDATE marketplace_orders SET status = 'PENDING', paypal_capture_id = ?, updated_at = ? WHERE paypal_order_id = ? AND status IN ('CREATED', 'APPROVED')",
+    ).bind(capture.id, new Date(now()).toISOString(), orderId).run();
+    return json(request, env, {
+      status: "PENDING",
+      orderId,
+      message: "PayPal is still processing this payment.",
+    }, 202);
+  }
+  if (["DECLINED", "FAILED"].includes(capture.status)) {
+    await env.ORDERS.prepare(
+      "UPDATE marketplace_orders SET status = 'DENIED', paypal_capture_id = ?, updated_at = ? WHERE paypal_order_id = ? AND status IN ('CREATED', 'APPROVED')",
+    ).bind(capture.id, new Date(now()).toISOString(), orderId).run();
+    throw new HttpError(409, "PayPal did not complete this payment.");
+  }
+  if (capture.status !== "COMPLETED") throw new HttpError(502, "PayPal returned an unsupported capture state.");
   await env.ORDERS.prepare(
     "UPDATE marketplace_orders SET status = 'COMPLETED', paypal_capture_id = ?, updated_at = ? WHERE paypal_order_id = ? AND status IN ('CREATED', 'APPROVED')",
   ).bind(capture.id, new Date(now()).toISOString(), orderId).run();
@@ -241,7 +275,11 @@ const recoverPurchase = async (request, env, paypal, now) => {
   if (!order || order.status !== "COMPLETED") throw new HttpError(404, "Purchase could not be verified.");
   const remote = await paypal.getOrder(env, body.orderId);
   const email = remote.payer?.email_address;
-  if (remote.status !== "COMPLETED" || typeof email !== "string" || email.toLowerCase() !== body.email.trim().toLowerCase()) {
+  const merchantId = remote.purchase_units?.[0]?.payee?.merchant_id;
+  if (remote.status !== "COMPLETED"
+    || merchantId !== env.PAYPAL_MERCHANT_ID
+    || typeof email !== "string"
+    || email.toLowerCase() !== body.email.trim().toLowerCase()) {
     throw new HttpError(404, "Purchase could not be verified.");
   }
   const token = await newDownloadToken(order, env, now);
@@ -252,11 +290,12 @@ const webhookOrderId = (event) => event.resource?.supplementary_data?.related_id
 const webhookCaptureId = (event) => event.resource?.supplementary_data?.related_ids?.capture_id ?? event.resource?.id;
 
 const processWebhook = async (request, env, paypal, now) => {
-  const event = await readBody(request);
+  const rawEvent = await readBodyText(request);
+  const event = parseBody(rawEvent);
   if (typeof event.id !== "string" || event.id.length > 127 || typeof event.event_type !== "string") {
     throw new HttpError(400, "Webhook event is invalid.");
   }
-  const verification = await paypal.verifyWebhook(env, request.headers, event);
+  const verification = await paypal.verifyWebhook(env, request.headers, rawEvent);
   if (verification.verification_status !== "SUCCESS") throw new HttpError(400, "Webhook signature is invalid.");
 
   const existing = await env.ORDERS.prepare(
@@ -265,17 +304,22 @@ const processWebhook = async (request, env, paypal, now) => {
   if (existing) return json(request, env, { received: true, duplicate: true });
 
   const timestamp = new Date(now()).toISOString();
-  if (event.event_type === "PAYMENT.CAPTURE.COMPLETED") {
+  if (["PAYMENT.CAPTURE.PENDING", "PAYMENT.CAPTURE.COMPLETED"].includes(event.event_type)) {
     const orderId = webhookOrderId(event);
     const order = paypalOrderPattern.test(orderId ?? "") ? await findOrder(env, orderId) : null;
     const amount = event.resource?.amount;
     if (order
       && amount?.currency_code === order.currency
       && amount?.value === order.amount
-      && event.resource?.custom_id === `${order.product_id}@${order.product_version}`) {
+      && event.resource?.payee?.merchant_id === env.PAYPAL_MERCHANT_ID
+      && (!event.resource?.custom_id || event.resource.custom_id === `${order.product_id}@${order.product_version}`)) {
+      const status = event.event_type === "PAYMENT.CAPTURE.COMPLETED" ? "COMPLETED" : "PENDING";
+      const mutableStates = status === "COMPLETED"
+        ? "('CREATED', 'APPROVED', 'PENDING', 'COMPLETED')"
+        : "('CREATED', 'APPROVED', 'PENDING')";
       await env.ORDERS.prepare(
-        "UPDATE marketplace_orders SET status = 'COMPLETED', paypal_capture_id = ?, updated_at = ? WHERE paypal_order_id = ? AND status IN ('CREATED', 'APPROVED', 'COMPLETED')",
-      ).bind(event.resource.id, timestamp, orderId).run();
+        `UPDATE marketplace_orders SET status = ?, paypal_capture_id = ?, updated_at = ? WHERE paypal_order_id = ? AND status IN ${mutableStates}`,
+      ).bind(status, event.resource.id, timestamp, orderId).run();
     }
   } else if (["PAYMENT.CAPTURE.REFUNDED", "PAYMENT.CAPTURE.REVERSED", "PAYMENT.CAPTURE.DENIED"].includes(event.event_type)) {
     const status = event.event_type === "PAYMENT.CAPTURE.REFUNDED"

@@ -8,6 +8,7 @@
     "API_ORIGIN": "https://marketplace-api.ph7builder.com",
     "MARKETPLACE_ORIGIN": "https://ph7builder.com",
     "PAYPAL_ENVIRONMENT": "sandbox",
+    "PAYPAL_MERCHANT_ID": "REPLACE_WITH_PAYPAL_MERCHANT_ID",
     "PURCHASES_ENABLED": "false",
     "ALLOW_PRODUCTION": "false"
   },

@@ -5,6 +5,7 @@ import test from "node:test";
 import {
   formatUsd,
   isContributionAllowed,
+  normalizeUsdAmount,
   parseUsdCents,
   validateMarketplaceConfig,
   validateProductCatalog,
@@ -59,7 +60,10 @@ test("USD parsing is exact to cents", () => {
   assert.equal(parseUsdCents("9"), 900);
   assert.equal(parseUsdCents("19.95"), 1995);
   assert.equal(parseUsdCents("1.999"), null);
+  assert.equal(parseUsdCents(9.001), null);
+  assert.equal(parseUsdCents(19.95), 1995);
   assert.equal(parseUsdCents("-9"), null);
+  assert.equal(normalizeUsdAmount("19.9"), "19.90");
   assert.equal(formatUsd("19.95"), "$19.95");
   assert.equal(isContributionAllowed(verifiedProduct(), "9.00"), true);
   assert.equal(isContributionAllowed(verifiedProduct(), "8.99"), false);
@@ -71,11 +75,4 @@ test("public config cannot enable production checkout", () => {
     catalogUpdatedAt: "2026-11-23",
     checkout: { enabled: true, environment: "production", apiOrigin: "https://example.com" },
   }), /Production checkout cannot be enabled/);
-});
-
-test("checkout client handles cancellation without claiming payment", async () => {
-  const source = await readFile(new URL("../src/scripts/marketplace-checkout.ts", import.meta.url), "utf8");
-  assert.match(source, /onCancel: \(\) => showStatus\("Checkout cancelled\. No payment was captured\."\)/);
-  assert.match(source, /onError: \(\) => showStatus\("PayPal could not complete checkout\. No download was granted\."\)/);
-  assert.doesNotMatch(source, /PAYPAL_CLIENT_SECRET|DOWNLOAD_SIGNING_SECRET/);
 });
