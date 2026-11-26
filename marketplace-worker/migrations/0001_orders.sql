@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS marketplace_orders (
   product_version TEXT NOT NULL,
   amount TEXT NOT NULL,
   currency TEXT NOT NULL CHECK (currency = 'USD'),
-  status TEXT NOT NULL CHECK (status IN ('CREATED', 'APPROVED', 'PENDING', 'COMPLETED', 'REFUNDED', 'REVERSED', 'DENIED')),
+  status TEXT NOT NULL CHECK (status IN ('CREATED', 'APPROVED', 'PENDING', 'COMPLETED', 'REFUNDED', 'REVERSED', 'DENIED', 'DISPUTED')),
   reference TEXT NOT NULL UNIQUE,
   download_count INTEGER NOT NULL DEFAULT 0,
   last_downloaded_at TEXT,

@@ -288,6 +288,9 @@ const recoverPurchase = async (request, env, paypal, now) => {
 
 const webhookOrderId = (event) => event.resource?.supplementary_data?.related_ids?.order_id;
 const webhookCaptureId = (event) => event.resource?.supplementary_data?.related_ids?.capture_id ?? event.resource?.id;
+const disputeCaptureId = (event) => event.resource?.disputed_transactions?.find(
+  (transaction) => typeof transaction?.seller_transaction_id === "string",
+)?.seller_transaction_id;
 
 const processWebhook = async (request, env, paypal, now) => {
   const rawEvent = await readBodyText(request);
@@ -328,6 +331,13 @@ const processWebhook = async (request, env, paypal, now) => {
     await env.ORDERS.prepare(
       "UPDATE marketplace_orders SET status = ?, updated_at = ? WHERE paypal_capture_id = ?",
     ).bind(status, timestamp, webhookCaptureId(event)).run();
+  } else if (["CUSTOMER.DISPUTE.CREATED", "CUSTOMER.DISPUTE.UPDATED", "CUSTOMER.DISPUTE.RESOLVED"].includes(event.event_type)) {
+    const captureId = disputeCaptureId(event);
+    if (paypalOrderPattern.test(captureId ?? "")) {
+      await env.ORDERS.prepare(
+        "UPDATE marketplace_orders SET status = ?, updated_at = ? WHERE paypal_capture_id = ? AND status IN ('COMPLETED', 'DISPUTED')",
+      ).bind("DISPUTED", timestamp, captureId).run();
+    }
   }
 
   await env.ORDERS.prepare(

@@ -17,7 +17,8 @@ e-commerce backend.
   amount. The Worker reads those values from the validated catalogue.
 - No PayPal secret, download signing secret, payer email or package is stored in
   the public website.
-- Refund and reversal webhooks revoke future downloads.
+- Refund, reversal and dispute webhooks revoke future downloads. A resolved
+  dispute remains suspended until the transaction is reconciled deliberately.
 - Pending captures never grant a download. A verified completion webhook moves
   them forward without asking the customer to pay twice.
 
@@ -36,7 +37,9 @@ e-commerce backend.
    `DOWNLOAD_SIGNING_SECRET`.
 6. Register `https://marketplace-api.ph7builder.com/v1/webhooks/paypal` for
    `PAYMENT.CAPTURE.PENDING`, `PAYMENT.CAPTURE.COMPLETED`, `PAYMENT.CAPTURE.REFUNDED`,
-   `PAYMENT.CAPTURE.REVERSED`, and `PAYMENT.CAPTURE.DENIED`.
+   `PAYMENT.CAPTURE.REVERSED`, `PAYMENT.CAPTURE.DENIED`,
+   `CUSTOMER.DISPUTE.CREATED`, `CUSTOMER.DISPUTE.UPDATED`, and
+   `CUSTOMER.DISPUTE.RESOLVED`.
 7. Keep purchases disabled while running PayPal sandbox tests.
 
 Secrets must be entered directly through Cloudflare tooling. Do not place them
@@ -48,7 +51,7 @@ in a file, command argument, GitHub variable or chat message.
 2. Deploy the Worker with sandbox credentials and purchases disabled.
 3. Upload the exact verified package to R2.
 4. Enable sandbox purchases and test successful, cancelled, failed, duplicate,
-   refunded and recovery paths with PayPal sandbox accounts.
+   refunded, disputed and recovery paths with PayPal sandbox accounts.
 5. Review D1 records, webhook retries, download expiry and the public terms.
 6. Obtain explicit owner approval before configuring production credentials,
    accepting a real payment, issuing a real refund or enabling live checkout.

@@ -43,7 +43,9 @@ fulfilment have release evidence.
    until PayPal sends a verified completion webhook.
 4. The Worker signs a short-lived token bound to the stored order, product and
    version. Downloads resolve only to the manifest-selected R2 key.
-5. A verified refund, reversal or denial webhook revokes future downloads.
+5. A verified refund, reversal, denial or dispute webhook revokes future
+   downloads. Dispute resolution does not automatically restore access because
+   a verified financial outcome must be reconciled first.
 6. Recovery requires the PayPal order ID and matching PayPal payer email. The
    email is checked against PayPal and is not stored locally.
 
@@ -64,7 +66,7 @@ details. A browser redirect alone cannot grant a package.
    secrets directly through Cloudflare tooling.
 5. Deploy the Worker with purchases disabled.
 6. Run sandbox create, approve, cancel, failure, duplicate, recovery, expiry,
-   refund and webhook-retry tests.
+   refund, dispute and webhook-retry tests.
 7. Review the visible licence, support and refund terms.
 8. Request explicit owner authorisation before any production credential,
    payment, refund or purchase activation.

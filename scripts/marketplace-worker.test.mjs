@@ -366,6 +366,46 @@ test("verified refund webhook revokes downloads and duplicate delivery is harmle
   assert.equal((await worker.fetch(new Request(downloadUrl), env)).status, 404);
 });
 
+test("verified dispute lifecycle keeps package access suspended", async () => {
+  const client = paypal();
+  const worker = newWorker(client);
+  const env = environment();
+  await createOrder(worker, env);
+  const capture = await worker.fetch(request("/v1/orders/ORDER123456789/capture", {
+    method: "POST",
+    headers: { "Idempotency-Key": "capture-key-dispute" },
+  }), env);
+  const { downloadUrl } = await capture.json();
+  const event = {
+    id: "WH-DISPUTE-123",
+    event_type: "CUSTOMER.DISPUTE.CREATED",
+    resource: {
+      dispute_id: "PP-R-NMW-100000",
+      disputed_transactions: [{ seller_transaction_id: "CAPTURE123456" }],
+    },
+  };
+  const response = await worker.fetch(new Request("https://marketplace-api.ph7builder.com/v1/webhooks/paypal", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(event),
+  }), env);
+  assert.equal(response.status, 200);
+  assert.equal(env.ORDERS.orders[0].status, "DISPUTED");
+  assert.equal((await worker.fetch(new Request(downloadUrl), env)).status, 404);
+
+  event.id = "WH-DISPUTE-RESOLVED-123";
+  event.event_type = "CUSTOMER.DISPUTE.RESOLVED";
+  event.resource.dispute_outcome = { outcome_code: "RESOLVED_SELLER_FAVOUR" };
+  const resolved = await worker.fetch(new Request("https://marketplace-api.ph7builder.com/v1/webhooks/paypal", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(event),
+  }), env);
+  assert.equal(resolved.status, 200);
+  assert.equal(env.ORDERS.orders[0].status, "DISPUTED");
+  assert.equal((await worker.fetch(new Request(downloadUrl), env)).status, 404);
+});
+
 test("unverified webhook cannot change an order", async () => {
   const client = paypal();
   client.verifyWebhook = async () => ({ verification_status: "FAILURE" });
