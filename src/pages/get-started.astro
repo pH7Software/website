@@ -1,7 +1,10 @@
 ---
 import ArrowIcon from "../components/ArrowIcon.astro";
+import CopyTextButton from "../components/CopyTextButton.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { site } from "../data/site";
+
+const installCommand = `composer create-project ph7software/ph7builder:${site.latestRelease} my-dating-app --no-dev --prefer-dist`;
 ---
 
 <BaseLayout title="Get pH7Builder" description="Install the latest published pH7Builder release through Composer or download the source from GitHub." path="/get-started/">
@@ -15,7 +18,8 @@ import { site } from "../data/site";
       <article>
         <span class="status-pill">Recommended</span>
         <h2>Install through Composer</h2>
-        <pre><code>composer create-project ph7software/ph7builder:{site.latestRelease} my-dating-app --no-dev --prefer-dist</code></pre>
+        <pre><code>{installCommand}</code></pre>
+        <CopyTextButton value={installCommand} label="Copy install command" successMessage="Install command copied." />
         <p>This installs the current published release and creates an independent application copy with locked production dependencies. Future application upgrades are explicit rather than automatic Composer library updates.</p>
         <a class="button" href="/ai-builders/">Follow the AI builder path<ArrowIcon /></a>
       </article>

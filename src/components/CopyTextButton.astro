@@ -1,0 +1,72 @@
+---
+interface Props {
+  value: string;
+  label: string;
+  successMessage?: string;
+  fallbackMessage?: string;
+  tone?: "default" | "dark";
+}
+
+const {
+  value,
+  label,
+  successMessage = "Copied.",
+  fallbackMessage = "Select and copy the text above.",
+  tone = "default",
+} = Astro.props;
+---
+
+<div
+  class:list={["copy-text-control", { "copy-text-control-dark": tone === "dark" }]}
+  data-copy-control
+  data-copy-value={value}
+  data-copy-success={successMessage}
+  data-copy-fallback={fallbackMessage}
+>
+  <button class="button button-small" type="button" data-copy-trigger>{label}</button>
+  <p class="copy-text-status" aria-live="polite"></p>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-copy-control]").forEach((control) => {
+    if (control.dataset.copyReady === "true") return;
+    control.dataset.copyReady = "true";
+
+    const button = control.querySelector<HTMLButtonElement>("[data-copy-trigger]");
+    const status = control.querySelector<HTMLElement>(".copy-text-status");
+
+    button?.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(control.dataset.copyValue ?? "");
+        if (status) status.textContent = control.dataset.copySuccess ?? "Copied.";
+      } catch {
+        if (status) status.textContent = control.dataset.copyFallback ?? "Select and copy the text above.";
+      }
+    });
+  });
+</script>
+
+<style>
+  .copy-text-control {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin-top: 0.85rem;
+  }
+
+  .copy-text-status {
+    min-height: 1.5em;
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.8rem;
+  }
+
+  .copy-text-control-dark {
+    padding-inline: 1.5rem;
+  }
+
+  .copy-text-control-dark .copy-text-status {
+    color: #bbc1d3;
+  }
+</style>
