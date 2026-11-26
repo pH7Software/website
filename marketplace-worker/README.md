@@ -8,6 +8,21 @@ packages from R2 through signed, expiring links.
 It is intentionally not part of the pH7Builder application and is not a general
 e-commerce backend.
 
+## Hosting boundary
+
+The Astro catalogue remains on GitHub Pages. This Worker, D1 and private R2
+bucket run on Cloudflare and are the complete server-side marketplace boundary.
+No request in the purchase, webhook, recovery or download flow should pass
+through Krystal, cPanel or another shared host.
+
+The initial design fits Cloudflare's free allowances at low volume. Recheck the
+current [Workers](https://developers.cloudflare.com/workers/platform/pricing/),
+[D1](https://developers.cloudflare.com/d1/platform/pricing/) and
+[R2](https://developers.cloudflare.com/r2/pricing/) limits before sandbox and
+production activation. Do not enable a paid plan or recurring cost without
+owner approval. Quota or binding failures must leave the purchase unfulfilled;
+they must never fall back to browser assertions or public package storage.
+
 ## Safety defaults
 
 - `PURCHASES_ENABLED` and `ALLOW_PRODUCTION` default to `false`.
@@ -41,6 +56,8 @@ e-commerce backend.
    `CUSTOMER.DISPUTE.CREATED`, `CUSTOMER.DISPUTE.UPDATED`, and
    `CUSTOMER.DISPUTE.RESOLVED`.
 7. Keep purchases disabled while running PayPal sandbox tests.
+8. Route `marketplace-api.ph7builder.com` to this Worker. Do not configure a
+   Krystal or other shared-hosting origin for the API hostname.
 
 Secrets must be entered directly through Cloudflare tooling. Do not place them
 in a file, command argument, GitHub variable or chat message.

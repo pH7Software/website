@@ -44,6 +44,22 @@ unrelated work.
 - `marketplace-worker/`: server-side PayPal verification and private delivery;
   it is deployed separately from GitHub Pages.
 
+## Hosting contract
+
+- GitHub Pages is the single deployment target for the public website and
+  marketplace catalogue. Do not add a duplicate Cloudflare Pages deployment
+  while GitHub Pages remains suitable.
+- Cloudflare Workers, D1 and private R2 storage form the only marketplace
+  runtime boundary. They hold payment state and packages that cannot safely be
+  served by a static host.
+- The marketplace purchase path must not depend on Krystal, cPanel, FTP or
+  another shared-hosting account.
+- Prefer Cloudflare's free allowances while usage remains suitable. A paid
+  plan, new recurring cost or automatic paid-tier upgrade requires explicit
+  owner approval.
+- Quota exhaustion and unavailable bindings must fail closed: never accept an
+  order or grant a download when payment state cannot be verified.
+
 Do not commit WordPress exports, comments, private metadata, credentials,
 runtime output or machine-local files. The export filename patterns are
 intentionally ignored.

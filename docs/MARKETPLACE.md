@@ -19,6 +19,31 @@ module system.
 This boundary is required because a static GitHub Pages site cannot safely
 verify payments, keep packages private or issue revocable download access.
 
+## Hosting and cost boundary
+
+The public marketplace stays with the rest of `ph7builder.com` on GitHub Pages.
+It is already deployed from the reviewed `main` branch by the repository's
+Pages workflow. Moving only the catalogue to Cloudflare Pages would create a
+second static deployment without removing any required server-side component.
+
+The private commerce boundary uses Cloudflare Workers, D1 and private R2
+storage. This is compatible with Cloudflare's free allowances for an initial,
+low-volume launch. As reviewed on 27 November 2026, the official limits include
+100,000 Worker requests per day, 5 million D1 rows read and 100,000 rows written
+per day with 5 GB total D1 storage, and 10 GB-month of Standard R2 storage with
+1 million Class A and 10 million Class B operations per month. Current limits
+must be rechecked before activation:
+
+- <https://developers.cloudflare.com/workers/platform/pricing/>
+- <https://developers.cloudflare.com/d1/platform/pricing/>
+- <https://developers.cloudflare.com/r2/pricing/>
+
+The marketplace has no runtime dependency on Krystal, cPanel or FTP. Exceeding
+a free allowance must not silently enable a paid plan. Review actual usage and
+obtain owner approval before accepting a recurring Cloudflare cost. If the
+Worker, D1 or R2 is unavailable or at quota, checkout and fulfilment must fail
+closed rather than trusting browser state or issuing an unverified download.
+
 ## Release states
 
 `candidate` is public for review but cannot be purchased. `verified` requires
@@ -64,7 +89,8 @@ details. A browser redirect alone cannot grant a package.
 3. Replace manifest package placeholders and record exact verification checks.
 4. Create private R2 and D1 resources, apply the reviewed schema, and add Worker
    secrets directly through Cloudflare tooling.
-5. Deploy the Worker with purchases disabled.
+5. Route `marketplace-api.ph7builder.com` directly to the Worker and deploy it
+   with purchases disabled. No Krystal origin is involved.
 6. Run sandbox create, approve, cancel, failure, duplicate, recovery, expiry,
    refund, dispute and webhook-retry tests.
 7. Review the visible licence, support and refund terms.
