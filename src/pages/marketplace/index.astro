@@ -69,6 +69,7 @@ const activeProducts = marketplaceProducts.filter((product) => product.verificat
     <div class="shell marketplace-link-grid">
       <a href="/marketplace/terms/"><strong>Licence terms</strong><span>What a purchase permits.</span></a>
       <a href="/marketplace/refunds/"><strong>Refund policy</strong><span>Clear treatment of digital purchases.</span></a>
+      <a href="/marketplace/recover/"><strong>Recover a purchase</strong><span>Create a fresh, expiring download link.</span></a>
       <a href="/marketplace/support/"><strong>Product support</strong><span>A bounded, practical support policy.</span></a>
     </div>
   </section>
@@ -144,7 +145,7 @@ const activeProducts = marketplaceProducts.filter((product) => product.verificat
   .standard-list span { color: var(--ink-soft); }
 
   .marketplace-links { border-block: 1px solid var(--line); background: var(--ink); color: white; }
-  .marketplace-link-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .marketplace-link-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
   .marketplace-link-grid a { display: grid; gap: 0.3rem; padding: 1.5rem; border-right: 1px solid #4a5169; text-decoration: none; }
   .marketplace-link-grid a:first-child { border-left: 1px solid #4a5169; }
   .marketplace-link-grid span { color: #c4c8d6; }

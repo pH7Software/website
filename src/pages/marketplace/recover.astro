@@ -1,0 +1,111 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { marketplace } from "../../data/marketplace";
+---
+
+<BaseLayout
+  title="Recover a Marketplace Purchase"
+  description="Create a new secure download link for a completed pH7Builder marketplace purchase."
+  path="/marketplace/recover/"
+>
+  <section class="page-hero">
+    <div class="narrow-shell">
+      <p class="eyebrow"><a href="/marketplace/">Official Marketplace</a></p>
+      <h1>Recover your download.</h1>
+      <p class="lede">
+        Use the PayPal order ID and payer email from the completed purchase. The
+        email is checked directly with PayPal and is not stored by pH7Builder.
+      </p>
+    </div>
+  </section>
+
+  <section class="section surface">
+    <div class="narrow-shell recovery-grid">
+      <form class="recovery-form" data-purchase-recovery data-api-origin={marketplace.checkout.apiOrigin}>
+        <div>
+          <label for="paypal-order-id">PayPal order ID</label>
+          <input
+            id="paypal-order-id"
+            name="orderId"
+            type="text"
+            minlength="10"
+            maxlength="64"
+            pattern="[A-Za-z0-9-]+"
+            autocomplete="off"
+            required
+          />
+        </div>
+        <div>
+          <label for="payer-email">PayPal payer email</label>
+          <input
+            id="payer-email"
+            name="email"
+            type="email"
+            maxlength="254"
+            autocomplete="email"
+            required
+          />
+        </div>
+        <button class="button" type="submit">Create a new download link</button>
+        <p class="recovery-status" data-recovery-status aria-live="assertive"></p>
+        <div class="recovery-result" data-recovery-result hidden></div>
+      </form>
+
+      <aside class="recovery-help">
+        <h2>Before you start</h2>
+        <ul>
+          <li>The payment must be completed rather than pending, denied or refunded.</li>
+          <li>The email must match the payer email recorded by PayPal.</li>
+          <li>The new link expires after 24 hours and remains bound to the exact product version purchased.</li>
+        </ul>
+        <p>Could not verify a valid purchase? Read the <a href="/marketplace/support/">support policy</a>.</p>
+      </aside>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import "../../scripts/marketplace-recovery";
+</script>
+
+<style>
+  .recovery-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(16rem, 0.62fr);
+    gap: clamp(2rem, 7vw, 5rem);
+    align-items: start;
+  }
+
+  .recovery-form,
+  .recovery-help {
+    padding: clamp(1.4rem, 4vw, 2.5rem);
+    border: 2px solid var(--ink);
+    border-radius: var(--radius);
+    background: var(--paper-strong);
+  }
+
+  .recovery-form { display: grid; gap: 1.25rem; box-shadow: var(--shadow); }
+  .recovery-form div:not(.recovery-result) { display: grid; gap: 0.4rem; }
+  .recovery-form label { font-weight: 800; }
+  .recovery-form input {
+    width: 100%;
+    padding: 0.8rem 0.9rem;
+    border: 1px solid var(--ink);
+    border-radius: 0.4rem;
+    background: white;
+    color: var(--ink);
+    font: inherit;
+  }
+
+  .recovery-status { margin: 0; }
+  .recovery-status:empty { display: none; }
+  .recovery-result { padding: 1rem; border: 2px solid var(--ink); background: var(--lime); }
+  .recovery-help { background: var(--yellow); transform: rotate(0.7deg); }
+  .recovery-help h2 { margin-top: 0; }
+  .recovery-help li + li { margin-top: 0.65rem; }
+
+  @media (max-width: 760px) {
+    .recovery-grid { grid-template-columns: 1fr; }
+    .recovery-help { transform: none; }
+  }
+</style>
