@@ -1,16 +1,16 @@
 :root {
-  --paper: #f4f2e9;
-  --paper-strong: #fffdf7;
-  --ink: #111628;
-  --ink-soft: #505568;
-  --line: #c9c8bf;
-  --line-dark: #2a3044;
-  --lime: #c8ef5a;
+  --paper: #fff5ef;
+  --paper-strong: #fffdf9;
+  --ink: #18132d;
+  --ink-soft: #5f586e;
+  --line: #d8cbd0;
+  --line-dark: #352b4d;
+  --lime: #c9f45b;
   --lime-dark: #6e9214;
-  --coral: #ff6047;
-  --blue: #3159ff;
-  --blue-soft: #dfe5ff;
-  --yellow: #ffd957;
+  --coral: #ff6d85;
+  --blue: #5d4dff;
+  --blue-soft: #e4e0ff;
+  --yellow: #ffda62;
   --shadow: 7px 7px 0 var(--ink);
   --radius: 1.25rem;
   --shell: 76rem;
@@ -46,9 +46,11 @@ body::before {
   inset: 0;
   z-index: -1;
   background-image:
-    linear-gradient(rgba(17, 22, 40, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(17, 22, 40, 0.035) 1px, transparent 1px);
-  background-size: 3rem 3rem;
+    radial-gradient(circle at 8% 4%, rgba(255, 109, 133, 0.14), transparent 22rem),
+    radial-gradient(circle at 91% 14%, rgba(93, 77, 255, 0.11), transparent 24rem),
+    linear-gradient(rgba(24, 19, 45, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(24, 19, 45, 0.035) 1px, transparent 1px);
+  background-size: auto, auto, 3rem 3rem, 3rem 3rem;
   content: "";
   pointer-events: none;
 }
@@ -275,7 +277,7 @@ h3 {
   place-items: center;
   border: 2px solid currentColor;
   border-radius: 0.35rem 0.35rem 0.9rem 0.35rem;
-  background: var(--lime);
+  background: linear-gradient(145deg, var(--lime) 0 52%, var(--coral) 52%);
   font-family: var(--mono);
   font-size: 0.8rem;
   letter-spacing: -0.08em;
@@ -328,6 +330,8 @@ h3 {
   padding: 0.6rem 0.9rem;
   border: 1px solid var(--ink);
   border-radius: 999px;
+  background: var(--ink);
+  color: white;
 }
 
 .menu-button {

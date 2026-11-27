@@ -1,0 +1,387 @@
+<div class="connection-scene" aria-label="Illustrative dating product interface built on pH7Builder">
+  <div class="scene-topbar">
+    <div class="scene-brand"><span aria-hidden="true">n</span><strong>nearby</strong></div>
+    <span class="scene-label">Synthetic product concept</span>
+    <div class="scene-avatar" aria-hidden="true">PH</div>
+  </div>
+
+  <div class="scene-canvas">
+    <svg class="connection-lines" viewBox="0 0 640 430" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M176 145 C270 70 350 72 454 134" />
+      <path d="M182 164 C278 238 349 245 455 158" />
+      <path d="M315 212 C382 212 421 196 465 164" />
+    </svg>
+
+    <div class="profile-card profile-card-ari">
+      <div class="portrait portrait-ari" aria-hidden="true"><span>A</span></div>
+      <div><strong>Ari, 31</strong><span>Wellington · 4 km</span></div>
+      <small>Slow travel · Food</small>
+    </div>
+
+    <div class="match-orbit" aria-hidden="true">
+      <span>92%</span>
+      <small>shared fit</small>
+    </div>
+
+    <div class="profile-card profile-card-sam">
+      <div class="portrait portrait-sam" aria-hidden="true"><span>S</span></div>
+      <div><strong>Sam, 33</strong><span>Wellington · 7 km</span></div>
+      <small>Outdoors · Design</small>
+    </div>
+
+    <div class="connection-message">
+      <span aria-hidden="true">♥</span>
+      <div><strong>A promising connection</strong><small>Shared values, interests and location preferences.</small></div>
+    </div>
+
+    <div class="scene-control" aria-hidden="true">
+      <span>Profiles</span><span>Discovery</span><span>Messaging</span><span>Moderation</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .connection-scene {
+    position: relative;
+    overflow: hidden;
+    border: 2px solid var(--ink);
+    border-radius: 2rem;
+    background: #18132d;
+    color: white;
+    box-shadow: 14px 14px 0 var(--coral);
+    transform: rotate(1.2deg);
+    animation: scene-arrive 650ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+  }
+
+  .connection-scene::before {
+    position: absolute;
+    inset: 3.8rem 0 0;
+    background:
+      radial-gradient(circle at 20% 28%, rgba(255, 109, 133, 0.35), transparent 25%),
+      radial-gradient(circle at 80% 38%, rgba(153, 111, 255, 0.33), transparent 26%),
+      linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    background-size: auto, auto, 2rem 2rem, 2rem 2rem;
+    content: "";
+  }
+
+  .scene-topbar {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 0.85rem;
+    min-height: 3.8rem;
+    padding: 0.7rem 0.9rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.13);
+  }
+
+  .scene-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .scene-brand > span,
+  .scene-avatar {
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    font-weight: 900;
+  }
+
+  .scene-brand > span {
+    width: 1.85rem;
+    height: 1.85rem;
+    background: var(--coral);
+    font-family: var(--serif);
+    font-size: 1.2rem;
+  }
+
+  .scene-label {
+    padding: 0.35rem 0.55rem;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
+    color: #d9d3ec;
+    font-family: var(--mono);
+    font-size: 0.52rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .scene-avatar {
+    width: 2rem;
+    height: 2rem;
+    background: var(--lime);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 0.55rem;
+  }
+
+  .scene-canvas {
+    position: relative;
+    z-index: 1;
+    min-height: 29rem;
+    padding: 2rem;
+  }
+
+  .connection-lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .connection-lines path {
+    fill: none;
+    stroke: rgba(200, 239, 90, 0.5);
+    stroke-dasharray: 5 9;
+    stroke-width: 1.5;
+    animation: connection-flow 7s linear infinite;
+  }
+
+  .profile-card {
+    position: absolute;
+    z-index: 2;
+    width: min(12.5rem, 38%);
+    padding: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 1.1rem;
+    background: rgba(255, 255, 255, 0.96);
+    color: var(--ink);
+    box-shadow: 0 1.2rem 3rem rgba(4, 2, 12, 0.32);
+  }
+
+  .profile-card-ari {
+    top: 2.4rem;
+    left: 1.8rem;
+    transform: rotate(-5deg);
+  }
+
+  .profile-card-sam {
+    top: 3.1rem;
+    right: 1.8rem;
+    transform: rotate(5deg);
+  }
+
+  .portrait {
+    position: relative;
+    display: grid;
+    min-height: 9.2rem;
+    place-items: center;
+    overflow: hidden;
+    border-radius: 0.72rem;
+  }
+
+  .portrait::before {
+    width: 3.3rem;
+    height: 3.3rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.76);
+    content: "";
+  }
+
+  .portrait::after {
+    position: absolute;
+    bottom: -2.4rem;
+    width: 8rem;
+    height: 6rem;
+    border-radius: 50% 50% 0 0;
+    background: rgba(255, 255, 255, 0.62);
+    content: "";
+  }
+
+  .portrait span {
+    position: absolute;
+    z-index: 1;
+    color: #4e2d52;
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    font-weight: 800;
+  }
+
+  .portrait-ari {
+    background: linear-gradient(145deg, #ffc1a6, #e77894 58%, #784f89);
+  }
+
+  .portrait-sam {
+    background: linear-gradient(145deg, #b9d8ff, #7b7ddd 58%, #3a315f);
+  }
+
+  .profile-card > div:nth-child(2) {
+    display: grid;
+    margin-top: 0.65rem;
+  }
+
+  .profile-card strong {
+    font-size: 0.8rem;
+  }
+
+  .profile-card div > span,
+  .profile-card small {
+    color: #727287;
+    font-size: 0.54rem;
+  }
+
+  .profile-card > small {
+    display: inline-block;
+    margin-top: 0.55rem;
+    padding: 0.25rem 0.4rem;
+    border-radius: 999px;
+    background: #f3ecff;
+    color: #5a3a79;
+    font-weight: 750;
+  }
+
+  .match-orbit {
+    position: absolute;
+    top: 6.8rem;
+    left: 50%;
+    z-index: 4;
+    display: grid;
+    width: 5.5rem;
+    height: 5.5rem;
+    place-content: center;
+    border: 0.4rem solid #18132d;
+    border-radius: 50%;
+    background: var(--lime);
+    color: var(--ink);
+    text-align: center;
+    transform: translateX(-50%) rotate(-3deg);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25), 0 0 2.4rem rgba(200, 239, 90, 0.35);
+    animation: match-pulse 3.4s ease-in-out infinite;
+  }
+
+  .match-orbit span {
+    font-family: var(--serif);
+    font-size: 1.55rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .match-orbit small {
+    font-family: var(--mono);
+    font-size: 0.42rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .connection-message {
+    position: absolute;
+    right: 3rem;
+    bottom: 4.9rem;
+    left: 3rem;
+    z-index: 3;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 1rem;
+    background: rgba(39, 28, 66, 0.92);
+    box-shadow: 0 1rem 2rem rgba(3, 2, 8, 0.22);
+    backdrop-filter: blur(10px);
+  }
+
+  .connection-message > span {
+    display: grid;
+    width: 2.4rem;
+    height: 2.4rem;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--coral);
+  }
+
+  .connection-message div {
+    display: grid;
+  }
+
+  .connection-message strong {
+    font-size: 0.72rem;
+  }
+
+  .connection-message small {
+    color: #c4bbdc;
+    font-size: 0.52rem;
+  }
+
+  .scene-control {
+    position: absolute;
+    right: 1.1rem;
+    bottom: 0.8rem;
+    left: 1.1rem;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .scene-control span {
+    padding: 0.3rem 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.07);
+    color: #d9d3e6;
+    font-family: var(--mono);
+    font-size: 0.48rem;
+  }
+
+  @keyframes scene-arrive {
+    from { opacity: 0; transform: translateY(1.5rem) rotate(0deg) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) rotate(1.2deg) scale(1); }
+  }
+
+  @keyframes connection-flow {
+    to { stroke-dashoffset: -70; }
+  }
+
+  @keyframes match-pulse {
+    0%, 100% { transform: translateX(-50%) rotate(-3deg) scale(1); }
+    50% { transform: translateX(-50%) rotate(2deg) scale(1.045); }
+  }
+
+  @media (max-width: 560px) {
+    .connection-scene {
+      box-shadow: 8px 8px 0 var(--coral);
+      transform: none;
+    }
+
+    .scene-label {
+      display: none;
+    }
+
+    .scene-topbar {
+      grid-template-columns: 1fr auto;
+    }
+
+    .scene-canvas {
+      min-height: 24rem;
+      padding: 1rem;
+    }
+
+    .profile-card {
+      width: 42%;
+    }
+
+    .profile-card-ari { top: 1.7rem; left: 0.85rem; }
+    .profile-card-sam { top: 2.1rem; right: 0.85rem; }
+    .portrait { min-height: 7.2rem; }
+    .match-orbit { top: 5rem; width: 4.6rem; height: 4.6rem; border-width: 0.3rem; }
+    .match-orbit span { font-size: 1.25rem; }
+    .connection-message { right: 1rem; bottom: 4.25rem; left: 1rem; }
+    .connection-message small { line-height: 1.35; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .connection-scene,
+    .connection-lines path,
+    .match-orbit {
+      animation: none;
+    }
+  }
+</style>
