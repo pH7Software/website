@@ -12,6 +12,16 @@
     "Run online or in-person events without sending member data to another platform.",
     "Keep event publishing and attendance inside the existing pH7Builder administration model."
   ],
+  "decision": {
+    "buyer": "Dating and community operators who want to create recurring reasons for members to meet and return.",
+    "bestFor": [
+      "Small online or in-person gatherings managed by the site operator.",
+      "Communities that want RSVPs without exposing a public attendee directory.",
+      "Operators who prefer a focused native module over another external service."
+    ],
+    "notFor": "A full ticketing, venue-management or public event marketplace.",
+    "timeToValue": "Install the module, review its settings and publish the first event from the existing administration area."
+  },
   "version": "1.0.0",
   "releasedAt": "2026-11-23",
   "updatedAt": "2026-11-23",

@@ -3,8 +3,10 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import {
+  contributionLabel,
   formatUsd,
   isContributionAllowed,
+  marketplaceAvailability,
   normalizeUsdAmount,
   parseUsdCents,
   validateMarketplaceConfig,
@@ -68,6 +70,22 @@ test("USD parsing is exact to cents", () => {
   assert.equal(isContributionAllowed(verifiedProduct(), "9.00"), true);
   assert.equal(isContributionAllowed(verifiedProduct(), "8.99"), false);
   assert.equal(isContributionAllowed(verifiedProduct(), "29.00", "EUR"), false);
+});
+
+test("contribution labels frame value without changing the product", () => {
+  assert.equal(contributionLabel(product, 19), "Accessible");
+  assert.equal(contributionLabel(product, 29), "Recommended");
+  assert.equal(contributionLabel(product, 49), "Back future updates");
+});
+
+test("availability reflects verification and checkout state", () => {
+  assert.deepEqual(marketplaceAvailability(product, false), {
+    label: "In release review",
+    message: "Checkout opens only after the package, compatibility and delivery checks pass.",
+    available: false,
+  });
+  assert.equal(marketplaceAvailability(verifiedProduct(), false).available, false);
+  assert.equal(marketplaceAvailability(verifiedProduct(), true).available, true);
 });
 
 test("public config cannot enable production checkout", () => {

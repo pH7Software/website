@@ -14,14 +14,15 @@ const activeProducts = marketplaceProducts.filter((product) => product.verificat
         <p class="eyebrow">Official products only</p>
         <h1>Add only what your community needs.</h1>
         <p class="lede">
-          Small, installable pH7Builder extensions. Each product has one job.
-          Downloads open only with explicit compatibility and a verified release package.
+          Focused pH7Builder extensions with clear compatibility, one-time contributions
+          and no marketplace account. Pay securely, download the verified package and
+          install it through the existing module system.
         </p>
       </div>
       <aside class="marketplace-principle" aria-label="Marketplace promise">
         <strong>The core stays complete.</strong>
         <p>Existing features, security fixes and accessibility work remain in the free MIT-licensed project.</p>
-        <span>Pay once · choose your contribution · no subscription</span>
+        <span>No account · one payment · protected download</span>
       </aside>
     </div>
   </section>
@@ -43,10 +44,29 @@ const activeProducts = marketplaceProducts.filter((product) => product.verificat
       </div>
       {!marketplace.checkout.enabled && (
         <p class="catalogue-notice">
-          <strong>Checkout is currently paused.</strong> Product information is public for review;
-          no payment can be started until sandbox fulfilment and owner activation are complete.
+          <strong>Checkout is currently paused.</strong> No payment can start until at least one
+          extension has passed its package, compatibility, payment and delivery checks.
         </p>
       )}
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="purchase-path-title">
+    <div class="shell purchase-path-grid">
+      <div class="purchase-path-heading">
+        <p class="eyebrow">From decision to working module</p>
+        <h2 id="purchase-path-title">A short path, with no sales call.</h2>
+        <p>
+          When a verified extension is available, the complete purchase and delivery flow
+          stays self-service. The product page shows the fit, limits and exact package first.
+        </p>
+      </div>
+      <ol class="purchase-path">
+        <li><span>01</span><div><strong>Evaluate the fit</strong><p>Check the outcome, limits, compatibility and installation impact.</p></div></li>
+        <li><span>02</span><div><strong>Choose a contribution</strong><p>Every amount receives the same product. The final USD amount is shown before PayPal.</p></div></li>
+        <li><span>03</span><div><strong>Pay securely</strong><p>PayPal processes the payment; the marketplace verifies it server-side.</p></div></li>
+        <li><span>04</span><div><strong>Download and install</strong><p>Receive an expiring package link, checksum and focused installation instructions.</p></div></li>
+      </ol>
     </div>
   </section>
 
@@ -126,6 +146,24 @@ const activeProducts = marketplaceProducts.filter((product) => product.verificat
   }
 
   .standards-grid { align-items: start; }
+  .purchase-path-grid {
+    display: grid;
+    grid-template-columns: minmax(16rem, 0.72fr) minmax(0, 1.28fr);
+    gap: clamp(2rem, 7vw, 6rem);
+    align-items: start;
+  }
+  .purchase-path-heading { position: sticky; top: 7rem; }
+  .purchase-path { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; counter-reset: none; }
+  .purchase-path li {
+    display: grid;
+    grid-template-columns: 3.5rem 1fr;
+    gap: 1rem;
+    padding: 1.3rem 0;
+    border-top: 1px solid var(--line);
+  }
+  .purchase-path li:last-child { border-bottom: 1px solid var(--line); }
+  .purchase-path li > span { color: var(--coral); font-family: var(--mono); font-weight: 900; }
+  .purchase-path p { margin: 0.3rem 0 0; color: var(--ink-soft); }
   .standard-list { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; counter-reset: standards; }
   .standard-list li {
     display: grid;
@@ -154,7 +192,9 @@ const activeProducts = marketplaceProducts.filter((product) => product.verificat
     .marketplace-hero-grid,
     .standards-grid,
     .marketplace-grid,
-    .marketplace-link-grid { grid-template-columns: 1fr; }
+    .marketplace-link-grid,
+    .purchase-path-grid { grid-template-columns: 1fr; }
+    .purchase-path-heading { position: static; }
     .marketplace-grid > :only-child { grid-column: auto; }
     .marketplace-link-grid a,
     .marketplace-link-grid a:first-child { border: 0; border-bottom: 1px solid #4a5169; }

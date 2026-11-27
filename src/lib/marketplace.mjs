@@ -56,6 +56,11 @@ export const validateProductManifest = (product) => {
   assert(typeof product.summary === "string" && product.summary.length >= 30, `${product.id}: product summary is too short.`);
   assert(Array.isArray(product.description) && product.description.length >= 1, `${product.id}: product description is missing.`);
   assert(Array.isArray(product.outcomes) && product.outcomes.length >= 2, `${product.id}: product outcomes are missing.`);
+  assert(typeof product.decision?.buyer === "string" && product.decision.buyer.length >= 40, `${product.id}: target buyer is missing.`);
+  assert(Array.isArray(product.decision?.bestFor) && product.decision.bestFor.length >= 2, `${product.id}: buying guidance is incomplete.`);
+  assert(product.decision.bestFor.every((item) => typeof item === "string" && item.length >= 25), `${product.id}: buying guidance is too vague.`);
+  assert(typeof product.decision?.notFor === "string" && product.decision.notFor.length >= 30, `${product.id}: product limits are missing.`);
+  assert(typeof product.decision?.timeToValue === "string" && product.decision.timeToValue.length >= 40, `${product.id}: time-to-value guidance is missing.`);
   assert(semanticVersionPattern.test(product.version), `${product.id}: product version must be semantic.`);
   assert(datePattern.test(product.releasedAt) && datePattern.test(product.updatedAt), `${product.id}: release dates are invalid.`);
   assert(semanticVersionPattern.test(product.compatibility?.pH7Builder?.min), `${product.id}: minimum pH7Builder version is invalid.`);
@@ -110,4 +115,39 @@ export const isContributionAllowed = (product, amount, currency = "USD") => {
   return currency === product.pricing.currency
     && cents !== null
     && cents >= product.pricing.minimum * 100;
+};
+
+export const contributionLabel = (product, amount) => {
+  if (amount === product.pricing.suggested) return "Recommended";
+  if (amount === product.pricing.options[0]) return "Accessible";
+  return "Back future updates";
+};
+
+export const marketplaceAvailability = (product, checkoutEnabled) => {
+  if (product.verification.status === "candidate") {
+    return Object.freeze({
+      label: "In release review",
+      message: "Checkout opens only after the package, compatibility and delivery checks pass.",
+      available: false,
+    });
+  }
+  if (product.verification.status === "retired") {
+    return Object.freeze({
+      label: "Retired",
+      message: "This release is no longer offered for new purchases.",
+      available: false,
+    });
+  }
+  if (!product.purchasable || !checkoutEnabled) {
+    return Object.freeze({
+      label: "Checkout paused",
+      message: "No payment can start while delivery or compatibility is under review.",
+      available: false,
+    });
+  }
+  return Object.freeze({
+    label: "Available now",
+    message: "The verified package is ready for protected delivery after payment.",
+    available: true,
+  });
 };

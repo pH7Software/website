@@ -57,6 +57,44 @@ features already present in pH7Builder. It remains unavailable until browser
 installation, member/admin flows, concurrent capacity and full PayPal sandbox
 fulfilment have release evidence.
 
+## Adding an official product
+
+The catalogue is deliberately easy to extend without adding a CMS or copying
+product data between the website and Worker:
+
+1. Add one reviewed JSON manifest to `marketplace/catalog/`. Its filename must
+   match the stable product identifier.
+2. Register that manifest once in `marketplace/catalog/index.mjs`. The Astro
+   catalogue and payment Worker both consume this shared registry.
+3. Keep the product source, tests, documentation and deterministic package in
+   the private marketplace-products repository.
+4. Run `npm run verify:marketplace` and `npm run build:ci`. Validation rejects
+   missing buying guidance, invalid pricing, duplicate identifiers, omitted
+   registry entries and unverified purchase states.
+5. Leave the product as a non-purchasable candidate until the exact private
+   artefact, checksum, compatibility evidence and complete sandbox fulfilment
+   pass.
+
+Public pages are generated from the manifest. Adding a product must not require
+a hand-written catalogue card, product route or duplicate Worker metadata.
+
+## Product communication
+
+Every extension must make the decision easier before it makes the sale. Its
+manifest identifies the buyer, practical outcome, best-fit situations, honest
+limits and shortest path to value. The page then shows the exact package,
+compatibility, installation impact, support boundary and final contribution.
+
+Use persuasion through specificity, reduced risk and a clear cost of leaving
+the operator problem unsolved. Do not use fake stock, invented demand, false
+discounts or countdowns. Digital packages do not become scarce merely because
+a timer says so. If a future offer has a genuine availability window, it needs
+an explicit reason, exact dates and matching server-side enforcement before it
+can be displayed.
+
+All pay-what-you-wish amounts receive the same complete package. Higher
+contributions support maintenance; they never unlock hidden product behaviour.
+
 ## Payment and delivery flow
 
 1. The browser requests safe checkout configuration from the Worker.

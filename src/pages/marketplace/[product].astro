@@ -1,8 +1,8 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import MarketplaceCheckout from "../../components/MarketplaceCheckout.astro";
-import { marketplaceProducts } from "../../data/marketplace";
-import { formatUsd } from "../../lib/marketplace.mjs";
+import { marketplace, marketplaceProducts } from "../../data/marketplace";
+import { formatUsd, marketplaceAvailability } from "../../lib/marketplace.mjs";
 import { site } from "../../data/site";
 
 export const getStaticPaths = () => marketplaceProducts
@@ -12,6 +12,7 @@ export const getStaticPaths = () => marketplaceProducts
 const { product } = Astro.props;
 const path = `/marketplace/${product.id}/`;
 const isVerified = product.verification.status === "verified";
+const availability = marketplaceAvailability(product, marketplace.checkout.enabled);
 const description = isVerified
   ? `${product.summary} Official pH7Builder extension from ${formatUsd(product.pricing.minimum)} USD.`
   : `${product.summary} Official pH7Builder extension candidate under release review.`;
@@ -27,7 +28,7 @@ const schema = {
   softwareRequirements: `pH7Builder ${product.compatibility.pH7Builder.min} up to, but not including, ${product.compatibility.pH7Builder.maxExclusive}; PHP ${product.compatibility.php}`,
   author: { "@id": `${site.origin}/#creator` },
   publisher: { "@id": `${site.origin}/#organization` },
-  ...(product.purchasable ? {
+  ...(availability.available ? {
     offers: {
       "@type": "Offer",
       price: product.pricing.minimum,
@@ -49,14 +50,14 @@ const schema = {
         <div class="product-meta">
           <span>Version {product.version}</span>
           <span>pH7Builder {product.compatibility.pH7Builder.min}–20.x</span>
-          <span class:list={["release-pill", { verified: isVerified }]}>{isVerified ? "Verified" : "Candidate"}</span>
+          <span class:list={["release-pill", { verified: availability.available }]}>{availability.label}</span>
         </div>
       </div>
       <aside class="product-ticket" aria-label="Product price">
         <span>{isVerified ? "Pay what you wish" : "Planned pay what you wish"}</span>
         <strong>{formatUsd(product.pricing.minimum)}+</strong>
         <p>Recommended contribution: {formatUsd(product.pricing.suggested)} USD</p>
-        <small>One payment · no subscription</small>
+        <small>The same complete package at every contribution</small>
       </aside>
     </div>
   </section>
@@ -72,6 +73,28 @@ const schema = {
           {product.outcomes.map((outcome) => <li>{outcome}</li>)}
         </ul>
       </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="fit-title">
+    <div class="shell decision-grid">
+      <div>
+        <p class="eyebrow">Make the decision before paying</p>
+        <h2 id="fit-title">A clear fit, with clear limits.</h2>
+        <p class="decision-buyer">{product.decision.buyer}</p>
+      </div>
+      <div>
+        <h3>Best when</h3>
+        <ul class="plain-list decision-list">
+          {product.decision.bestFor.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+      <aside class="decision-limit">
+        <strong>Not designed for</strong>
+        <p>{product.decision.notFor}</p>
+        <strong>Shortest path to value</strong>
+        <p>{product.decision.timeToValue}</p>
+      </aside>
     </div>
   </section>
 
@@ -154,12 +177,32 @@ const schema = {
   .outcome-list li { padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
 
   .package-facts { margin: 0; border-top: 1px solid var(--line); }
+  .decision-grid {
+    display: grid;
+    grid-template-columns: minmax(16rem, 0.8fr) minmax(16rem, 0.8fr) minmax(18rem, 1fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: start;
+  }
+  .decision-buyer { max-width: 38rem; color: var(--ink-soft); font-size: 1.1rem; }
+  .decision-list { display: grid; gap: 0.8rem; }
+  .decision-list li { padding-bottom: 0.8rem; border-bottom: 1px solid var(--line); }
+  .decision-limit {
+    padding: 1.4rem;
+    border: 2px solid var(--ink);
+    background: var(--yellow);
+    box-shadow: var(--shadow);
+  }
+  .decision-limit p:last-child { margin-bottom: 0; }
   .package-facts div { display: grid; grid-template-columns: 8rem 1fr; gap: 1rem; padding-block: 0.8rem; border-bottom: 1px solid var(--line); }
   .package-facts dt { font-weight: 800; }
   .package-facts dd { margin: 0; overflow-wrap: anywhere; }
   .package-facts code { font-size: 0.72rem; }
   .prose-block ol { padding-left: 1.4rem; }
   .prose-block li { margin-bottom: 0.8rem; }
+
+  @media (max-width: 960px) {
+    .decision-grid { grid-template-columns: 1fr; }
+  }
 
   @media (max-width: 760px) {
     .product-hero-grid,

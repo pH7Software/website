@@ -1,7 +1,7 @@
 ---
 import type { MarketplaceProduct } from "../data/marketplace";
 import { marketplace } from "../data/marketplace";
-import { formatUsd } from "../lib/marketplace.mjs";
+import { contributionLabel, formatUsd } from "../lib/marketplace.mjs";
 
 type Props = {
   product: MarketplaceProduct;
@@ -25,11 +25,11 @@ const checkoutAvailable = marketplace.checkout.enabled
   <div class="checkout-heading">
     <div>
       <p class="eyebrow">Pay what you wish</p>
-      <h2 id="checkout-title">Choose a fair contribution.</h2>
+      <h2 id="checkout-title">Choose what the extension is worth to you.</h2>
     </div>
     <p>
-      The minimum keeps the product paid. The recommended amount supports testing,
-      compatibility work and future fixes.
+      Every contribution receives the same complete package. The recommended amount
+      supports testing, compatibility work and future fixes without a subscription.
     </p>
   </div>
 
@@ -47,7 +47,7 @@ const checkoutAvailable = marketplace.checkout.enabled
             />
             <span>
               <strong>{formatUsd(amount)}</strong>
-              {amount === product.pricing.suggested && <small>Recommended</small>}
+              <small>{contributionLabel(product, amount)}</small>
             </span>
           </label>
         ))}
@@ -77,21 +77,27 @@ const checkoutAvailable = marketplace.checkout.enabled
       <strong data-final-amount>{formatUsd(product.pricing.suggested)} USD</strong>
     </div>
 
+    <ul class="checkout-assurances plain-list" aria-label="Purchase assurances">
+      <li><strong>No marketplace account</strong><span>Use PayPal, then receive the protected download.</span></li>
+      <li><strong>Server-verified payment</strong><span>A browser redirect alone can never release a package.</span></li>
+      <li><strong>Purchase recovery</strong><span>Create a fresh expiring link with the PayPal order details.</span></li>
+    </ul>
+
     {checkoutAvailable ? (
       <>
-        <button class="button" type="submit">Continue with PayPal</button>
+        <button class="button" type="submit">Continue securely with PayPal</button>
         <paypal-button hidden></paypal-button>
       </>
     ) : (
       <div class="checkout-paused" role="status">
-        <strong>Purchases are not open yet.</strong>
-        <span>The package is visible for review, but checkout stays disabled until sandbox fulfilment and the commercial terms receive final owner approval.</span>
+        <strong>This release is not available for purchase yet.</strong>
+        <span>Checkout opens only after the package, compatibility, payment and delivery checks pass.</span>
       </div>
     )}
 
     <p class="checkout-terms">
-      One payment. No subscription. Purchase means accepting the
-      <a href="/marketplace/terms/">licence terms</a> and
+      One payment. No subscription. Purchase means accepting the{" "}
+      <a href="/marketplace/terms/">licence terms</a>{" "}and{" "}
       <a href="/marketplace/refunds/">refund policy</a>.
     </p>
     <p class="checkout-status" data-checkout-status aria-live="assertive"></p>
@@ -185,6 +191,21 @@ const checkoutAvailable = marketplace.checkout.enabled
   .checkout-summary p { margin-bottom: 0; }
   .checkout-summary strong { font-size: 1.3rem; }
 
+  .checkout-assurances {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin: 0 0 1.5rem;
+  }
+  .checkout-assurances li {
+    display: grid;
+    gap: 0.2rem;
+    padding: 0.85rem;
+    border: 1px solid color-mix(in srgb, var(--ink) 28%, transparent);
+    background: color-mix(in srgb, var(--paper-strong) 72%, transparent);
+  }
+  .checkout-assurances span { color: var(--ink-soft); font-size: 0.84rem; }
+
   .checkout-paused {
     display: grid;
     gap: 0.2rem;
@@ -208,6 +229,7 @@ const checkoutAvailable = marketplace.checkout.enabled
   @media (max-width: 800px) {
     .checkout-heading { grid-template-columns: 1fr; }
     .contribution-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .checkout-assurances { grid-template-columns: 1fr; }
   }
 
   @media (max-width: 480px) {

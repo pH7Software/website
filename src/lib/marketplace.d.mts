@@ -16,6 +16,12 @@ export type MarketplaceProduct = {
   summary: string;
   description: string[];
   outcomes: string[];
+  decision: {
+    buyer: string;
+    bestFor: string[];
+    notFor: string;
+    timeToValue: string;
+  };
   version: string;
   releasedAt: string;
   updatedAt: string;
@@ -58,9 +64,14 @@ export function normalizeUsdAmount(value: string | number): string | null;
 export function formatUsd(value: string | number): string;
 export function validateMarketplaceConfig(config: unknown): Readonly<MarketplaceConfig>;
 export function validateProductManifest(product: unknown): Readonly<MarketplaceProduct>;
-export function validateProductCatalog(products: unknown[]): ReadonlyArray<Readonly<MarketplaceProduct>>;
+export function validateProductCatalog(products: readonly unknown[]): ReadonlyArray<Readonly<MarketplaceProduct>>;
 export function isContributionAllowed(
   product: MarketplaceProduct,
   amount: string | number,
   currency?: string,
 ): boolean;
+export function contributionLabel(product: MarketplaceProduct, amount: number): string;
+export function marketplaceAvailability(
+  product: MarketplaceProduct,
+  checkoutEnabled: boolean,
+): Readonly<{ label: string; message: string; available: boolean }>;

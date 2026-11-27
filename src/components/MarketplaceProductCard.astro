@@ -1,6 +1,7 @@
 ---
 import type { MarketplaceProduct } from "../data/marketplace";
-import { formatUsd } from "../lib/marketplace.mjs";
+import { marketplace } from "../data/marketplace";
+import { formatUsd, marketplaceAvailability } from "../lib/marketplace.mjs";
 
 type Props = {
   product: MarketplaceProduct;
@@ -8,13 +9,14 @@ type Props = {
 
 const { product } = Astro.props;
 const isVerified = product.verification.status === "verified";
+const availability = marketplaceAvailability(product, marketplace.checkout.enabled);
 ---
 
 <article class="marketplace-card">
   <div class="marketplace-card-topline">
     <span>{product.category}</span>
-    <span class:list={["release-state", { verified: isVerified }]}>
-      {isVerified ? "Verified release" : "Release candidate"}
+    <span class:list={["release-state", { verified: availability.available }]}>
+      {availability.label}
     </span>
   </div>
   <div>
@@ -24,6 +26,7 @@ const isVerified = product.verification.status === "verified";
   <ul class="plain-list compact-list">
     {product.outcomes.slice(0, 3).map((outcome) => <li>{outcome}</li>)}
   </ul>
+  <p class="availability-note">{availability.message}</p>
   <div class="marketplace-card-footer">
     <p>
       <span>{isVerified ? "Pay what you wish" : "Planned contribution"}</span>
@@ -78,6 +81,13 @@ const isVerified = product.verification.status === "verified";
   }
 
   .marketplace-card p { color: var(--ink-soft); }
+  .marketplace-card .availability-note {
+    margin: 0;
+    padding: 0.75rem 0.9rem;
+    border-left: 0.3rem solid var(--blue);
+    background: var(--blue-soft);
+    font-size: 0.88rem;
+  }
 
   .marketplace-card-footer {
     align-self: end;
