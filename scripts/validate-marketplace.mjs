@@ -6,6 +6,7 @@ import {
   validateMarketplaceConfig,
   validateProductCatalog,
 } from "../src/lib/marketplace.mjs";
+import { productManifests } from "../marketplace/catalog/index.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const catalogDirectory = path.join(root, "marketplace", "catalog");
@@ -26,6 +27,13 @@ const config = validateMarketplaceConfig(JSON.parse(
   await readFile(path.join(root, "marketplace", "config.json"), "utf8"),
 ));
 const validated = validateProductCatalog(products);
+const fileProductIds = validated.map((product) => product.id).sort();
+const registeredProductIds = validateProductCatalog(productManifests)
+  .map((product) => product.id)
+  .sort();
+if (JSON.stringify(fileProductIds) !== JSON.stringify(registeredProductIds)) {
+  throw new Error("Marketplace registry must contain every product manifest exactly once.");
+}
 if (config.checkout.enabled && !validated.some((product) => product.purchasable)) {
   throw new Error("Checkout cannot be enabled without a verified purchasable product.");
 }
