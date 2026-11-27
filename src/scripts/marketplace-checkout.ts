@@ -1,6 +1,6 @@
 export {};
 
-import { normalizeUsdAmount, parseUsdCents } from "../lib/marketplace.mjs";
+import { contributionMessage, normalizeUsdAmount, parseUsdCents } from "../lib/marketplace.mjs";
 
 type MarketplaceApiConfig = {
   enabled: boolean;
@@ -35,12 +35,15 @@ declare global {
   }
 }
 
-const panel = document.querySelector<HTMLElement>("[data-marketplace-checkout='enabled']");
+const panel = document.querySelector<HTMLElement>("[data-marketplace-checkout]");
 const form = panel?.querySelector<HTMLFormElement>(".contribution-form");
 const statusMessage = panel?.querySelector<HTMLElement>("[data-checkout-status]");
 const result = panel?.querySelector<HTMLElement>("[data-checkout-result]");
 const finalAmount = panel?.querySelector<HTMLElement>("[data-final-amount]");
+const contributionFeedback = panel?.querySelector<HTMLElement>("[data-contribution-message]");
+const checkoutAvailable = panel?.dataset.marketplaceCheckout === "enabled";
 const minimum = Number(panel?.dataset.minimum ?? "0");
+const suggested = Number(panel?.dataset.suggested ?? "0");
 const minimumCents = parseUsdCents(minimum);
 
 const selectedAmount = () => {
@@ -61,6 +64,9 @@ const showStatus = (message: string) => {
 const updateAmount = () => {
   const amount = selectedAmount();
   if (finalAmount) finalAmount.textContent = amount ? `$${amount} USD` : "Choose an amount";
+  if (contributionFeedback) {
+    contributionFeedback.textContent = contributionMessage({ amount: amount ?? "", minimum, suggested });
+  }
 };
 
 const loadPayPal = async (environment: MarketplaceApiConfig["environment"]) => {
@@ -95,10 +101,20 @@ const requestJson = async (url: string, options?: RequestInit) => {
 };
 
 form?.addEventListener("change", updateAmount);
-form?.addEventListener("input", updateAmount);
+form?.addEventListener("input", (event) => {
+  if (event.target instanceof HTMLInputElement && event.target.name === "customAmount") {
+    const customOption = form.querySelector<HTMLInputElement>("input[name='contribution'][value='custom']");
+    if (customOption) customOption.checked = true;
+  }
+  updateAmount();
+});
 
 form?.addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (!checkoutAvailable) {
+    showStatus("Checkout is still in release verification. No payment was started.");
+    return;
+  }
   const amount = selectedAmount();
   const amountCents = amount === null ? null : parseUsdCents(amount);
   if (amountCents === null || minimumCents === null || amountCents < minimumCents) {

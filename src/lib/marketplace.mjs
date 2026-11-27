@@ -123,6 +123,26 @@ export const contributionLabel = (product, amount) => {
   return "Back future updates";
 };
 
+export const contributionMessage = ({ amount, minimum, suggested }) => {
+  const amountCents = parseUsdCents(amount);
+  const minimumCents = parseUsdCents(minimum);
+  const suggestedCents = parseUsdCents(suggested);
+
+  if (amountCents === null || minimumCents === null || suggestedCents === null) {
+    return "Enter a valid contribution in US dollars.";
+  }
+  if (amountCents < minimumCents) {
+    return `The minimum contribution is ${formatUsd(minimum)} USD.`;
+  }
+  if (amountCents === suggestedCents) {
+    return "Recommended: helps cover release testing, compatibility work and maintenance.";
+  }
+  if (amountCents < suggestedCents) {
+    return "You receive the complete extension at this accessible contribution.";
+  }
+  return "You receive the same complete extension; the extra supports future maintenance.";
+};
+
 export const marketplaceAvailability = (product, checkoutEnabled) => {
   if (product.verification.status === "candidate") {
     return Object.freeze({

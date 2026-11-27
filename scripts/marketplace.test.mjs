@@ -4,6 +4,7 @@ import test from "node:test";
 
 import {
   contributionLabel,
+  contributionMessage,
   formatUsd,
   isContributionAllowed,
   marketplaceAvailability,
@@ -76,6 +77,15 @@ test("contribution labels frame value without changing the product", () => {
   assert.equal(contributionLabel(product, 19), "Accessible");
   assert.equal(contributionLabel(product, 29), "Recommended");
   assert.equal(contributionLabel(product, 49), "Back future updates");
+});
+
+test("contribution feedback explains value without inventing scarcity", () => {
+  const pricing = { minimum: 9, suggested: 29 };
+  assert.match(contributionMessage({ amount: "8.99", ...pricing }), /minimum contribution/);
+  assert.match(contributionMessage({ amount: "19.00", ...pricing }), /complete extension/);
+  assert.match(contributionMessage({ amount: "29.00", ...pricing }), /Recommended/);
+  assert.match(contributionMessage({ amount: "49.00", ...pricing }), /same complete extension/);
+  assert.doesNotMatch(contributionMessage({ amount: "49.00", ...pricing }), /limited|expires|hurry/i);
 });
 
 test("availability reflects verification and checkout state", () => {

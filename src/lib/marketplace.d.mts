@@ -71,6 +71,11 @@ export function isContributionAllowed(
   currency?: string,
 ): boolean;
 export function contributionLabel(product: MarketplaceProduct, amount: number): string;
+export function contributionMessage(pricing: {
+  amount: string | number;
+  minimum: string | number;
+  suggested: string | number;
+}): string;
 export function marketplaceAvailability(
   product: MarketplaceProduct,
   checkoutEnabled: boolean,

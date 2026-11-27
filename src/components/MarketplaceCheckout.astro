@@ -1,7 +1,7 @@
 ---
 import type { MarketplaceProduct } from "../data/marketplace";
 import { marketplace } from "../data/marketplace";
-import { contributionLabel, formatUsd } from "../lib/marketplace.mjs";
+import { contributionLabel, contributionMessage, formatUsd } from "../lib/marketplace.mjs";
 
 type Props = {
   product: MarketplaceProduct;
@@ -20,12 +20,15 @@ const checkoutAvailable = marketplace.checkout.enabled
   data-product-id={product.id}
   data-product-version={product.version}
   data-minimum={product.pricing.minimum}
+  data-suggested={product.pricing.suggested}
   data-api-origin={marketplace.checkout.apiOrigin}
 >
   <div class="checkout-heading">
     <div>
       <p class="eyebrow">Pay what you wish</p>
-      <h2 id="checkout-title">Choose what the extension is worth to you.</h2>
+      <h2 id="checkout-title">
+        {checkoutAvailable ? "Choose what the extension is worth to you." : "Preview your contribution."}
+      </h2>
     </div>
     <p>
       Every contribution receives the same complete package. The recommended amount
@@ -34,7 +37,7 @@ const checkoutAvailable = marketplace.checkout.enabled
   </div>
 
   <form class="contribution-form">
-    <fieldset disabled={!checkoutAvailable}>
+    <fieldset aria-describedby="contribution-feedback">
       <legend>Contribution in US dollars</legend>
       <div class="contribution-options">
         {product.pricing.options.map((amount) => (
@@ -72,8 +75,19 @@ const checkoutAvailable = marketplace.checkout.enabled
       </div>
     </fieldset>
 
+    <p id="contribution-feedback" class="contribution-feedback" data-contribution-message aria-live="polite">
+      {contributionMessage({
+        amount: product.pricing.suggested,
+        minimum: product.pricing.minimum,
+        suggested: product.pricing.suggested,
+      })}
+    </p>
+
     <div class="checkout-summary" aria-live="polite">
-      <p>Final amount</p>
+      <div>
+        <p>{checkoutAvailable ? "Final amount" : "Contribution preview"}</p>
+        <small>{checkoutAvailable ? "Confirmed again by PayPal" : "No payment can start yet"}</small>
+      </div>
       <strong data-final-amount>{formatUsd(product.pricing.suggested)} USD</strong>
     </div>
 
@@ -89,9 +103,17 @@ const checkoutAvailable = marketplace.checkout.enabled
         <paypal-button hidden></paypal-button>
       </>
     ) : (
-      <div class="checkout-paused" role="status">
-        <strong>This release is not available for purchase yet.</strong>
-        <span>Checkout opens only after the package, compatibility, payment and delivery checks pass.</span>
+      <div id="release-status" class="checkout-paused">
+        <div role="status">
+          <strong>Release verification is in progress.</strong>
+          <span>No payment can start yet. Try the amounts above to preview the exact total.</span>
+        </div>
+        <ol class="release-steps">
+          <li><span>1</span><strong>Choose</strong><small>Preview a contribution</small></li>
+          <li><span>2</span><strong>Review</strong><small>See the exact total</small></li>
+          <li><span>3</span><strong>Pay later</strong><small>Only after checkout opens</small></li>
+        </ol>
+        <a href="#package-title">Review the package and compatibility</a>
       </div>
     )}
 
@@ -131,8 +153,6 @@ const checkoutAvailable = marketplace.checkout.enabled
 
   fieldset { padding: 0; border: 0; }
   legend { margin-bottom: 0.8rem; font-weight: 800; }
-  fieldset:disabled { opacity: 0.62; }
-
   .contribution-options {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -149,7 +169,12 @@ const checkoutAvailable = marketplace.checkout.enabled
     border: 1px solid var(--ink);
     border-radius: 0.55rem;
     background: var(--paper-strong);
+    cursor: pointer;
+    transition: transform 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
   }
+
+  .contribution-option:hover { transform: translateY(-2px); }
+  .contribution-option:focus-within { outline: 3px solid var(--coral); outline-offset: 3px; }
 
   .contribution-option:has(input:checked) {
     background: var(--lime);
@@ -159,6 +184,13 @@ const checkoutAvailable = marketplace.checkout.enabled
   .contribution-option > span:not(.custom-amount) { display: grid; }
   .contribution-option small { color: var(--ink-soft); }
   .contribution-option input[type="radio"] { width: 1.2rem; height: 1.2rem; accent-color: var(--blue); }
+
+  .contribution-feedback {
+    min-height: 1.75rem;
+    margin: 1rem 0 0;
+    color: var(--ink-soft);
+    font-weight: 700;
+  }
 
   .contribution-custom { grid-template-columns: auto auto; }
   .custom-amount {
@@ -184,12 +216,16 @@ const checkoutAvailable = marketplace.checkout.enabled
     justify-content: space-between;
     gap: 1rem;
     margin-block: 1.5rem;
-    padding-block: 1rem;
-    border-block: 1px solid color-mix(in srgb, var(--ink) 25%, transparent);
+    padding: 1rem 1.15rem;
+    border: 2px solid var(--ink);
+    border-radius: 0.55rem;
+    background: var(--paper-strong);
+    box-shadow: 3px 3px 0 color-mix(in srgb, var(--ink) 18%, transparent);
   }
 
   .checkout-summary p { margin-bottom: 0; }
-  .checkout-summary strong { font-size: 1.3rem; }
+  .checkout-summary small { display: block; margin-top: 0.15rem; color: var(--ink-soft); }
+  .checkout-summary strong { font-family: var(--serif); font-size: clamp(1.65rem, 4vw, 2.5rem); }
 
   .checkout-assurances {
     display: grid;
@@ -208,12 +244,41 @@ const checkoutAvailable = marketplace.checkout.enabled
 
   .checkout-paused {
     display: grid;
-    gap: 0.2rem;
-    padding: 1rem;
+    gap: 1rem;
+    padding: 1.2rem;
     border: 1px solid var(--ink);
     border-radius: 0.45rem;
     background: var(--yellow);
   }
+  .checkout-paused > div { display: grid; gap: 0.2rem; }
+  .checkout-paused > a { width: fit-content; font-weight: 800; }
+  .release-steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.65rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .release-steps li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.05rem 0.5rem;
+    align-items: center;
+  }
+  .release-steps li > span {
+    display: grid;
+    grid-row: 1 / span 2;
+    place-items: center;
+    width: 1.8rem;
+    height: 1.8rem;
+    border: 1px solid var(--ink);
+    border-radius: 50%;
+    background: var(--paper-strong);
+    font-family: var(--mono);
+    font-weight: 800;
+  }
+  .release-steps small { color: var(--ink-soft); }
 
   .checkout-terms,
   .checkout-status { margin: 1rem 0 0; font-size: 0.88rem; }
@@ -230,9 +295,16 @@ const checkoutAvailable = marketplace.checkout.enabled
     .checkout-heading { grid-template-columns: 1fr; }
     .contribution-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .checkout-assurances { grid-template-columns: 1fr; }
+    .release-steps { grid-template-columns: 1fr; }
   }
 
   @media (max-width: 480px) {
     .contribution-options { grid-template-columns: 1fr; }
+    .checkout-summary { align-items: flex-start; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .contribution-option { transition: none; }
+    .contribution-option:hover { transform: none; }
   }
 </style>
