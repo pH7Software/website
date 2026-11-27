@@ -5,6 +5,7 @@ import test from "node:test";
 import { createMarketplaceWorker } from "../marketplace-worker/src/index.mjs";
 import { paypalWebhookVerificationPayload } from "../marketplace-worker/src/paypal.mjs";
 import { createDownloadToken } from "../marketplace-worker/src/security.mjs";
+import { maximumKvPackageBytes } from "../marketplace-worker/src/storage.mjs";
 
 const baseProduct = JSON.parse(await readFile(
   new URL("../marketplace/catalog/community-events-mini.json", import.meta.url),
@@ -161,15 +162,26 @@ const paypal = () => {
   };
 };
 
+const packageValue = new TextEncoder().encode("package").buffer;
+
 const environment = (database = new MockD1()) => ({
   ORDERS: database,
-  PRODUCTS: {
-    async get(key) {
+  PACKAGES: {
+    async getWithMetadata(key) {
       return key === product.package.artifactKey
-        ? { body: "package", httpEtag: '"etag"', writeHttpMetadata() {} }
+        ? {
+            value: packageValue,
+            metadata: {
+              sha256: product.package.sha256,
+              sizeBytes: product.package.sizeBytes,
+              contentType: "application/zip",
+              etag: '"etag"',
+            },
+          }
         : null;
     },
   },
+  PACKAGE_STORAGE_DRIVER: "kv",
   API_ORIGIN: "https://marketplace-api.ph7builder.com",
   MARKETPLACE_ORIGIN: "https://ph7builder.com",
   PAYPAL_ENVIRONMENT: "sandbox",
@@ -218,6 +230,13 @@ test("configuration keeps production disabled without the independent production
   assert.deepEqual(await response.json(), { enabled: false, environment: "production" });
 });
 
+test("configuration fails closed without its package storage binding", async () => {
+  const env = environment();
+  delete env.PACKAGES;
+  const response = await newWorker(paypal()).fetch(request("/v1/config"), env);
+  assert.deepEqual(await response.json(), { enabled: false, environment: "sandbox" });
+});
+
 test("order creation rejects browser price tampering and incorrect currency", async () => {
   const client = paypal();
   const worker = newWorker(client);
@@ -248,6 +267,35 @@ test("order creation uses verified manifest data and is idempotent", async () =>
   assert.equal(client.state.createCalls, 1);
 });
 
+test("KV quota failures pause ordering before PayPal is called", async () => {
+  const client = paypal();
+  const env = environment();
+  env.PACKAGES.getWithMetadata = async () => {
+    throw new Error("KV read quota exceeded");
+  };
+  const response = await createOrder(newWorker(client), env);
+  assert.equal(response.status, 503);
+  assert.match((await response.json()).error, /No payment was captured/);
+  assert.equal(client.state.createCalls, 0);
+  assert.equal(env.ORDERS.orders.length, 0);
+});
+
+test("KV package limit is enforced before PayPal is called", async () => {
+  const client = paypal();
+  const oversizedProduct = structuredClone(product);
+  oversizedProduct.package.sizeBytes = maximumKvPackageBytes + 1;
+  const oversizedCatalog = new Map([[oversizedProduct.id, oversizedProduct]]);
+  const worker = createMarketplaceWorker({
+    catalog: oversizedCatalog,
+    paypal: client,
+    now: () => fixedNow,
+    randomUUID: () => "reference-123456789",
+  });
+  const response = await createOrder(worker, environment());
+  assert.equal(response.status, 503);
+  assert.equal(client.state.createCalls, 0);
+});
+
 test("capture rejects a PayPal amount that does not match the stored order", async () => {
   const client = paypal();
   const worker = newWorker(client);
@@ -259,6 +307,23 @@ test("capture rejects a PayPal amount that does not match the stored order", asy
     headers: { "Idempotency-Key": "capture-key-123456" },
   }), env);
   assert.equal(response.status, 502);
+  assert.equal(env.ORDERS.orders[0].status, "CREATED");
+});
+
+test("KV quota failures stop capture before PayPal charges the buyer", async () => {
+  const client = paypal();
+  const worker = newWorker(client);
+  const env = environment();
+  await createOrder(worker, env);
+  env.PACKAGES.getWithMetadata = async () => {
+    throw new Error("KV read quota exceeded");
+  };
+  const response = await worker.fetch(request("/v1/orders/ORDER123456789/capture", {
+    method: "POST",
+    headers: { "Idempotency-Key": "capture-key-quota" },
+  }), env);
+  assert.equal(response.status, 503);
+  assert.equal(client.state.captureCalls, 0);
   assert.equal(env.ORDERS.orders[0].status, "CREATED");
 });
 
@@ -330,12 +395,33 @@ test("completed capture grants an expiring link to the manifest package only", a
   const download = await worker.fetch(new Request(downloadUrl), env);
   assert.equal(download.status, 200);
   assert.equal(download.headers.get("X-Package-SHA256"), product.package.sha256);
+  assert.equal(download.headers.get("ETag"), '"etag"');
   assert.equal(await download.text(), "package");
   assert.equal(env.ORDERS.orders[0].download_count, 1);
 
   const expiredWorker = newWorker(client, { now: fixedNow + 24 * 60 * 60 * 1000 + 1 });
   const expired = await expiredWorker.fetch(new Request(downloadUrl), env);
   assert.equal(expired.status, 404);
+});
+
+test("KV failures keep completed purchases closed without consuming a download", async () => {
+  const client = paypal();
+  const worker = newWorker(client);
+  const env = environment();
+  await createOrder(worker, env);
+  const capture = await worker.fetch(request("/v1/orders/ORDER123456789/capture", {
+    method: "POST",
+    headers: { "Idempotency-Key": "capture-key-storage-failure" },
+  }), env);
+  const { downloadUrl } = await capture.json();
+  env.PACKAGES.getWithMetadata = async () => {
+    throw new Error("KV read quota exceeded");
+  };
+
+  const download = await worker.fetch(new Request(downloadUrl), env);
+  assert.equal(download.status, 503);
+  assert.match((await download.json()).error, /temporarily unavailable/);
+  assert.equal(env.ORDERS.orders[0].download_count, 0);
 });
 
 test("verified refund webhook revokes downloads and duplicate delivery is harmless", async () => {

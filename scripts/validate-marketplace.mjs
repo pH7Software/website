@@ -7,6 +7,7 @@ import {
   validateProductCatalog,
 } from "../src/lib/marketplace.mjs";
 import { productManifests } from "../marketplace/catalog/index.mjs";
+import { maximumKvPackageBytes } from "../marketplace-worker/src/storage.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const catalogDirectory = path.join(root, "marketplace", "catalog");
@@ -37,11 +38,17 @@ if (JSON.stringify(fileProductIds) !== JSON.stringify(registeredProductIds)) {
 if (config.checkout.enabled && !validated.some((product) => product.purchasable)) {
   throw new Error("Checkout cannot be enabled without a verified purchasable product.");
 }
+for (const product of validated) {
+  if (product.package.sizeBytes > maximumKvPackageBytes) {
+    throw new Error(`${product.id}: package exceeds the 25 MiB KV storage limit.`);
+  }
+}
 
 const requiredWorkerFiles = [
   "marketplace-worker/src/index.mjs",
   "marketplace-worker/src/paypal.mjs",
   "marketplace-worker/src/security.mjs",
+  "marketplace-worker/src/storage.mjs",
   "marketplace-worker/migrations/0001_orders.sql",
   "marketplace-worker/wrangler.jsonc.example",
   "marketplace-worker/README.md",

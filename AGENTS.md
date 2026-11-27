@@ -49,9 +49,13 @@ unrelated work.
 - GitHub Pages is the single deployment target for the public website and
   marketplace catalogue. Do not add a duplicate Cloudflare Pages deployment
   while GitHub Pages remains suitable.
-- Cloudflare Workers, D1 and private R2 storage form the only marketplace
+- Cloudflare Workers, D1 and private KV storage form the only marketplace
   runtime boundary. They hold payment state and packages that cannot safely be
   served by a static host.
+- KV is the initial package store, with a hard 25 MiB limit per package and the
+  free 1 GB allowance treated as an operating ceiling. Keep package access
+  behind `marketplace-worker/src/storage.mjs` so R2 can replace KV without
+  changing checkout or fulfilment code.
 - The marketplace purchase path must not depend on Krystal, cPanel, FTP or
   another shared-hosting account.
 - Prefer Cloudflare's free allowances while usage remains suitable. A paid
@@ -59,6 +63,8 @@ unrelated work.
   owner approval.
 - Quota exhaustion and unavailable bindings must fail closed: never accept an
   order or grant a download when payment state cannot be verified.
+- Reconsider R2 only when a verified package exceeds 25 MiB, stored packages
+  approach 1 GB in total, or real sales justify pay-as-you-go storage.
 
 Do not commit WordPress exports, comments, private metadata, credentials,
 runtime output or machine-local files. The export filename patterns are

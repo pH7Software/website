@@ -9,6 +9,7 @@
     "MARKETPLACE_ORIGIN": "https://ph7builder.com",
     "PAYPAL_ENVIRONMENT": "sandbox",
     "PAYPAL_MERCHANT_ID": "REPLACE_WITH_PAYPAL_MERCHANT_ID",
+    "PACKAGE_STORAGE_DRIVER": "kv",
     "PURCHASES_ENABLED": "false",
     "ALLOW_PRODUCTION": "false"
   },
@@ -20,10 +21,10 @@
       "migrations_dir": "migrations"
     }
   ],
-  "r2_buckets": [
+  "kv_namespaces": [
     {
-      "binding": "PRODUCTS",
-      "bucket_name": "ph7builder-marketplace-products"
+      "binding": "PACKAGES",
+      "id": "REPLACE_WITH_KV_NAMESPACE_ID"
     }
   ]
 }

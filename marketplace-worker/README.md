@@ -3,25 +3,38 @@
 This Cloudflare Worker is the small server-side boundary required by the static
 pH7Builder website. It creates and captures PayPal Orders v2 payments, verifies
 PayPal webhooks, stores idempotent order state in D1 and serves verified private
-packages from R2 through signed, expiring links.
+packages from Workers KV through signed, expiring links.
 
 It is intentionally not part of the pH7Builder application and is not a general
 e-commerce backend.
 
 ## Hosting boundary
 
-The Astro catalogue remains on GitHub Pages. This Worker, D1 and private R2
-bucket run on Cloudflare and are the complete server-side marketplace boundary.
+The Astro catalogue remains on GitHub Pages. This Worker, D1 and a private KV
+namespace run on Cloudflare and are the complete server-side marketplace
+boundary.
 No request in the purchase, webhook, recovery or download flow should pass
 through Krystal, cPanel or another shared host.
 
 The initial design fits Cloudflare's free allowances at low volume. Recheck the
 current [Workers](https://developers.cloudflare.com/workers/platform/pricing/),
 [D1](https://developers.cloudflare.com/d1/platform/pricing/) and
-[R2](https://developers.cloudflare.com/r2/pricing/) limits before sandbox and
+[KV](https://developers.cloudflare.com/kv/platform/pricing/) limits before sandbox and
 production activation. Do not enable a paid plan or recurring cost without
 owner approval. Quota or binding failures must leave the purchase unfulfilled;
 they must never fall back to browser assertions or public package storage.
+
+KV is deliberately bounded to one immutable value per package release. The
+Worker enforces Cloudflare's 25 MiB value limit and verifies the stored value's
+size and release metadata before creating or capturing an order. On the free
+plan, keep total package storage below 1 GB. Reconsider R2 only when a verified
+package exceeds 25 MiB, stored packages approach 1 GB, or real sales justify
+pay-as-you-go infrastructure.
+
+`src/storage.mjs` is the only package-storage boundary. Checkout, recovery and
+download routes use its `inspect` and `read` operations. The KV and dormant R2
+adapters share that contract, so a later migration does not require rewriting
+the payment or fulfilment flow.
 
 ## Safety defaults
 
@@ -42,8 +55,10 @@ they must never fall back to browser assertions or public package storage.
 1. Copy `wrangler.jsonc.example` to the untracked deployment configuration and
    fill in the D1 database identifier.
 2. Create the D1 database and apply `migrations/0001_orders.sql`.
-3. Create the private R2 bucket and upload only packages that match the public
-   manifest key and SHA-256 checksum.
+3. Create a private Workers KV namespace and bind it as `PACKAGES`. Upload only
+   packages no larger than 25 MiB that match the public manifest key, byte size
+   and SHA-256 checksum. Store this metadata with each value:
+   `{"sha256":"…","sizeBytes":13927,"contentType":"application/zip"}`.
 4. Set the sandbox PayPal merchant ID as `PAYPAL_MERCHANT_ID` in the untracked
    Worker configuration. The Worker verifies it on captures and completion
    webhooks so another merchant cannot fulfil an order accidentally.
@@ -66,7 +81,9 @@ in a file, command argument, GitHub variable or chat message.
 
 1. Run the root website tests and marketplace Worker tests.
 2. Deploy the Worker with sandbox credentials and purchases disabled.
-3. Upload the exact verified package to R2.
+3. Upload the exact verified package to KV with its checksum, size and content
+   type metadata. Use the immutable manifest artefact key and never overwrite a
+   published key with different bytes.
 4. Enable sandbox purchases and test successful, cancelled, failed, duplicate,
    refunded, disputed and recovery paths with PayPal sandbox accounts.
 5. Review D1 records, webhook retries, download expiry and the public terms.
@@ -76,3 +93,15 @@ in a file, command argument, GitHub variable or chat message.
 GitHub Actions can run deterministic checks and prepare an artefact. It cannot
 run Codex by itself. Ongoing Codex maintenance requires an explicitly scheduled
 Codex task or a human-triggered review workflow.
+
+## Free-tier failure behaviour
+
+The Worker reads the package before it creates a PayPal order and again before
+capture. Missing values, mismatched metadata, the 25 MiB limit, an unavailable
+binding and KV quota or service errors all return `503` before capture. PayPal
+is not called, the order is not marked complete and no download is granted.
+
+After a completed historical payment, a temporary KV failure keeps the signed
+download closed with `503`; it never redirects to public storage. Retrying after
+the daily KV quota resets or the service recovers restores access without
+altering the purchase record.

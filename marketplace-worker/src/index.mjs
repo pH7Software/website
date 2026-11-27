@@ -1,6 +1,7 @@
 import { createPayPalClient, paypalOrderPayload } from "./paypal.mjs";
 import { productsById } from "./catalog.mjs";
 import { createDownloadToken, readDownloadToken, recoveryRateKey } from "./security.mjs";
+import { createPackageStorage, PackageStorageUnavailableError } from "./storage.mjs";
 import { isContributionAllowed, parseUsdCents } from "../../src/lib/marketplace.mjs";
 
 const jsonHeaders = { "Content-Type": "application/json; charset=utf-8", "X-Content-Type-Options": "nosniff", "Cache-Control": "no-store" };
@@ -9,6 +10,9 @@ const paypalOrderPattern = /^[A-Za-z0-9-]{10,64}$/;
 const paypalMerchantPattern = /^[2-9A-HJ-NP-Z]{13}$/;
 const maximumBodyBytes = 8192;
 const downloadLifetimeMs = 24 * 60 * 60 * 1000;
+const safeLogPath = (pathname) => pathname.startsWith("/v1/download/")
+  ? "/v1/download/[redacted]"
+  : pathname;
 
 class HttpError extends Error {
   constructor(status, publicMessage) {
@@ -75,6 +79,8 @@ const purchasesEnabled = (env) => env.PURCHASES_ENABLED === "true"
   && typeof env.PAYPAL_CLIENT_SECRET === "string" && env.PAYPAL_CLIENT_SECRET.length >= 20
   && typeof env.PAYPAL_WEBHOOK_ID === "string" && env.PAYPAL_WEBHOOK_ID.length >= 10
   && paypalMerchantPattern.test(env.PAYPAL_MERCHANT_ID ?? "")
+  && ["kv", "r2"].includes(env.PACKAGE_STORAGE_DRIVER)
+  && Boolean(env.PACKAGES)
   && typeof env.DOWNLOAD_SIGNING_SECRET === "string" && env.DOWNLOAD_SIGNING_SECRET.length >= 32;
 
 const readVerifiedProduct = (catalog, productId, productVersion) => {
@@ -121,7 +127,7 @@ const findOrder = (env, orderId) => env.ORDERS.prepare(
   "SELECT * FROM marketplace_orders WHERE paypal_order_id = ? LIMIT 1",
 ).bind(orderId).first();
 
-const issueDownload = async (env, catalog, token, now) => {
+const issueDownload = async (env, catalog, storage, token, now) => {
   const claims = await readDownloadToken(token, env.DOWNLOAD_SIGNING_SECRET, now());
   if (!claims) throw new HttpError(404, "Download link is invalid or expired.");
   const product = catalog.get(claims.productId);
@@ -136,24 +142,22 @@ const issueDownload = async (env, catalog, token, now) => {
     throw new HttpError(404, "Download is unavailable.");
   }
 
-  const object = await env.PRODUCTS.get(product.package.artifactKey);
-  if (!object) throw new HttpError(503, "Package storage is temporarily unavailable.");
+  const storedPackage = await storage.read(product);
   const headers = new Headers({
-    "Content-Type": "application/zip",
+    "Content-Type": storedPackage.contentType,
     "Content-Disposition": `attachment; filename="${product.package.filename}"`,
     "Cache-Control": "private, no-store",
     "X-Content-Type-Options": "nosniff",
     "X-Package-SHA256": product.package.sha256,
   });
-  if (typeof object.writeHttpMetadata === "function") object.writeHttpMetadata(headers);
-  if (object.httpEtag) headers.set("ETag", object.httpEtag);
+  if (storedPackage.etag) headers.set("ETag", storedPackage.etag);
   await env.ORDERS.prepare(
     "UPDATE marketplace_orders SET download_count = download_count + 1, last_downloaded_at = ? WHERE paypal_order_id = ?",
   ).bind(new Date(now()).toISOString(), claims.orderId).run();
-  return new Response(object.body, { headers });
+  return new Response(storedPackage.body, { headers });
 };
 
-const createOrder = async (request, env, catalog, paypal, now, randomUUID) => {
+const createOrder = async (request, env, catalog, storage, paypal, now, randomUUID) => {
   requireOrigin(request, env);
   if (!purchasesEnabled(env)) throw new HttpError(503, "Purchases are temporarily paused.");
   const idempotencyKey = requireIdempotencyKey(request);
@@ -164,6 +168,8 @@ const createOrder = async (request, env, catalog, paypal, now, randomUUID) => {
   if (!isContributionAllowed(product, amount, body.currency)) {
     throw new HttpError(400, `Contribution must be at least $${product.pricing.minimum.toFixed(2)} USD.`);
   }
+
+  await storage.inspect(product);
 
   const existing = await env.ORDERS.prepare(
     "SELECT * FROM marketplace_orders WHERE idempotency_key = ? LIMIT 1",
@@ -205,12 +211,14 @@ const createOrder = async (request, env, catalog, paypal, now, randomUUID) => {
   return json(request, env, { orderId: order.id, status: "CREATED" }, 201);
 };
 
-const captureOrder = async (request, env, paypal, orderId, now) => {
+const captureOrder = async (request, env, catalog, storage, paypal, orderId, now) => {
   requireOrigin(request, env);
   if (!purchasesEnabled(env)) throw new HttpError(503, "Purchases are temporarily paused.");
   if (!paypalOrderPattern.test(orderId)) throw new HttpError(404, "Order was not found.");
   const order = await findOrder(env, orderId);
   if (!order) throw new HttpError(404, "Order was not found.");
+  const product = readVerifiedProduct(catalog, order.product_id, order.product_version);
+  await storage.inspect(product);
   if (order.status === "COMPLETED") {
     const token = await newDownloadToken(order, env, now);
     return json(request, env, { status: "COMPLETED", downloadUrl: `${env.API_ORIGIN}/v1/download/${token}` });
@@ -255,7 +263,7 @@ const captureOrder = async (request, env, paypal, orderId, now) => {
   return json(request, env, { status: "COMPLETED", downloadUrl: `${env.API_ORIGIN}/v1/download/${token}` });
 };
 
-const recoverPurchase = async (request, env, paypal, now) => {
+const recoverPurchase = async (request, env, catalog, storage, paypal, now) => {
   requireOrigin(request, env);
   const body = await readBody(request);
   if (!paypalOrderPattern.test(body.orderId ?? "") || typeof body.email !== "string" || body.email.length > 254) {
@@ -282,6 +290,8 @@ const recoverPurchase = async (request, env, paypal, now) => {
     || email.toLowerCase() !== body.email.trim().toLowerCase()) {
     throw new HttpError(404, "Purchase could not be verified.");
   }
+  const product = readVerifiedProduct(catalog, order.product_id, order.product_version);
+  await storage.inspect(product);
   const token = await newDownloadToken(order, env, now);
   return json(request, env, { downloadUrl: `${env.API_ORIGIN}/v1/download/${token}` });
 };
@@ -378,23 +388,30 @@ export const createMarketplaceWorker = ({
         });
       }
       if (request.method === "POST" && url.pathname === "/v1/orders") {
-        return await createOrder(request, env, catalog, paypal, now, randomUUID);
+        return await createOrder(request, env, catalog, createPackageStorage(env), paypal, now, randomUUID);
       }
       const captureMatch = request.method === "POST" && url.pathname.match(/^\/v1\/orders\/([^/]+)\/capture$/);
-      if (captureMatch) return await captureOrder(request, env, paypal, decodeURIComponent(captureMatch[1]), now);
+      if (captureMatch) return await captureOrder(request, env, catalog, createPackageStorage(env), paypal, decodeURIComponent(captureMatch[1]), now);
       if (request.method === "POST" && url.pathname === "/v1/recover") {
-        return await recoverPurchase(request, env, paypal, now);
+        return await recoverPurchase(request, env, catalog, createPackageStorage(env), paypal, now);
       }
       if (request.method === "POST" && url.pathname === "/v1/webhooks/paypal") {
         return await processWebhook(request, env, paypal, now);
       }
       const downloadMatch = request.method === "GET" && url.pathname.match(/^\/v1\/download\/([^/]+)$/);
-      if (downloadMatch) return await issueDownload(env, catalog, decodeURIComponent(downloadMatch[1]), now);
+      if (downloadMatch) return await issueDownload(env, catalog, createPackageStorage(env), decodeURIComponent(downloadMatch[1]), now);
       return json(request, env, { error: "Not found." }, 404);
     } catch (error) {
-      const status = error instanceof HttpError ? error.status : 500;
-      if (status >= 500) console.error("marketplace_request_failed", { path: url.pathname, status });
-      return json(request, env, { error: error instanceof HttpError ? error.publicMessage : "Request could not be completed." }, status);
+      const storageUnavailable = error instanceof PackageStorageUnavailableError;
+      const status = error instanceof HttpError ? error.status : storageUnavailable ? 503 : 500;
+      if (status >= 500) console.error("marketplace_request_failed", { path: safeLogPath(url.pathname), status });
+      const storageMessage = url.pathname.startsWith("/v1/download/") || url.pathname === "/v1/recover"
+        ? "Package delivery is temporarily unavailable. Please try again later."
+        : "Purchases are temporarily paused because package delivery is unavailable. No payment was captured.";
+      const publicMessage = storageUnavailable
+        ? storageMessage
+        : error instanceof HttpError ? error.publicMessage : "Request could not be completed.";
+      return json(request, env, { error: publicMessage }, status);
     }
   },
 });
