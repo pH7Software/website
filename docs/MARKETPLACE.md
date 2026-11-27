@@ -12,7 +12,7 @@ module system.
 - The public repository contains no paid packages or buyer records.
 - A small Cloudflare Worker creates and captures PayPal Orders v2 payments,
   verifies webhook signatures, records idempotent state in D1 and serves exact
-  private R2 objects through 24-hour HMAC-signed links.
+  private Workers KV values through 24-hour HMAC-signed links.
 - The private `pH7Software/marketplace-products` repository owns product source,
   tests and deterministic packaging.
 
@@ -26,23 +26,27 @@ It is already deployed from the reviewed `main` branch by the repository's
 Pages workflow. Moving only the catalogue to Cloudflare Pages would create a
 second static deployment without removing any required server-side component.
 
-The private commerce boundary uses Cloudflare Workers, D1 and private R2
+The private commerce boundary uses Cloudflare Workers, D1 and private KV
 storage. This is compatible with Cloudflare's free allowances for an initial,
 low-volume launch. As reviewed on 27 November 2026, the official limits include
 100,000 Worker requests per day, 5 million D1 rows read and 100,000 rows written
-per day with 5 GB total D1 storage, and 10 GB-month of Standard R2 storage with
-1 million Class A and 10 million Class B operations per month. Current limits
-must be rechecked before activation:
+per day with 5 GB total D1 storage, and 100,000 KV reads per day, 1,000 daily
+writes, 1 GB total KV storage and 25 MiB per value. Current limits must be
+rechecked before activation:
 
 - <https://developers.cloudflare.com/workers/platform/pricing/>
 - <https://developers.cloudflare.com/d1/platform/pricing/>
-- <https://developers.cloudflare.com/r2/pricing/>
+- <https://developers.cloudflare.com/kv/platform/pricing/>
+- <https://developers.cloudflare.com/kv/platform/limits/>
 
 The marketplace has no runtime dependency on Krystal, cPanel or FTP. Exceeding
 a free allowance must not silently enable a paid plan. Review actual usage and
 obtain owner approval before accepting a recurring Cloudflare cost. If the
-Worker, D1 or R2 is unavailable or at quota, checkout and fulfilment must fail
+Worker, D1 or KV is unavailable or at quota, checkout and fulfilment must fail
 closed rather than trusting browser state or issuing an unverified download.
+Package storage remains behind `marketplace-worker/src/storage.mjs`; R2 is
+reconsidered only when a package exceeds 25 MiB, stored packages approach 1 GB,
+or real sales justify pay-as-you-go infrastructure.
 
 ## Release states
 
@@ -99,13 +103,15 @@ contributions support maintenance; they never unlock hidden product behaviour.
 
 1. The browser requests safe checkout configuration from the Worker.
 2. The Worker validates the product, version, currency and minimum contribution
-   against its own catalogue before creating a PayPal order.
+   against its own catalogue and confirms the exact package is readable before
+   creating a PayPal order.
 3. PayPal approval returns an order ID. The Worker captures it with a
    server-derived idempotency key and verifies amount, currency, product and
    merchant before recording completion. Pending captures remain unavailable
    until PayPal sends a verified completion webhook.
-4. The Worker signs a short-lived token bound to the stored order, product and
-   version. Downloads resolve only to the manifest-selected R2 key.
+4. The Worker checks package storage again before capture, then signs a
+   short-lived token bound to the stored order, product and version. Downloads
+   resolve only to the manifest-selected KV key.
 5. A verified refund, reversal, denial or dispute webhook revokes future
    downloads. Dispute resolution does not automatically restore access because
    a verified financial outcome must be reconciled first.
@@ -125,7 +131,8 @@ details. A browser redirect alone cannot grant a package.
 2. Install the package on every supported pH7Builder version and finish its
    product-specific browser, permission, data-integrity and uninstall checks.
 3. Replace manifest package placeholders and record exact verification checks.
-4. Create private R2 and D1 resources, apply the reviewed schema, and add Worker
+4. Create private KV and D1 resources, apply the reviewed schema, upload the
+   exact package with its checksum and byte size as metadata, and add Worker
    secrets directly through Cloudflare tooling.
 5. Route `marketplace-api.ph7builder.com` directly to the Worker and deploy it
    with purchases disabled. No Krystal origin is involved.

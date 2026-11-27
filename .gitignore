@@ -6,3 +6,8 @@ dist/
 socialdaringbuildersoftware.WordPress.*.xml
 wordpress-export.xml
 .migration/
+marketplace-worker/.dev.vars*
+marketplace-worker/.env*
+marketplace-worker/.wrangler/
+marketplace-worker/wrangler.jsonc
+.wrangler/
