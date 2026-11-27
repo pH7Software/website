@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title">
+  <title id="title">pH7Builder mark</title>
+  <rect x="12" y="12" width="232" height="232" rx="54" fill="#c9f45b" stroke="#18132d" stroke-width="16"/>
+  <path d="M142 12h102v84L142 244z" fill="#ff6d85"/>
+  <path d="M142 12h102v84L142 244" fill="none" stroke="#18132d" stroke-width="16" stroke-linejoin="round"/>
+  <text x="110" y="145" text-anchor="middle" font-family="ui-monospace, monospace" font-size="68" font-weight="900" letter-spacing="-7" fill="#18132d">pH7</text>
+</svg>

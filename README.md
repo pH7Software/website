@@ -66,6 +66,7 @@ migration input and is intentionally ignored.
 ## Product and migration notes
 
 - [Product and website strategy](docs/PRODUCT_AND_WEBSITE_STRATEGY.md)
+- [Brand system and visual identity](docs/BRAND.md)
 - [Legacy URL migration](docs/LEGACY_URL_MIGRATION.md)
 - [Build journey acceptance record](docs/BUILD_ACCEPTANCE.md)
 - [Marketplace architecture and release gate](docs/MARKETPLACE.md)

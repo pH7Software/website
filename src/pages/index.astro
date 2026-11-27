@@ -1,5 +1,6 @@
 ---
 import ArrowIcon from "../components/ArrowIcon.astro";
+import ConnectionJourney from "../components/ConnectionJourney.astro";
 import ConnectionScene from "../components/ConnectionScene.astro";
 import CtaBand from "../components/CtaBand.astro";
 import PathCard from "../components/PathCard.astro";
@@ -35,6 +36,8 @@ import { site } from "../data/site";
 
   <ProductPreview />
 
+  <ConnectionJourney />
+
   <section class="section identity-section" aria-labelledby="what-is-ph7builder">
     <div class="shell identity-grid">
       <div>
@@ -53,35 +56,6 @@ import { site } from "../data/site";
         <div class="identity-links">
           <a class="text-link" href="/get-started/">How to install pH7Builder<ArrowIcon /></a>
           <a class="text-link" href={site.docsUrl} target="_blank" rel="noopener noreferrer">Read the versioned documentation<ArrowIcon /><span class="sr-only"> (opens in a new tab)</span></a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section surface">
-    <div class="shell">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">Not another empty starter</p>
-          <h2>Begin with the hard parts already represented.</h2>
-        </div>
-        <p>AI can generate screens quickly. A real dating product also needs account flows, privacy decisions, discovery rules, communication, moderation and a path to sustainable operations.</p>
-      </div>
-      <div class="capability-map">
-        <div class="capability-core">
-          <span class="eyebrow">What makes it yours</span>
-          <strong>Niche, brand, rules and member experience</strong>
-        </div>
-        <div class="capability-connector" aria-hidden="true">builds on</div>
-        <div class="capability-foundation">
-          {[
-            ["01", "Profiles & identity"],
-            ["02", "Discovery & matching"],
-            ["03", "Messaging & connection"],
-            ["04", "Memberships"],
-            ["05", "Moderation controls"],
-            ["06", "Admin operations"],
-          ].map(([number, label]) => <span><b>{number}</b>{label}</span>)}
         </div>
       </div>
     </div>
@@ -325,64 +299,6 @@ import { site } from "../data/site";
     font-size: 0.85rem;
   }
 
-  .capability-map {
-    display: grid;
-    grid-template-columns: minmax(0, 0.65fr) auto minmax(0, 1fr);
-    align-items: center;
-    gap: 1.25rem;
-  }
-
-  .capability-core {
-    display: flex;
-    min-height: 18rem;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: 2rem;
-    border: 2px solid var(--ink);
-    border-radius: var(--radius);
-    background: var(--coral);
-    box-shadow: var(--shadow);
-  }
-
-  .capability-core strong {
-    max-width: 13ch;
-    font-family: var(--serif);
-    font-size: clamp(2rem, 4vw, 3.4rem);
-    line-height: 1.02;
-  }
-
-  .capability-connector {
-    font-family: var(--mono);
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    writing-mode: vertical-rl;
-  }
-
-  .capability-foundation {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    border: 2px solid var(--ink);
-    border-radius: var(--radius);
-    overflow: hidden;
-  }
-
-  .capability-foundation span {
-    display: flex;
-    min-height: 7.5rem;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 1.25rem;
-    border: 1px solid var(--ink);
-    background: var(--paper-strong);
-    font-weight: 800;
-  }
-
-  .capability-foundation b {
-    font-family: var(--mono);
-    font-size: 0.68rem;
-  }
-
   .principle-section {
     background: var(--blue);
     color: white;
@@ -414,13 +330,8 @@ import { site } from "../data/site";
   @media (max-width: 900px) {
     .home-hero-grid,
     .identity-grid,
-    .capability-map,
     .principle-grid {
       grid-template-columns: minmax(0, 1fr);
-    }
-
-    .capability-connector {
-      writing-mode: initial;
     }
 
   }
@@ -444,10 +355,6 @@ import { site } from "../data/site";
     .foundation-grid p + p {
       border-top: 1px solid #4b4562;
       border-left: 0;
-    }
-
-    .capability-foundation {
-      grid-template-columns: 1fr;
     }
 
     .identity-answer dl {

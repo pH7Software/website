@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="220" viewBox="0 0 760 220" role="img" aria-labelledby="title">
+  <title id="title">pH7Builder</title>
+  <rect x="14" y="20" width="180" height="180" rx="42" fill="#c9f45b" stroke="#18132d" stroke-width="12"/>
+  <path d="M115 20h79v65L115 200z" fill="#ff6d85"/>
+  <path d="M115 20h79v65L115 200" fill="none" stroke="#18132d" stroke-width="12" stroke-linejoin="round"/>
+  <text x="91" y="132" text-anchor="middle" font-family="ui-monospace, monospace" font-size="52" font-weight="900" letter-spacing="-5" fill="#18132d">pH7</text>
+  <text x="224" y="139" font-family="ui-sans-serif, sans-serif" font-size="96" font-weight="900" letter-spacing="-6" fill="#18132d">Builder</text>
+</svg>

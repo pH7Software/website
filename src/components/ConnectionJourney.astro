@@ -1,0 +1,300 @@
+<section class="section connection-journey" aria-labelledby="connection-journey-title">
+  <div class="shell">
+    <div class="journey-heading">
+      <div>
+        <p class="eyebrow">The member experience</p>
+        <h2 id="connection-journey-title">The software works underneath. The connection happens on top.</h2>
+      </div>
+      <p>A dating product should feel personal to its members, even when the foundation behind it is doing a lot of work. pH7Builder gives each important moment a place to start.</p>
+    </div>
+
+    <div class="journey-map">
+      <svg viewBox="0 0 1120 260" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M70 142 C200 34 315 236 446 132 S696 30 814 138 S1000 225 1060 106" />
+      </svg>
+      <article class="journey-card journey-card-profile">
+        <span class="journey-node" aria-hidden="true"></span>
+        <small>Arrive</small>
+        <h3>Feel represented.</h3>
+        <p>Profiles and preferences shaped around the audience you want to serve.</p>
+        <b>Identity · profile fields</b>
+      </article>
+      <article class="journey-card journey-card-discovery">
+        <span class="journey-node" aria-hidden="true"></span>
+        <small>Explore</small>
+        <h3>Find relevance.</h3>
+        <p>Discovery and matching rules that reflect the purpose of your product.</p>
+        <b>Search · matching</b>
+      </article>
+      <article class="journey-card journey-card-conversation">
+        <span class="journey-node" aria-hidden="true"></span>
+        <small>Connect</small>
+        <h3>Start safely.</h3>
+        <p>Private messaging supported by reporting, blocking and moderation controls.</p>
+        <b>Messaging · safety</b>
+      </article>
+      <article class="journey-card journey-card-belonging">
+        <span class="journey-node" aria-hidden="true"></span>
+        <small>Belong</small>
+        <h3>Build a community.</h3>
+        <p>Membership and administration tools for an independently operated product.</p>
+        <b>Memberships · operations</b>
+      </article>
+    </div>
+
+    <div class="journey-manifesto">
+      <span aria-hidden="true">♥</span>
+      <p>Connection is not one-size-fits-all.</p>
+      <strong>Your niche. Your rules. Your community.</strong>
+    </div>
+  </div>
+</section>
+
+<style>
+  .connection-journey {
+    position: relative;
+    overflow: hidden;
+    border-block: 1px solid var(--ink);
+    background: var(--ink);
+    color: white;
+  }
+
+  .connection-journey::before {
+    position: absolute;
+    top: -12rem;
+    right: -8rem;
+    width: 29rem;
+    height: 29rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    background: var(--blue);
+    content: "";
+    opacity: 0.33;
+  }
+
+  .journey-heading {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.48fr);
+    align-items: end;
+    gap: clamp(2rem, 7vw, 7rem);
+    margin-bottom: clamp(3rem, 8vw, 6rem);
+  }
+
+  .journey-heading h2 {
+    max-width: 14ch;
+    margin: 0;
+  }
+
+  .journey-heading > p {
+    margin: 0;
+    color: #cbc5da;
+    font-size: 1.08rem;
+  }
+
+  .journey-map {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: start;
+    gap: 1rem;
+    min-height: 26rem;
+  }
+
+  .journey-map > svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 17rem;
+    pointer-events: none;
+  }
+
+  .journey-map path {
+    fill: none;
+    stroke: var(--lime);
+    stroke-dasharray: 7 11;
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .journey-card {
+    position: relative;
+    display: flex;
+    min-height: 20rem;
+    flex-direction: column;
+    padding: 1.35rem;
+    border: 2px solid var(--ink);
+    border-radius: 1.5rem;
+    background: var(--paper-strong);
+    color: var(--ink);
+    box-shadow: 6px 6px 0 var(--coral);
+  }
+
+  .journey-card:nth-of-type(even) {
+    margin-top: 4rem;
+  }
+
+  .journey-card-discovery {
+    box-shadow: 6px 6px 0 var(--lime);
+    transform: rotate(1.5deg);
+  }
+
+  .journey-card-conversation {
+    box-shadow: 6px 6px 0 #9d8aff;
+    transform: rotate(-1.5deg);
+  }
+
+  .journey-card-belonging {
+    box-shadow: 6px 6px 0 var(--yellow);
+  }
+
+  .journey-node {
+    position: absolute;
+    top: -0.75rem;
+    left: 1.2rem;
+    width: 1.45rem;
+    height: 1.45rem;
+    border: 0.35rem solid var(--ink);
+    border-radius: 50%;
+    background: var(--coral);
+  }
+
+  .journey-card-discovery .journey-node { background: var(--lime); }
+  .journey-card-conversation .journey-node { background: #9d8aff; }
+  .journey-card-belonging .journey-node { background: var(--yellow); }
+
+  .journey-card small,
+  .journey-card b {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .journey-card small {
+    color: var(--blue);
+    font-weight: 800;
+  }
+
+  .journey-card h3 {
+    max-width: 9ch;
+    margin: auto 0 1rem;
+    font-family: var(--serif);
+    font-size: clamp(2rem, 3vw, 3rem);
+    line-height: 0.95;
+  }
+
+  .journey-card p {
+    color: var(--ink-soft);
+  }
+
+  .journey-card b {
+    margin-top: 0.75rem;
+    color: var(--ink);
+  }
+
+  .journey-manifesto {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1.25rem;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border: 2px solid white;
+    border-radius: 999px;
+    background: var(--coral);
+    color: var(--ink);
+    transform: rotate(-0.5deg);
+  }
+
+  .journey-manifesto > span {
+    display: grid;
+    width: 3rem;
+    height: 3rem;
+    place-items: center;
+    border: 2px solid var(--ink);
+    border-radius: 50%;
+    background: var(--paper-strong);
+    font-size: 1.2rem;
+  }
+
+  .journey-manifesto p,
+  .journey-manifesto strong {
+    margin: 0;
+  }
+
+  .journey-manifesto p {
+    font-family: var(--serif);
+    font-size: clamp(1.8rem, 4vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .journey-manifesto strong {
+    max-width: 15rem;
+    font-size: 0.95rem;
+    text-align: right;
+  }
+
+  @media (max-width: 900px) {
+    .journey-heading {
+      grid-template-columns: 1fr;
+    }
+
+    .journey-map {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .journey-map > svg {
+      display: none;
+    }
+
+    .journey-card:nth-of-type(even) {
+      margin-top: 2rem;
+    }
+
+    .journey-manifesto {
+      grid-template-columns: auto 1fr;
+      border-radius: 1.5rem;
+    }
+
+    .journey-manifesto strong {
+      grid-column: 2;
+      text-align: left;
+    }
+  }
+
+  @media (max-width: 580px) {
+    .journey-map {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+
+    .journey-map,
+    .journey-card {
+      min-height: auto;
+    }
+
+    .journey-card,
+    .journey-card:nth-of-type(even) {
+      margin-top: 0;
+      transform: none;
+    }
+
+    .journey-card h3 {
+      margin-top: 3.5rem;
+    }
+
+    .journey-manifesto {
+      grid-template-columns: 1fr;
+      transform: none;
+    }
+
+    .journey-manifesto strong {
+      grid-column: 1;
+    }
+  }
+</style>

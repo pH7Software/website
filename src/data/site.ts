@@ -62,6 +62,7 @@ export const footerNavigation = [
     links: [
       { label: "Get pH7Builder", href: "/get-started/" },
       { label: "About", href: "/about/" },
+      { label: "Brand kit", href: "/brand/" },
       { label: "GitHub", href: site.githubUrl, external: true },
       { label: "Privacy", href: "/privacy/" },
     ],

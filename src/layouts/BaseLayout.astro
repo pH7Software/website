@@ -175,7 +175,7 @@ const schemas = schema
         <a class="brand-link" href="/" aria-label="pH7Builder home"><Brand /></a>
         <nav id="primary-navigation" class="primary-navigation" aria-label="Primary navigation">
           {primaryNavigation.map((item) => (
-            <a href={item.href} aria-current={isCurrentPath(item.href) ? "page" : undefined}>{item.label}</a>
+            <a class:list={{ "nav-build": item.href === "/build/" }} href={item.href} aria-current={isCurrentPath(item.href) ? "page" : undefined}>{item.label}</a>
           ))}
         </nav>
         <a class="header-github" href={site.githubUrl} target="_blank" rel="noopener noreferrer">GitHub<span class="sr-only"> (opens in a new tab)</span></a>
@@ -191,7 +191,7 @@ const schemas = schema
       <div class="shell">
         <div class="footer-lead">
           <a class="brand-link" href="/" aria-label="pH7Builder home"><Brand inverted /></a>
-          <p>Build with an established open-source foundation. Keep your code, hosting choices and member relationships.</p>
+          <p><strong>Your idea. Your code. Your community.</strong><span>Build with an established open-source foundation. Keep your hosting choices and member relationships.</span></p>
         </div>
         <div class="footer-grid">
           {footerNavigation.map((group) => (
