@@ -82,8 +82,8 @@
   "package": {
     "filename": "community-events-mini-1.0.0.zip",
     "artifactKey": "community-events-mini/1.0.0/community-events-mini-1.0.0.zip",
-    "sha256": "TO_BE_REPLACED_AFTER_REPRODUCIBLE_BUILD",
-    "sizeBytes": 0
+    "sha256": "d70a0bcf9f5485db2c2892c2037454d9e9ee240c308294d830ccc017cc9481cb",
+    "sizeBytes": 13927
   },
   "verification": {
     "status": "candidate",
