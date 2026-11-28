@@ -10,4 +10,5 @@ marketplace-worker/.dev.vars*
 marketplace-worker/.env*
 marketplace-worker/.wrangler/
 marketplace-worker/wrangler.jsonc
+marketplace-worker/wrangler.ci.jsonc
 .wrangler/

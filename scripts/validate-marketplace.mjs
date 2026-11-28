@@ -52,6 +52,8 @@ const requiredWorkerFiles = [
   "marketplace-worker/migrations/0001_orders.sql",
   "marketplace-worker/wrangler.jsonc.example",
   "marketplace-worker/README.md",
+  ".github/workflows/deploy-marketplace-worker.yml",
+  "scripts/render-marketplace-worker-config.mjs",
 ];
 for (const relative of requiredWorkerFiles) {
   await readFile(path.join(root, relative), "utf8");

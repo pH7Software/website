@@ -154,6 +154,23 @@ link and build drift. It does not run Codex or publish packages. Product changes
 remain normal reviewed pull requests; an external Codex schedule can propose
 maintenance, but tests and owner-controlled release gates decide publication.
 
+Changes to the Worker, catalogue or marketplace configuration also run the
+`Deploy marketplace Worker` workflow. Its verification job always runs. The
+deployment job remains skipped until the repository variable
+`MARKETPLACE_WORKER_DEPLOY_ENABLED` is explicitly set to `true` and the
+`marketplace-sandbox` environment contains:
+
+- secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`;
+- variables `MARKETPLACE_D1_DATABASE_ID`, `MARKETPLACE_KV_NAMESPACE_ID` and
+  `MARKETPLACE_PAYPAL_MERCHANT_ID`.
+
+Use a Cloudflare token restricted to this account and Worker deployment. The
+workflow builds a temporary untracked Wrangler configuration, deploys only the
+disabled PayPal sandbox state, then verifies the public API still reports
+`enabled: false` and `environment: sandbox`. PayPal secrets remain stored in
+Cloudflare and are not copied into GitHub. Production purchase activation is a
+separate owner-authorised operation and is deliberately outside this workflow.
+
 To pause sales immediately, set Worker `PURCHASES_ENABLED=false`. To retire one
 product, set `purchasable=false` before changing its verification status to
 `retired`; existing completed orders remain in D1 for support and audit needs.

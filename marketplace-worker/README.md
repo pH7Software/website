@@ -90,6 +90,16 @@ in a file, command argument, GitHub variable or chat message.
 6. Obtain explicit owner approval before configuring production credentials,
    accepting a real payment, issuing a real refund or enabling live checkout.
 
+## Automated disabled-sandbox deployment
+
+The repository workflow `.github/workflows/deploy-marketplace-worker.yml`
+verifies marketplace changes on every relevant push. Deployment stays skipped
+until `MARKETPLACE_WORKER_DEPLOY_ENABLED=true` is configured in GitHub and the
+documented Cloudflare secrets and resource identifiers are available in the
+`marketplace-sandbox` environment. It renders an untracked configuration,
+deploys with PayPal sandbox and both purchase gates disabled, then checks the
+public configuration endpoint. The workflow cannot enable production sales.
+
 GitHub Actions can run deterministic checks and prepare an artefact. It cannot
 run Codex by itself. Ongoing Codex maintenance requires an explicitly scheduled
 Codex task or a human-triggered review workflow.
