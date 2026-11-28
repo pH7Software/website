@@ -14,6 +14,7 @@ const historical = entries
   .filter((entry) => entry.data.sourceType === "post" && entry.data.categories.includes("Release archive"))
   .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
 const dateFormatter = new Intl.DateTimeFormat("en", { day: "numeric", month: "short", year: "numeric" });
+const latestReleaseSlug = `release-notes-${site.latestRelease.replaceAll(".", "-")}`;
 ---
 
 <BaseLayout title="Changelog" description="Published pH7Builder release notes and the preserved historical release archive." path="/changelog/">
@@ -27,7 +28,7 @@ const dateFormatter = new Intl.DateTimeFormat("en", { day: "numeric", month: "sh
       <span class="status-pill">Latest published</span>
       <strong>{site.latestRelease}</strong>
       <p>Released {site.latestReleaseDate}</p>
-      <a class="button button-small" href="/release-notes-20-0-0/">Read the release notes<ArrowIcon /></a>
+      <a class="button button-small" href={`/${latestReleaseSlug}/`}>Read the release notes<ArrowIcon /></a>
     </aside>
   </header>
 
